@@ -363,10 +363,11 @@ export default function App() {
             cycles={cycles}
             activeCycleId={activeCycle?.id || null}
             serviceTypes={serviceTypes}
+            barbers={barbers}
             records={records}
             onSelectCycle={setActiveCycleId}
             onRefresh={loadAll}
-            unitId={activeUnitId} // Passar unitId para o gerenciador
+            unitId={activeUnitId}
           />
         )}
         {activeTab === 'settings' && isAdmin && (

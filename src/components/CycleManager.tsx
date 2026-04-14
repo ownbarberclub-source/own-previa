@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { Upload, Calendar, Hash, FileSpreadsheet, Trash2, Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
-import { Cycle, ServiceType, CommissionRecord } from '../types';
+import { Cycle, ServiceType, CommissionRecord, Barber } from '../types';
 import { currentMonthYear, formatCurrency } from '../utils';
 
 interface CycleManagerProps {
   cycles: Cycle[];
   activeCycleId: string | null;
   serviceTypes: ServiceType[];
+  barbers: Barber[];
   records: CommissionRecord[];
   onSelectCycle: (id: string) => void;
   onRefresh: () => void;
   unitId: string;
 }
 
-export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
+export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, records, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
   const [subTotal, setSubTotal] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ type: '', text: '' });
@@ -78,9 +79,11 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
           const rawComm = row['Comissão'] || 0;
           const dateStr = row['Data'];
 
-          if (!itemName || !barberName) continue;
+          // 1. Verifica se o profissional na planilha existe no sistema PARA ESTA UNIDADE
+          const barberExists = barbers.some(b => b.name === barberName && b.unit_id === unitId);
+          if (!barberExists) continue;
 
-          // Busca mapeamento do serviço NESTA unidade
+          // 2. Busca mapeamento do serviço NESTA unidade
           const mapping = serviceTypes.find(s => s.item_name === itemName && s.unit_id === unitId);
           if (!mapping || mapping.category === 'ignorar') continue;
 
@@ -133,10 +136,13 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
   };
 
   const handleClearRecords = async () => {
-    if (!activeCycleId) return;
-    if (!window.confirm('Isso apagará TODOS os registros importados deste ciclo. O POT e as configurações serão mantidos. Continuar?')) return;
+    if (!activeCycleId || !unitId) return;
+    if (!window.confirm('Isso apagará OS REGISTROS DESTA UNIDADE para este ciclo. O faturamento de assinaturas e os dados de outras unidades serão mantidos. Continuar?')) return;
     
-    await supabase.from('commission_records').delete().eq('cycle_id', activeCycleId);
+    await supabase.from('commission_records').delete().match({ 
+      cycle_id: activeCycleId,
+      unit_id: unitId 
+    });
     onRefresh();
   };
 
@@ -262,7 +268,9 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
           <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <h4 style={{ color: '#f4f4f5', fontWeight: 600 }}>Dados Importados</h4>
-              <p style={{ fontSize: 12, color: '#71717a' }}>{records.filter(r => r.cycle_id === activeCycle.id).length} lançamentos encontrados neste ciclo</p>
+              <p style={{ fontSize: 12, color: '#71717a' }}>
+                {records.filter(r => r.cycle_id === activeCycle.id && r.unit_id === unitId).length} lançamentos desta unidade neste ciclo
+              </p>
             </div>
             <button
               onClick={handleClearRecords}
