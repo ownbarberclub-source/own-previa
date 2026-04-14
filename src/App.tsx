@@ -27,6 +27,7 @@ export default function App() {
   const [activeUnitId, setActiveUnitId] = useState<string | 'consolidated'>('');
   
   const [barbers, setBarbers] = useState<Barber[]>([]);
+  const [allBarbers, setAllBarbers] = useState<Barber[]>([]);
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [appSettings, setAppSettings] = useState<SettingsType | null>(null);
   // Para consolidated, precisaremos de múltiplos settings
@@ -97,7 +98,8 @@ export default function App() {
       { data: manual },
       { data: st }, 
       { data: cy }, 
-      { data: rec }
+      { data: rec },
+      { data: allB }
     ] = await Promise.all([
       supabase.from('commission_barbers').select('*').in('unit_id', unitIds).order('name'),
       supabase.from('commission_settings').select('*').in('unit_id', unitIds),
@@ -107,6 +109,7 @@ export default function App() {
       // Importante: Para o cálculo do POT Global, carregamos TODAS as assinaturas da rede para o mês,
       // além de todos os registros da(s) unidade(s) selecionada(s).
       supabase.from('commission_records').select('*').or(`unit_id.in.(${unitIds.join(',')}),category.eq.assinatura`).order('service_date'),
+      supabase.from('commission_barbers').select('*')
     ]);
 
     if (b) setBarbers(b);
@@ -116,6 +119,7 @@ export default function App() {
     }
     if (manual) setManualMinutes(manual);
     if (st) setServiceTypes(st);
+    if (allB) setAllBarbers(allB);
     
     if (cy) {
       setCycles(cy);
@@ -148,13 +152,13 @@ export default function App() {
     const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
     const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
     
-    // NOVO: Cálculo de minutos totais da rede considerando lançamentos MANUAIS
-    const totalNetworkMinutes = barbers.reduce((sum, barber) => {
+    // NOVO: Cálculo de minutos totais da rede considerando lançamentos MANUAIS e TODOS os barbeiros (allBarbers)
+    const totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
       const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
       if (manual) return sum + manual.minutes;
       
       const sheetMinutes = records
-        .filter(r => r.barber_name === barber.name && r.category === 'assinatura' && r.service_date.startsWith(currentMonth))
+        .filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && r.service_date.startsWith(currentMonth))
         .reduce((s, r) => s + r.duration_minutes, 0);
       return sum + sheetMinutes;
     }, 0);
