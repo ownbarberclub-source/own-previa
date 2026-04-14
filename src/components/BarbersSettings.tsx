@@ -70,8 +70,8 @@ export function BarbersSettings({ barbers, onRefresh }: BarbersSettingsProps) {
               <input style={input} value={name} onChange={e => setName(e.target.value)} placeholder="Ex: João Guilherme" required />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>% Comissão Avulsos</label>
-              <input style={input} type="number" min="0" max="100" value={rate} onChange={e => setRate(e.target.value)} placeholder="Ex: 25" required />
+              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>% Comissão Serviços (Avulsos/Extras)</label>
+              <input style={input} type="number" min="0" max="100" value={rate} onChange={e => setRate(e.target.value)} placeholder="Ex: 30" required />
             </div>
             <button type="submit" style={{
               padding: '10px 20px', backgroundColor: 'var(--brand)', color: 'white',
@@ -101,7 +101,7 @@ export function BarbersSettings({ barbers, onRefresh }: BarbersSettingsProps) {
               <thead>
                 <tr style={{ backgroundColor: 'rgba(9,9,11,0.5)' }}>
                   <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: 12, color: '#52525b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nome</th>
-                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: 12, color: '#52525b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>% Avulsos</th>
+                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: 12, color: '#52525b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>% Serviços</th>
                   <th style={{ padding: '12px 24px', textAlign: 'right', fontSize: 12, color: '#52525b', fontWeight: 600 }}>Ações</th>
                 </tr>
               </thead>
@@ -135,7 +135,7 @@ export function BarbersSettings({ barbers, onRefresh }: BarbersSettingsProps) {
                               <input style={input} value={editName} onChange={e => setEditName(e.target.value)} />
                             </div>
                             <div style={{ width: 160 }}>
-                              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>% Avulsos</label>
+                              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>% Serviços</label>
                               <input style={input} type="number" min="0" max="100" value={editRate} onChange={e => setEditRate(e.target.value)} />
                             </div>
                             <button onClick={() => handleSaveEdit(b.id)} style={{ padding: '8px 14px', backgroundColor: '#22c55e', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, marginTop: 16 }}>

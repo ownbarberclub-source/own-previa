@@ -84,23 +84,6 @@ export function GeneralSettings({ settings, onRefresh }: GeneralSettingsProps) {
             <p style={{ fontSize: 12, color: '#52525b' }}>Define quanto do valor total arrecadado das assinaturas será dividido entre os barbeiros no POT.</p>
           </div>
 
-          <div style={inputGroup}>
-            <label style={{ fontSize: 13, color: '#a1a1aa', fontWeight: 500 }}>
-              Comissão Geral para Serviços Extras (%)
-            </label>
-            <div style={{ position: 'relative' }}>
-              <input 
-                style={inputStyle} 
-                type="number" 
-                value={extraRate} 
-                onChange={e => setExtraRate(e.target.value)} 
-                placeholder="Ex: 10" 
-                required 
-              />
-              <span style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: '#52525b' }}><Percent size={14} /></span>
-            </div>
-            <p style={{ fontSize: 12, color: '#52525b' }}>Taxa de comissão padrão para serviços como sobrancelha, depilação, etc.</p>
-          </div>
 
           <div style={inputGroup}>
             <label style={{ fontSize: 13, color: '#a1a1aa', fontWeight: 500 }}>

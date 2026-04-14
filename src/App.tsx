@@ -142,7 +142,7 @@ export default function App() {
 
       const subscriptionCommission = bd.subscriptionMinutes * valuePorMinuto;
       const avulsoCommission = bd.avulsoRevenue * barber.avulso_rate;
-      const extraCommission = bd.extraRevenue * appSettings.extra_rate;
+      const extraCommission = bd.extraRevenue * barber.avulso_rate;
       const productCommission = bd.productRevenue * appSettings.product_rate;
       const totalCommission = subscriptionCommission + avulsoCommission + extraCommission + productCommission;
       const projectedCommission = totalCommission * projectionFactor;
