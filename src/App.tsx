@@ -146,7 +146,7 @@ export default function App() {
       : records.filter(r => r.cycle_id === activeCycle.id);
 
     const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
-    const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.40);
+    const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
     
     // NOVO: Cálculo de minutos totais da rede considerando lançamentos MANUAIS
     const totalNetworkMinutes = barbers.reduce((sum, barber) => {
@@ -258,7 +258,7 @@ export default function App() {
 
     const metrics = {
       totalSubscriptions: activeCycle.subscription_total || 0,
-      potRate: globalSettings?.pot_rate || 0.40,
+      potRate: globalSettings?.pot_rate || 0.42,
       potBaseValue: potGlobal,
       totalMinutes: totalNetworkMinutes,
       valuePerMinute: valuePorMinutoGlobal
