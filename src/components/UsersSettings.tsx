@@ -112,9 +112,10 @@ export function UsersSettings() {
                   </td>
                   <td style={{ padding: '14px 24px' }}>
                     <span style={{
-                      backgroundColor: u.is_authorized ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
-                      color: u.is_authorized ? '#4ade80' : '#f87171',
-                      padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                      backgroundColor: u.is_authorized ? 'rgba(225,6,0,0.1)' : 'rgba(113,113,122,0.1)',
+                      color: u.is_authorized ? 'var(--brand)' : '#71717a',
+                      padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 700,
+                      border: `1px solid ${u.is_authorized ? 'rgba(225,6,0,0.2)' : 'rgba(113,113,122,0.2)'}`
                     }}>
                       {u.is_authorized ? 'AUTORIZADO' : 'PENDENTE'}
                     </span>
@@ -146,7 +147,7 @@ export function UsersSettings() {
                       {u.is_authorized ? (
                         <button onClick={() => updateStatus(u.id, false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }} title="Revogar Acesso"><X size={16} /></button>
                       ) : (
-                        <button onClick={() => updateStatus(u.id, true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#22c55e' }} title="Autorizar"><Check size={16} /></button>
+                        <button onClick={() => updateStatus(u.id, true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', backgroundColor: 'rgba(225,6,0,0.1)', padding: '6px', borderRadius: 6 }} title="Autorizar"><Check size={16} /></button>
                       )}
                       <button onClick={() => deleteUser(u.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><Trash2 size={16} /></button>
                     </div>

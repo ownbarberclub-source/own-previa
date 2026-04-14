@@ -273,15 +273,21 @@ export default function App() {
             </div>
 
             {/* Unit Selector */}
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8, padding: '4px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-              <Building2 size={14} color="#71717a" />
+            <div style={{ 
+              position: 'relative', display: 'flex', alignItems: 'center', gap: 8, padding: '6px 14px', 
+              backgroundColor: '#09090b', borderRadius: 12, border: '1px solid',
+              borderColor: activeUnitId === 'consolidated' ? 'var(--brand)' : '#27272a',
+              transition: 'all 0.2s',
+              boxShadow: activeUnitId === 'consolidated' ? '0 0 15px rgba(225,6,0,0.1)' : 'none'
+            }}>
+              {activeUnitId === 'consolidated' ? <Trophy size={14} color="var(--brand)" /> : <Building2 size={14} color="#71717a" />}
               <select 
                 value={activeUnitId} 
                 onChange={(e) => setActiveUnitId(e.target.value)}
-                style={{ background: 'none', border: 'none', color: '#f4f4f5', fontSize: 13, fontWeight: 600, outline: 'none', cursor: 'pointer', paddingRight: 8 }}
+                style={{ background: 'none', border: 'none', color: activeUnitId === 'consolidated' ? 'white' : '#f4f4f5', fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer', paddingRight: 4 }}
               >
-                {units.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
-                {units.length > 1 && <option value="consolidated">Visão Consolidada (Geral)</option>}
+                {units.map(u => <option key={u.id} value={u.id} style={{ backgroundColor: '#18181b', color: 'white' }}>{u.name}</option>)}
+                {units.length > 1 && <option value="consolidated" style={{ backgroundColor: '#18181b', color: 'var(--brand)', fontWeight: 700 }}>🏆 Visão Consolidada</option>}
               </select>
             </div>
 

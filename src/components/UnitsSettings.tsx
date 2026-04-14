@@ -129,8 +129,12 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
                       <td colSpan={2} style={{ padding: 20 }}>
                         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                           <input style={input} value={editName} onChange={e => setEditName(e.target.value)} />
-                          <button onClick={() => handleSaveEdit(u.id)} style={{ padding: '8px 14px', backgroundColor: '#22c55e', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer' }}><Check size={14} /></button>
-                          <button onClick={() => setEditingId(null)} style={{ padding: '8px 14px', backgroundColor: '#27272a', color: '#a1a1aa', border: 'none', borderRadius: 8, cursor: 'pointer' }}><X size={14} /></button>
+                          <button onClick={() => handleSaveEdit(u.id)} style={{ padding: '8px 14px', backgroundColor: 'var(--brand)', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Check size={14} /> Salvar
+                          </button>
+                          <button onClick={() => setEditingId(null)} style={{ padding: '8px 14px', backgroundColor: '#27272a', color: '#a1a1aa', border: 'none', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <X size={14} /> Cancelar
+                          </button>
                         </div>
                       </td>
                     </tr>
