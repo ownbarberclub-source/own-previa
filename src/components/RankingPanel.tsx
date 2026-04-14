@@ -21,8 +21,9 @@ export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) 
 
   const leader = barberResults[0];
   const sortedByMinutes = [...barberResults].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
-  const sortedByAvulso = [...barberResults].sort((a, b) => b.avulsoRevenue - a.avulsoRevenue);
-  const sortedByExtra = [...barberResults].sort((a, b) => b.extraRevenue - a.extraRevenue);
+  const sortedByExtraCount = [...barberResults].sort((a, b) => b.extraCount - a.extraCount);
+  const sortedByProductCount = [...barberResults].sort((a, b) => b.productCount - a.productCount);
+  const sortedByBebidaCount = [...barberResults].sort((a, b) => b.bebidaCount - a.bebidaCount);
 
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 20, overflow: 'hidden' as const };
 
@@ -86,41 +87,53 @@ export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) 
         </div>
 
         {/* Mini Rankings */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Top Assinaturas */}
-          <div style={{ ...cardStyle, padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div style={{ ...cardStyle, padding: '20px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <div style={{ padding: 6, backgroundColor: 'rgba(59,130,246,0.1)', color: '#60a5fa', borderRadius: 8 }}>
                 <Users size={16} />
               </div>
-              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rei das Assinaturas</h4>
+              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rei das Assinaturas</h4>
             </div>
-            <p style={{ fontSize: 18, fontWeight: 800, color: '#f4f4f5', marginBottom: 4 }}>{sortedByMinutes[0].barber.name}</p>
-            <p style={{ fontSize: 14, color: '#60a5fa', fontWeight: 700 }}>{sortedByMinutes[0].subscriptionMinutes} minutos atendidos</p>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByMinutes[0].barber.name}</p>
+            <p style={{ fontSize: 13, color: '#60a5fa', fontWeight: 600 }}>{sortedByMinutes[0].subscriptionMinutes} min atendidos</p>
           </div>
 
-          {/* Top Avulsos */}
-          <div style={{ ...cardStyle, padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{ padding: 6, backgroundColor: 'rgba(225,6,0,0.1)', color: 'var(--brand)', borderRadius: 8 }}>
-                <Scissors size={16} />
+          {/* Top Bebidas (Qtd) */}
+          <div style={{ ...cardStyle, padding: '20px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <div style={{ padding: 6, backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80', borderRadius: 8 }}>
+                <Target size={16} />
               </div>
-              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rei dos Avulsos</h4>
+              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre das Bebidas</h4>
             </div>
-            <p style={{ fontSize: 18, fontWeight: 800, color: '#f4f4f5', marginBottom: 4 }}>{sortedByAvulso[0].barber.name}</p>
-            <p style={{ fontSize: 14, color: 'var(--brand)', fontWeight: 700 }}>Faturamento {formatCurrency(sortedByAvulso[0].avulsoRevenue)}</p>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByBebidaCount[0].barber.name}</p>
+            <p style={{ fontSize: 13, color: '#4ade80', fontWeight: 600 }}>{sortedByBebidaCount[0].bebidaCount} itens vendidos</p>
           </div>
 
-          {/* Top Extras */}
-          <div style={{ ...cardStyle, padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          {/* Top Produtos (Qtd) */}
+          <div style={{ ...cardStyle, padding: '20px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <div style={{ padding: 6, backgroundColor: 'rgba(234,179,8,0.1)', color: '#fbbf24', borderRadius: 8 }}>
+                <ArrowUpRight size={16} />
+              </div>
+              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre dos Produtos</h4>
+            </div>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByProductCount[0].barber.name}</p>
+            <p style={{ fontSize: 13, color: '#fbbf24', fontWeight: 600 }}>{sortedByProductCount[0].productCount} itens vendidos</p>
+          </div>
+
+          {/* Top Extras (Qtd) */}
+          <div style={{ ...cardStyle, padding: '20px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <div style={{ padding: 6, backgroundColor: 'rgba(168,85,247,0.1)', color: '#c084fc', borderRadius: 8 }}>
                 <Target size={16} />
               </div>
-              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mestre dos Extras</h4>
+              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre dos Extras</h4>
             </div>
-            <p style={{ fontSize: 18, fontWeight: 800, color: '#f4f4f5', marginBottom: 4 }}>{sortedByExtra[0].barber.name}</p>
-            <p style={{ fontSize: 14, color: '#c084fc', fontWeight: 700 }}>Faturamento {formatCurrency(sortedByExtra[0].extraRevenue)}</p>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByExtraCount[0].barber.name}</p>
+            <p style={{ fontSize: 13, color: '#c084fc', fontWeight: 600 }}>{sortedByExtraCount[0].extraCount} serviços extras</p>
           </div>
 
           {/* Insights de Projeção */}
@@ -133,7 +146,7 @@ export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) 
               <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--brand)', textTransform: 'uppercase' }}>Fim do Mês</span>
             </div>
             <p style={{ fontSize: 14, color: '#e4e4e7', lineHeight: 1.5, fontWeight: 500 }}>
-              No ritmo atual, <strong style={{color: '#fff'}}>{[...barberResults].sort((a,b) => b.projectedCommission - a.projectedCommission)[0].barber.name}</strong> é o favorito para terminar o mês no topo do pódio!
+              No ritmo atual, <strong style={{color: '#fff'}}>{[...barberResults].sort((a,b) => b.projectedCommission - a.projectedCommission)[0].barber.name}</strong> faturará mais no fim do mês!
             </p>
           </div>
         </div>

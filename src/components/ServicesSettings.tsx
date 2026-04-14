@@ -13,7 +13,8 @@ const CATEGORIES = [
   { value: 'assinatura', label: 'Assinatura (POT)' },
   { value: 'avulso', label: 'Avulso (corte/barba)' },
   { value: 'extra', label: 'Extra (sobrancelha etc.)' },
-  { value: 'produto', label: 'Produto/Bebida' },
+  { value: 'produto', label: 'Produto' },
+  { value: 'bebida', label: 'Bebida' },
   { value: 'ignorar', label: 'Ignorar (não contabilizar)' },
 ];
 

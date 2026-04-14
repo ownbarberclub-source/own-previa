@@ -1,7 +1,86 @@
-import React from 'react';
-import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
+
+function GoalSimulator({ result }: { result: BarberResult }) {
+  const [target, setTarget] = useState<string>('');
+  
+  const current = result.totalCommission;
+  const targetNum = parseFloat(target) || 0;
+  const missing = Math.max(0, targetNum - current);
+  
+  // Médias de comissão do barbeiro (baseado na planilha atual)
+  const avgExtra = result.extraCount > 0 ? result.extraCommission / result.extraCount : 0;
+  const avgProduct = result.productCount > 0 ? result.productCommission / result.productCount : 0;
+  const avgBebida = result.bebidaCount > 0 ? result.bebidaCommission / result.bebidaCount : 0;
+
+  const extrasNeeded = avgExtra > 0 ? Math.ceil(missing / avgExtra) : null;
+  const productsNeeded = avgProduct > 0 ? Math.ceil(missing / avgProduct) : null;
+  const bebidasNeeded = avgBebida > 0 ? Math.ceil(missing / avgBebida) : null;
+
+  return (
+    <div style={{ marginTop: 20, paddingTop: 20, borderTop: '2px dashed #27272a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <Target size={16} color="var(--brand)" />
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Simulador de Meta</span>
+      </div>
+      
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+        <div style={{ position: 'relative', flex: 1 }}>
+          <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#71717a', fontSize: 12, fontWeight: 700 }}>R$</span>
+          <input 
+            type="number" 
+            placeholder="Qual sua meta?" 
+            value={target}
+            onChange={e => setTarget(e.target.value)}
+            style={{
+              width: '100%', padding: '10px 12px 10px 32px', backgroundColor: '#09090b', border: '1px solid #27272a',
+              borderRadius: 10, color: 'white', fontSize: 14, fontWeight: 600, outline: 'none', boxSizing: 'border-box'
+            }}
+          />
+        </div>
+      </div>
+
+      {missing > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <p style={{ fontSize: 12, color: '#a1a1aa', fontWeight: 500 }}>
+            Para ganhar mais <strong style={{color: 'var(--brand)'}}>{formatCurrency(missing)}</strong> e bater a meta:
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Target size={12} color="#c084fc" />
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>EXTRAS</span>
+              </div>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{extrasNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>vendas</span></p>
+            </div>
+            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Package size={12} color="#fbbf24" />
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>PRODUTOS</span>
+              </div>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{productsNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>vendas</span></p>
+            </div>
+          </div>
+          {bebidasNeeded !== null && (
+             <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Beer size={12} color="#4ade80" />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>OU BEBIDAS:</span>
+                </div>
+                <p style={{ fontSize: 14, fontWeight: 800, color: '#f4f4f5' }}>{bebidasNeeded} <span style={{fontSize: 10, color: '#52525b'}}>unid.</span></p>
+             </div>
+          )}
+        </div>
+      ) : targetNum > 0 ? (
+        <div style={{ padding: '12px', backgroundColor: 'rgba(34,197,94,0.1)', borderRadius: 10, textAlign: 'center' }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#4ade80' }}>🏆 Meta Atingida!</p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 interface PreviewDashboardProps {
   barberResults: BarberResult[];
@@ -103,18 +182,46 @@ export function PreviewDashboard({ barberResults, activeCycle, cycles, onSelectC
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.avulsoCommission)}</span>
                   </div>
 
-                  {/* Extras e Produtos Juntos */}
+                  {/* Bebidas */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <div style={{ padding: 6, backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80', borderRadius: 8 }}>
+                        <Beer size={14} />
+                      </div>
+                      <div>
+                        <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Bebidas</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.bebidaCount} itens vendidos</span>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.bebidaCommission)}</span>
+                  </div>
+
+                  {/* Produtos */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ padding: 6, backgroundColor: 'rgba(234,179,8,0.1)', color: '#fbbf24', borderRadius: 8 }}>
+                        <Package size={14} />
+                      </div>
+                      <div>
+                        <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Produtos</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.productCount} itens vendidos</span>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.productCommission)}</span>
+                  </div>
+
+                  {/* Extras */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ padding: 6, backgroundColor: 'rgba(168,85,247,0.1)', color: '#c084fc', borderRadius: 8 }}>
                         <Target size={14} />
                       </div>
                       <div>
-                        <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Extras & Produtos</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>Faturado {formatCurrency(res.extraRevenue + res.productRevenue)}</span>
+                        <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Serviços Extras</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.extraCount} serviços</span>
                       </div>
                     </div>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.extraCommission + res.productCommission)}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.extraCommission)}</span>
                   </div>
                 </div>
 
@@ -132,6 +239,9 @@ export function PreviewDashboard({ barberResults, activeCycle, cycles, onSelectC
                     <div style={{ width: '65%', height: '100%', backgroundColor: 'var(--brand)', borderRadius: 2 }}></div>
                   </div>
                 </div>
+
+                {/* Simulador de Meta */}
+                <GoalSimulator result={res} />
               </div>
             </div>
           ))

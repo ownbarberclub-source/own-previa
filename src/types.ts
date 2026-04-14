@@ -25,7 +25,7 @@ export interface ServiceType {
   id: string;
   unit_id: string;
   item_name: string;
-  category: 'assinatura' | 'avulso' | 'extra' | 'produto' | 'ignorar';
+  category: 'assinatura' | 'avulso' | 'extra' | 'produto' | 'bebida' | 'ignorar';
   duration_minutes: number;
   created_at?: string;
 }
@@ -70,10 +70,19 @@ export interface BarberResult {
   avulsoRevenue: number;
   extraRevenue: number;
   productRevenue: number;
+  bebidaRevenue: number;
   subscriptionCommission: number;
   avulsoCommission: number;
   extraCommission: number;
   productCommission: number;
+  bebidaCommission: number;
+
+  // Contadores para Rankings e Simulador
+  avulsoCount: number;
+  extraCount: number;
+  productCount: number;
+  bebidaCount: number;
+
   totalCommission: number;
   projectedCommission: number;
 }

@@ -163,8 +163,9 @@ export default function App() {
       const key = isConsolidated ? rec.barber_name : `${rec.barber_name}-${rec.unit_id}`;
       if (!unitResultsMap[key]) {
         unitResultsMap[key] = { 
-          subscriptionMinutes: 0, avulsoRevenue: 0, extraRevenue: 0, productRevenue: 0,
-          avulsoComm: 0, extraComm: 0, productComm: 0,
+          subscriptionMinutes: 0, avulsoRevenue: 0, extraRevenue: 0, productRevenue: 0, bebidaRevenue: 0,
+          avulsoComm: 0, extraComm: 0, productComm: 0, bebidaComm: 0,
+          avulsoCount: 0, extraCount: 0, productCount: 0, bebidaCount: 0,
           barberName: rec.barber_name, unitId: rec.unit_id 
         };
       }
@@ -174,12 +175,19 @@ export default function App() {
       } else if (rec.category === 'avulso') {
         bd.avulsoRevenue += rec.value;
         bd.avulsoComm += (rec.commission || 0);
+        bd.avulsoCount++;
       } else if (rec.category === 'extra') {
         bd.extraRevenue += rec.value;
         bd.extraComm += (rec.commission || 0);
+        bd.extraCount++;
       } else if (rec.category === 'produto') {
         bd.productRevenue += rec.value;
         bd.productComm += (rec.commission || 0);
+        bd.productCount++;
+      } else if (rec.category === 'bebida') {
+        bd.bebidaRevenue += rec.value;
+        bd.bebidaComm += (rec.commission || 0);
+        bd.bebidaCount++;
       }
     });
 
@@ -199,7 +207,8 @@ export default function App() {
       const avulsoCommission = data.avulsoComm;
       const extraCommission = data.extraComm;
       const productCommission = data.productComm;
-      const totalCommission = subscriptionCommission + avulsoCommission + extraCommission + productCommission;
+      const bebidaCommission = data.bebidaComm;
+      const totalCommission = subscriptionCommission + avulsoCommission + extraCommission + productCommission + bebidaCommission;
 
       finalResults.push({
         barber,
@@ -209,6 +218,7 @@ export default function App() {
         avulsoCommission,
         extraCommission,
         productCommission,
+        bebidaCommission,
         totalCommission,
         projectedCommission: totalCommission * projectionFactor,
       });
@@ -230,6 +240,11 @@ export default function App() {
           g.avulsoCommission += r.avulsoCommission;
           g.extraCommission += r.extraCommission;
           g.productCommission += r.productCommission;
+          g.bebidaCommission += r.bebidaCommission;
+          g.avulsoCount += r.avulsoCount;
+          g.extraCount += r.extraCount;
+          g.productCount += r.productCount;
+          g.bebidaCount += r.bebidaCount;
           g.totalCommission += r.totalCommission;
           g.projectedCommission += r.projectedCommission;
         }
