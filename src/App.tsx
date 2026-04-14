@@ -372,6 +372,13 @@ export default function App() {
           <RankingPanel barberResults={barberResultsData.results} activeCycle={activeCycle} />
         )}
         {activeTab === 'upload' && canEdit && activeUnitId !== 'consolidated' && (
+          <CycleManager
+            cycles={cycles}
+            activeCycleId={activeCycle?.id || null}
+            serviceTypes={serviceTypes}
+            barbers={barbers}
+            records={records}
+            onSelectCycle={setActiveCycleId}
             onRefresh={loadAll}
             unitId={activeUnitId}
             manualMinutes={manualMinutes}

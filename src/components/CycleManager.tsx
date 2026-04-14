@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Upload, Calendar, Hash, FileSpreadsheet, Trash2, Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
-import { Cycle, ServiceType, CommissionRecord, Barber } from '../types';
+import { Cycle, ServiceType, CommissionRecord, Barber, ManualMinutes } from '../types';
 import { currentMonthYear, formatCurrency } from '../utils';
+import { ManualMinutesEditor } from './ManualMinutesEditor';
 
 interface CycleManagerProps {
   cycles: Cycle[];
@@ -11,12 +12,13 @@ interface CycleManagerProps {
   serviceTypes: ServiceType[];
   barbers: Barber[];
   records: CommissionRecord[];
+  manualMinutes: ManualMinutes[];
   onSelectCycle: (id: string) => void;
   onRefresh: () => void;
   unitId: string;
 }
 
-export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, records, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
+export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, records, manualMinutes, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
   const [subTotal, setSubTotal] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ type: '', text: '' });
@@ -264,31 +266,42 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
 
       {/* Histórico/Ações do Ciclo */}
       {activeCycle && (
-        <div style={cardStyle}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h4 style={{ color: '#f4f4f5', fontWeight: 600 }}>Dados Importados</h4>
-              <p style={{ fontSize: 12, color: '#71717a' }}>
-                {records.filter(r => r.cycle_id === activeCycle.id && r.unit_id === unitId).length} lançamentos desta unidade neste ciclo
+        <>
+          <div style={cardStyle}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h4 style={{ color: '#f4f4f5', fontWeight: 600 }}>Dados Importados</h4>
+                <p style={{ fontSize: 12, color: '#71717a' }}>
+                  {records.filter(r => r.cycle_id === activeCycle.id && r.unit_id === unitId).length} lançamentos desta unidade neste ciclo
+                </p>
+              </div>
+              <button
+                onClick={handleClearRecords}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px',
+                  backgroundColor: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)',
+                  borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
+                }}
+              >
+                <Trash2 size={14} /> Limpar Dados
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <p style={{ color: '#52525b', fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
+                Para atualizar o ranking semanal, basta fazer o upload da planilha atualizada. O sistema soma os dados novos ao que já foi importado. Se quiser recomeçar a semana, use o botão "Limpar Dados".
               </p>
             </div>
-            <button
-              onClick={handleClearRecords}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px',
-                backgroundColor: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)',
-                borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
-              }}
-            >
-              <Trash2 size={14} /> Limpar Dados
-            </button>
           </div>
-          <div style={{ padding: 24 }}>
-            <p style={{ color: '#52525b', fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              Para atualizar o ranking semanal, basta fazer o upload da planilha atualizada. O sistema soma os dados novos ao que já foi importado. Se quiser recomeçar a semana, use o botão "Limpar Dados".
-            </p>
+          
+          <div style={cardStyle} className="mt-6">
+            <ManualMinutesEditor
+              cycle={activeCycle}
+              barbers={barbers}
+              initialManualMinutes={manualMinutes}
+              onSave={onRefresh}
+            />
           </div>
-        </div>
+        </>
       )}
     </div>
   );
