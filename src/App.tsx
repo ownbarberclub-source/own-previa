@@ -308,8 +308,12 @@ export default function App() {
     let finalAnnualResults = networkAnnualResults;
 
     if (!isConsolidated) {
-      finalMonthResults = networkMonthResults.filter(r => r.barber.unit_id === activeUnitId);
-      finalAnnualResults = networkAnnualResults.filter(r => r.barber.unit_id === activeUnitId);
+      finalMonthResults = networkMonthResults.filter(r => 
+        allBarbers.some(b => b.name === r.barber.name && b.unit_id === activeUnitId)
+      );
+      finalAnnualResults = networkAnnualResults.filter(r => 
+        allBarbers.some(b => b.name === r.barber.name && b.unit_id === activeUnitId)
+      );
     }
     
     // Assign Unit Rank
