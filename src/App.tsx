@@ -67,8 +67,8 @@ export default function App() {
       setUnits(u);
       if (u.length > 0 && !activeUnitId) {
         const stored = localStorage.getItem('@own-previa:last-unit');
-        const defaultUnit = u.find(x => x.id === stored) || u[0];
-        setActiveUnitId(defaultUnit.id);
+        const defaultUnitId = stored === 'consolidated' ? 'consolidated' : (u.find(x => x.id === stored)?.id || u[0].id);
+        setActiveUnitId(defaultUnitId);
       }
     }
     setLoading(false);
