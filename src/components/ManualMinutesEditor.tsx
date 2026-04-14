@@ -16,13 +16,26 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
 
   useEffect(() => {
+    const draftStr = localStorage.getItem(`@own-previa:manual-minutes-${cycle.id}`);
+    const draft = draftStr ? JSON.parse(draftStr) : null;
+
     const initial: Record<string, number> = {};
     barbers.forEach(b => {
-      const existing = initialManualMinutes.find(m => m.barber_id === b.id && m.cycle_id === cycle.id);
-      initial[b.id] = existing ? existing.minutes : 0;
+      if (draft && draft[b.id] !== undefined) {
+        initial[b.id] = draft[b.id];
+      } else {
+        const existing = initialManualMinutes.find(m => m.barber_id === b.id && m.cycle_id === cycle.id);
+        initial[b.id] = existing ? existing.minutes : 0;
+      }
     });
     setEditingMinutes(initial);
-  }, [barbers, initialManualMinutes, cycle]);
+  }, [barbers, initialManualMinutes, cycle.id]);
+
+  useEffect(() => {
+    if (Object.keys(editingMinutes).length > 0) {
+      localStorage.setItem(`@own-previa:manual-minutes-${cycle.id}`, JSON.stringify(editingMinutes));
+    }
+  }, [editingMinutes, cycle.id]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -41,6 +54,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
 
       if (error) throw error;
 
+      localStorage.removeItem(`@own-previa:manual-minutes-${cycle.id}`);
       setFeedback({ type: 'success', msg: 'Minutos salvos com sucesso!' });
       onSave();
     } catch (err: any) {
