@@ -1,15 +1,20 @@
-import React from 'react';
-import { Trophy, Crown, TrendingUp, Users, Scissors, Target, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 
 interface RankingPanelProps {
   barberResults: BarberResult[];
+  annualResults: BarberResult[];
   activeCycle: Cycle | null;
 }
 
-export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) {
-  if (!activeCycle || barberResults.length === 0) {
+export function RankingPanel({ barberResults, annualResults, activeCycle }: RankingPanelProps) {
+  const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
+  
+  const resultsToUse = viewMode === 'month' ? barberResults : annualResults;
+
+  if (!activeCycle || resultsToUse.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
         <Trophy size={48} color="#27272a" style={{ marginBottom: 16, margin: '0 auto' }} />
@@ -19,21 +24,49 @@ export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) 
     );
   }
 
-  const leader = barberResults[0];
-  const sortedByMinutes = [...barberResults].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
-  const sortedByExtraCount = [...barberResults].sort((a, b) => b.extraCount - a.extraCount);
-  const sortedByProductCount = [...barberResults].sort((a, b) => b.productCount - a.productCount);
-  const sortedByBebidaCount = [...barberResults].sort((a, b) => b.bebidaCount - a.bebidaCount);
+  const leader = resultsToUse[0];
+  const sortedByMinutes = [...resultsToUse].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
+  const sortedByExtraCount = [...resultsToUse].sort((a, b) => b.extraCount - a.extraCount);
+  const sortedByProductCount = [...resultsToUse].sort((a, b) => b.productCount - a.productCount);
+  const sortedByBebidaCount = [...resultsToUse].sort((a, b) => b.bebidaCount - a.bebidaCount);
 
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 20, overflow: 'hidden' as const };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      <div>
-        <h2 style={{ fontSize: 28, fontWeight: 900, color: '#f4f4f5', letterSpacing: '-0.03em', fontFamily: 'Space Grotesk' }}>
-          RANKING DE <span style={{ color: 'var(--brand)' }}>DISPUTA</span>
-        </h2>
-        <p style={{ color: '#a1a1aa', fontSize: 14 }}>O placar operacional da barbearia</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 900, color: '#f4f4f5', letterSpacing: '-0.03em', fontFamily: 'Space Grotesk' }}>
+            RANKING DE <span style={{ color: 'var(--brand)' }}>DISPUTA</span>
+          </h2>
+          <p style={{ color: '#a1a1aa', fontSize: 14 }}>O placar operacional da barbearia</p>
+        </div>
+        <div style={{ display: 'flex', backgroundColor: '#18181b', padding: 4, borderRadius: 12, border: '1px solid #27272a' }}>
+          <button
+            onClick={() => setViewMode('month')}
+            style={{
+              padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
+              backgroundColor: viewMode === 'month' ? '#27272a' : 'transparent',
+              color: viewMode === 'month' ? 'white' : '#a1a1aa',
+              transition: 'all 0.2s'
+            }}
+          >
+            <Calendar size={14} /> Mês
+          </button>
+          <button
+            onClick={() => setViewMode('year')}
+            style={{
+              padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
+              backgroundColor: viewMode === 'year' ? '#27272a' : 'transparent',
+              color: viewMode === 'year' ? 'white' : '#a1a1aa',
+              transition: 'all 0.2s'
+            }}
+          >
+            <CalendarDays size={14} /> Acumulado do Ano
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32, alignItems: 'start' }}>
@@ -44,12 +77,12 @@ export function RankingPanel({ barberResults, activeCycle }: RankingPanelProps) 
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f4f4f5' }}>Pódio Geral (Comissão Acumulada)</h3>
           </div>
           <div style={{ padding: '8px 0' }}>
-            {barberResults.map((res, idx) => (
+            {resultsToUse.map((res, idx) => (
               <div 
                 key={res.barber.id}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '16px 28px', borderBottom: idx === barberResults.length - 1 ? 'none' : '1px solid #27272a',
+                  padding: '16px 28px', borderBottom: idx === resultsToUse.length - 1 ? 'none' : '1px solid #27272a',
                   backgroundColor: idx === 0 ? 'rgba(225,6,0,0.03)' : 'transparent'
                 }}
               >

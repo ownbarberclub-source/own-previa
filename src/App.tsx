@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid } from 'lucide-react';
 import { supabase } from './supabaseClient';
-import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes } from './types';
+import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
 
 import { LoginPage } from './components/LoginPage';
@@ -35,6 +35,7 @@ export default function App() {
   
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [records, setRecords] = useState<CommissionRecord[]>([]);
+  const [historicalResults, setHistoricalResults] = useState<HistoricalResult[]>([]);
   const [manualMinutes, setManualMinutes] = useState<ManualMinutes[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,17 +100,17 @@ export default function App() {
       { data: st }, 
       { data: cy }, 
       { data: rec },
-      { data: allB }
+      { data: allB },
+      { data: hist }
     ] = await Promise.all([
       supabase.from('commission_barbers').select('*').in('unit_id', unitIds).order('name'),
       supabase.from('commission_settings').select('*').in('unit_id', unitIds),
       supabase.from('commission_manual_minutes').select('*'),
       supabase.from('commission_services').select('*').in('unit_id', unitIds).order('item_name'),
       supabase.from('commission_cycles').select('*').order('month_year', { ascending: false }),
-      // Importante: Para o cálculo do POT Global, carregamos TODAS as assinaturas da rede para o mês,
-      // além de todos os registros da(s) unidade(s) selecionada(s).
       supabase.from('commission_records').select('*').or(`unit_id.in.(${unitIds.join(',')}),category.eq.assinatura`).order('service_date'),
-      supabase.from('commission_barbers').select('*')
+      supabase.from('commission_barbers').select('*'),
+      supabase.from('commission_historical_results').select('*')
     ]);
 
     if (b) setBarbers(b);
@@ -120,6 +121,7 @@ export default function App() {
     if (manual) setManualMinutes(manual);
     if (st) setServiceTypes(st);
     if (allB) setAllBarbers(allB);
+    if (hist) setHistoricalResults(hist);
     
     if (cy) {
       setCycles(cy);
@@ -144,12 +146,73 @@ export default function App() {
 
     const isConsolidated = activeUnitId === 'consolidated';
     const currentMonth = activeCycle.month_year;
+    const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
+    
+    if (activeCycle.status === 'closed') {
+      let mapped = historicalResults
+        .filter(hr => hr.cycle_id === activeCycle.id)
+        .map(hr => {
+           const barber = allBarbers.find(b => b.id === hr.barber_id);
+           if (!barber) return null;
+           return {
+             barber,
+             unit_name: units.find(u => u.id === hr.unit_id)?.name,
+             subscriptionMinutes: hr.subscription_minutes,
+             subscriptionCount: hr.subscription_count,
+             avulsoRevenue: hr.avulso_revenue,
+             extraRevenue: hr.extra_revenue,
+             productRevenue: hr.product_revenue,
+             bebidaRevenue: hr.bebida_revenue,
+             subscriptionCommission: hr.subscription_commission,
+             avulsoCommission: hr.avulso_commission,
+             extraCommission: hr.extra_commission,
+             productCommission: hr.product_commission,
+             bebidaCommission: hr.bebida_commission,
+             avulsoCount: hr.avulso_count,
+             extraCount: hr.extra_count,
+             productCount: hr.product_count,
+             bebidaCount: hr.bebida_count,
+             totalCommission: hr.total_commission,
+             projectedCommission: hr.total_commission
+           } as BarberResult;
+        }).filter(Boolean) as BarberResult[];
+
+      if (!isConsolidated) {
+         mapped = mapped.filter(r => r.barber.unit_id === activeUnitId);
+      } else {
+         const grouped: Record<string, BarberResult> = {};
+         mapped.forEach(r => {
+           if (!grouped[r.barber.name]) {
+             grouped[r.barber.name] = { ...r, unit_name: 'Consolidado' };
+           } else {
+             const g = grouped[r.barber.name];
+             g.subscriptionMinutes += r.subscriptionMinutes;
+             g.subscriptionCount += r.subscriptionCount;
+             g.avulsoRevenue += r.avulsoRevenue;
+             g.extraRevenue += r.extraRevenue;
+             g.productRevenue += r.productRevenue;
+             g.subscriptionCommission += r.subscriptionCommission;
+             g.avulsoCommission += r.avulsoCommission;
+             g.extraCommission += r.extraCommission;
+             g.productCommission += r.productCommission;
+             g.bebidaCommission += r.bebidaCommission;
+             g.avulsoCount += r.avulsoCount;
+             g.extraCount += r.extraCount;
+             g.productCount += r.productCount;
+             g.bebidaCount += r.bebidaCount;
+             g.totalCommission += r.totalCommission;
+             g.projectedCommission += r.projectedCommission;
+           }
+         });
+         mapped = Object.values(grouped);
+      }
+      return { results: mapped.sort((a,b) => b.totalCommission - a.totalCommission), metrics: null };
+    }
     
     const cycleRecords = isConsolidated 
       ? records.filter(r => r.service_date.startsWith(currentMonth))
       : records.filter(r => r.cycle_id === activeCycle.id);
 
-    const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
     const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
     
     // NOVO: Cálculo de minutos totais da rede considerando lançamentos MANUAIS e TODOS os barbeiros (allBarbers)
@@ -173,13 +236,14 @@ export default function App() {
         unitResultsMap[key] = { 
           subscriptionMinutes: 0, avulsoRevenue: 0, extraRevenue: 0, productRevenue: 0, bebidaRevenue: 0,
           avulsoComm: 0, extraComm: 0, productComm: 0, bebidaComm: 0,
-          avulsoCount: 0, extraCount: 0, productCount: 0, bebidaCount: 0,
+          subscriptionCount: 0, avulsoCount: 0, extraCount: 0, productCount: 0, bebidaCount: 0,
           barberName: rec.barber_name, unitId: rec.unit_id 
         };
       }
       const bd = unitResultsMap[key];
       if (rec.category === 'assinatura') {
         bd.subscriptionMinutes += rec.duration_minutes;
+        bd.subscriptionCount++;
       } else if (rec.category === 'avulso') {
         bd.avulsoRevenue += rec.value;
         bd.avulsoComm += (rec.commission || 0);
@@ -211,6 +275,8 @@ export default function App() {
       
       // Se tiver manual, usa o manual. Senão, usa o acumulado da planilha.
       const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
+      // Se houver minutos manuais inseridos, o contador de serviços vira uma estimativa (30min/serviço) pois perdemos os dados de lançamentos individuais
+      const actualCount = manual ? Math.round(actualMinutes / 30) : data.subscriptionCount;
 
       const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
       const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
@@ -219,6 +285,7 @@ export default function App() {
         barber,
         unit_name: units.find(u => u.id === barber.unit_id)?.name,
         ...data,
+        subscriptionCount: actualCount,
         subscriptionMinutes: actualMinutes, // Atualiza para o dashboard mostrar o valor manual se existir
         subscriptionCommission,
         avulsoCommission: data.avulsoComm,
@@ -239,6 +306,7 @@ export default function App() {
         } else {
           const g = grouped[r.barber.name];
           g.subscriptionMinutes += r.subscriptionMinutes;
+          g.subscriptionCount += r.subscriptionCount;
           g.avulsoRevenue += r.avulsoRevenue;
           g.extraRevenue += r.extraRevenue;
           g.productRevenue += r.productRevenue;
@@ -255,21 +323,79 @@ export default function App() {
           g.projectedCommission += r.projectedCommission;
         }
       });
-      results = Object.values(grouped).sort((a, b) => b.totalCommission - a.totalCommission);
-    } else {
-      results = finalResults.sort((a, b) => b.totalCommission - a.totalCommission);
+      results = Object.values(grouped);
+    }
+    return { results: results.sort((a,b) => b.totalCommission - a.totalCommission), metrics: { totalSubscriptions: activeCycle.subscription_total, potRate: globalSettings?.pot_rate || 0.42, potBaseValue: potGlobal, totalMinutes: totalNetworkMinutes, valuePerMinute: valuePorMinutoGlobal } };
+  }, [records, barbers, activeCycle, activeUnitId, allUnitsSettings, manualMinutes, historicalResults, allBarbers, units]);
+
+  const annualResultsData = useMemo(() => {
+    if (historicalResults.length === 0 && (!activeCycle || barberResultsData.results.length === 0)) return [];
+    const isConsolidated = activeUnitId === 'consolidated';
+    const activeYear = activeCycle?.month_year.split('-')[0] || new Date().getFullYear().toString();
+    const filteredHist = isConsolidated ? historicalResults : historicalResults.filter(hr => hr.unit_id === activeUnitId);
+
+    const grouped: Record<string, BarberResult> = {};
+
+    filteredHist.forEach(hr => {
+       const cycle = cycles.find(c => c.id === hr.cycle_id);
+       if (!cycle || !cycle.month_year.startsWith(activeYear)) return;
+
+       const barber = allBarbers.find(b => b.id === hr.barber_id);
+       if (!barber) return;
+
+       if (!grouped[barber.name]) {
+         grouped[barber.name] = {
+             barber,
+             unit_name: units.find(u => u.id === hr.unit_id)?.name,
+             subscriptionMinutes: hr.subscription_minutes,
+             subscriptionCount: hr.subscription_count,
+             avulsoRevenue: hr.avulso_revenue,
+             extraRevenue: hr.extra_revenue,
+             productRevenue: hr.product_revenue,
+             bebidaRevenue: hr.bebida_revenue,
+             subscriptionCommission: hr.subscription_commission,
+             avulsoCommission: hr.avulso_commission,
+             extraCommission: hr.extra_commission,
+             productCommission: hr.product_commission,
+             bebidaCommission: hr.bebida_commission,
+             avulsoCount: hr.avulso_count,
+             extraCount: hr.extra_count,
+             productCount: hr.product_count,
+             bebidaCount: hr.bebida_count,
+             totalCommission: hr.total_commission,
+             projectedCommission: hr.total_commission
+         } as BarberResult;
+       } else {
+         const g = grouped[barber.name];
+         g.subscriptionMinutes += hr.subscription_minutes; g.subscriptionCount += hr.subscription_count;
+         g.avulsoRevenue += hr.avulso_revenue; g.extraRevenue += hr.extra_revenue; g.productRevenue += hr.product_revenue;
+         g.subscriptionCommission += hr.subscription_commission; g.avulsoCommission += hr.avulso_commission;
+         g.extraCommission += hr.extra_commission; g.productCommission += hr.product_commission;
+         g.bebidaCommission += hr.bebida_commission; g.avulsoCount += hr.avulso_count;
+         g.extraCount += hr.extra_count; g.productCount += hr.product_count; g.bebidaCount += hr.bebida_count;
+         g.totalCommission += hr.total_commission; g.projectedCommission += hr.total_commission;
+       }
+    });
+
+    if (activeCycle && activeCycle.status !== 'closed' && activeCycle.month_year.startsWith(activeYear)) {
+       barberResultsData.results.forEach(r => {
+           if (!grouped[r.barber.name]) {
+               grouped[r.barber.name] = { ...r, projectedCommission: r.totalCommission }; 
+           } else {
+               const g = grouped[r.barber.name];
+               g.subscriptionMinutes += r.subscriptionMinutes; g.subscriptionCount += r.subscriptionCount;
+               g.avulsoRevenue += r.avulsoRevenue; g.extraRevenue += r.extraRevenue; g.productRevenue += r.productRevenue;
+               g.subscriptionCommission += r.subscriptionCommission; g.avulsoCommission += r.avulsoCommission;
+               g.extraCommission += r.extraCommission; g.productCommission += r.productCommission;
+               g.bebidaCommission += r.bebidaCommission; g.avulsoCount += r.avulsoCount;
+               g.extraCount += r.extraCount; g.productCount += r.productCount; g.bebidaCount += r.bebidaCount;
+               g.totalCommission += r.totalCommission; g.projectedCommission += r.totalCommission;
+           }
+       });
     }
 
-    const metrics = {
-      totalSubscriptions: activeCycle.subscription_total || 0,
-      potRate: globalSettings?.pot_rate || 0.42,
-      potBaseValue: potGlobal,
-      totalMinutes: totalNetworkMinutes,
-      valuePerMinute: valuePorMinutoGlobal
-    };
-
-    return { results, metrics };
-  }, [records, barbers, allUnitsSettings, activeCycle, activeUnitId, units, cycles, manualMinutes]);
+    return Object.values(grouped).sort((a,b) => b.totalCommission - a.totalCommission);
+  }, [historicalResults, activeCycle, activeUnitId, allBarbers, units, cycles, barberResultsData.results]);
 
   // 3. Renderização Condicional (Auth e Permissões)
   if (!session) return <LoginPage />;
@@ -373,7 +499,11 @@ export default function App() {
           />
         )}
         {activeTab === 'ranking' && (
-          <RankingPanel barberResults={barberResultsData.results} activeCycle={activeCycle} />
+          <RankingPanel
+            barberResults={barberResultsData.results}
+            annualResults={annualResultsData}
+            activeCycle={activeCycle}
+          />
         )}
         {activeTab === 'upload' && canEdit && activeUnitId !== 'consolidated' && (
           <CycleManager

@@ -44,6 +44,31 @@ export interface Cycle {
   id: string;
   month_year: string;
   subscription_total: number;
+  status?: 'open' | 'closed';
+  created_at?: string;
+}
+
+export interface HistoricalResult {
+  id: string;
+  cycle_id: string;
+  barber_id: string;
+  unit_id: string;
+  subscription_minutes: number;
+  subscription_count: number;
+  subscription_commission: number;
+  avulso_revenue: number;
+  avulso_commission: number;
+  avulso_count: number;
+  extra_revenue: number;
+  extra_commission: number;
+  extra_count: number;
+  product_revenue: number;
+  product_commission: number;
+  product_count: number;
+  bebida_revenue: number;
+  bebida_commission: number;
+  bebida_count: number;
+  total_commission: number;
   created_at?: string;
 }
 
@@ -78,6 +103,7 @@ export interface BarberResult {
   bebidaCommission: number;
 
   // Contadores para Rankings e Simulador
+  subscriptionCount: number;
   avulsoCount: number;
   extraCount: number;
   productCount: number;

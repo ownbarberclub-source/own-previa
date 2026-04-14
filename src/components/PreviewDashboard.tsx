@@ -11,10 +11,14 @@ function GoalSimulator({ result }: { result: BarberResult }) {
   const missing = Math.max(0, targetNum - current);
   
   // Médias de comissão do barbeiro (baseado na planilha atual)
+  const avgSubscription = result.subscriptionCount > 0 ? result.subscriptionCommission / result.subscriptionCount : 0;
+  const avgAvulso = result.avulsoCount > 0 ? result.avulsoCommission / result.avulsoCount : 0;
   const avgExtra = result.extraCount > 0 ? result.extraCommission / result.extraCount : 0;
   const avgProduct = result.productCount > 0 ? result.productCommission / result.productCount : 0;
   const avgBebida = result.bebidaCount > 0 ? result.bebidaCommission / result.bebidaCount : 0;
 
+  const subscriptionsNeeded = avgSubscription > 0 ? Math.ceil(missing / avgSubscription) : null;
+  const avulsosNeeded = avgAvulso > 0 ? Math.ceil(missing / avgAvulso) : null;
   const extrasNeeded = avgExtra > 0 ? Math.ceil(missing / avgExtra) : null;
   const productsNeeded = avgProduct > 0 ? Math.ceil(missing / avgProduct) : null;
   const bebidasNeeded = avgBebida > 0 ? Math.ceil(missing / avgBebida) : null;
@@ -31,7 +35,7 @@ function GoalSimulator({ result }: { result: BarberResult }) {
           <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#71717a', fontSize: 12, fontWeight: 700 }}>R$</span>
           <input 
             type="number" 
-            placeholder="Qual sua meta?" 
+            placeholder="Qual sua meta total?" 
             value={target}
             onChange={e => setTarget(e.target.value)}
             style={{
@@ -45,9 +49,23 @@ function GoalSimulator({ result }: { result: BarberResult }) {
       {missing > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <p style={{ fontSize: 12, color: '#a1a1aa', fontWeight: 500 }}>
-            Para ganhar mais <strong style={{color: 'var(--brand)'}}>{formatCurrency(missing)}</strong> e bater a meta:
+            Faltam <strong style={{color: 'var(--brand)'}}>{formatCurrency(missing)}</strong>. Para bater a meta você precisaria de:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Scissors size={12} color="var(--brand)" />
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>ASSINATURAS</span>
+              </div>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{subscriptionsNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>atend.</span></p>
+            </div>
+            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Users size={12} color="#38bdf8" />
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>AVULSOS</span>
+              </div>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{avulsosNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>atend.</span></p>
+            </div>
             <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <Target size={12} color="#c084fc" />
