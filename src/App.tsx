@@ -90,10 +90,6 @@ export default function App() {
     const isConsolidated = activeUnitId === 'consolidated';
     const unitIds = isConsolidated ? units.map(u => u.id) : [activeUnitId];
 
-  const loadAll = async () => {
-    const isConsolidated = activeUnitId === 'consolidated';
-    const unitIds = isConsolidated ? units.map(u => u.id) : [activeUnitId];
-
     const [
       { data: b }, 
       { data: s }, 
