@@ -164,14 +164,23 @@ export default function App() {
       if (!unitResultsMap[key]) {
         unitResultsMap[key] = { 
           subscriptionMinutes: 0, avulsoRevenue: 0, extraRevenue: 0, productRevenue: 0,
+          avulsoComm: 0, extraComm: 0, productComm: 0,
           barberName: rec.barber_name, unitId: rec.unit_id 
         };
       }
       const bd = unitResultsMap[key];
-      if (rec.category === 'assinatura') bd.subscriptionMinutes += rec.duration_minutes;
-      else if (rec.category === 'avulso') bd.avulsoRevenue += rec.value;
-      else if (rec.category === 'extra') bd.extraRevenue += rec.value;
-      else if (rec.category === 'produto') bd.productRevenue += rec.value;
+      if (rec.category === 'assinatura') {
+        bd.subscriptionMinutes += rec.duration_minutes;
+      } else if (rec.category === 'avulso') {
+        bd.avulsoRevenue += rec.value;
+        bd.avulsoComm += (rec.commission || 0);
+      } else if (rec.category === 'extra') {
+        bd.extraRevenue += rec.value;
+        bd.extraComm += (rec.commission || 0);
+      } else if (rec.category === 'produto') {
+        bd.productRevenue += rec.value;
+        bd.productComm += (rec.commission || 0);
+      }
     });
 
     const finalResults: BarberResult[] = [];
@@ -187,9 +196,9 @@ export default function App() {
       if (!uSettings) return;
 
       const subscriptionCommission = data.subscriptionMinutes * valuePorMinutoGlobal;
-      const avulsoCommission = data.avulsoRevenue * barber.avulso_rate;
-      const extraCommission = data.extraRevenue * barber.avulso_rate;
-      const productCommission = data.productRevenue * uSettings.product_rate;
+      const avulsoCommission = data.avulsoComm;
+      const extraCommission = data.extraComm;
+      const productCommission = data.productComm;
       const totalCommission = subscriptionCommission + avulsoCommission + extraCommission + productCommission;
 
       finalResults.push({

@@ -75,6 +75,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
           const itemName = String(row['Item'] || '').trim();
           const barberName = String(row['Profissional'] || '').trim();
           const rawValue = row['Valor'];
+          const rawComm = row['Comissão'] || 0;
           const dateStr = row['Data'];
 
           if (!itemName || !barberName) continue;
@@ -83,22 +84,30 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
           const mapping = serviceTypes.find(s => s.item_name === itemName && s.unit_id === unitId);
           if (!mapping || mapping.category === 'ignorar') continue;
 
-          // Limpa o valor (pode vir como 'R$ 60,00' ou 60)
-          let val = 0;
-          if (typeof rawValue === 'string') {
-            val = parseFloat(rawValue.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
-          } else {
-            val = parseFloat(rawValue) || 0;
-          }
+          // Função auxiliar para converter valores monetários da planilha
+          const parseCurrency = (val: any) => {
+            if (typeof val === 'string') {
+              return parseFloat(val.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+            }
+            return parseFloat(val) || 0;
+          };
+
+          const val = parseCurrency(rawValue);
+          const comm = parseCurrency(rawComm);
+
+          // Lógica Especial: Se for mapeado como Assinatura mas tiver comissão > 0, 
+          // significa que foi cobrado de forma avulsa.
+          const finalCategory = (mapping.category === 'assinatura' && comm > 0) ? 'avulso' : mapping.category;
 
           newRecords.push({
             cycle_id: activeCycleId,
             unit_id: unitId,
             barber_name: barberName,
             item_name: itemName,
-            category: mapping.category,
+            category: finalCategory,
             value: val,
-            duration_minutes: mapping.duration_minutes || 0,
+            commission: comm,
+            duration_minutes: finalCategory === 'assinatura' ? (mapping.duration_minutes || 0) : 0,
             service_date: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString()
           });
         }

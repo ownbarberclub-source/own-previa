@@ -56,6 +56,7 @@ export interface CommissionRecord {
   item_name: string;
   category: string;
   value: number;
+  commission: number;
   duration_minutes: number;
   service_date: string;
   created_at?: string;
