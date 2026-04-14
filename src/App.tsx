@@ -150,10 +150,18 @@ export default function App() {
     // 1. CALCULATE NETWORK WIDE MONTH RESULTS
     let networkMonthResults: BarberResult[] = [];
     let potBaseValue = 0;
+    let totalNetworkMinutes = 0;
+    let valuePorMinutoGlobal = 0;
+    let potGlobal = 0;
     
     if (activeCycle.status === 'closed') {
       const grouped: Record<string, BarberResult> = {};
+      let totalCommissionSigs = 0;
+
       historicalResults.filter(hr => hr.cycle_id === activeCycle.id).forEach(hr => {
+        totalNetworkMinutes += hr.subscription_minutes;
+        totalCommissionSigs += hr.subscription_commission;
+
         const barber = allBarbers.find(b => b.id === hr.barber_id);
         if (!barber) return;
         if (!grouped[barber.name]) {
@@ -178,20 +186,23 @@ export default function App() {
       networkMonthResults = Object.values(grouped);
       // Restore true unit for individual filtering later
       networkMonthResults.forEach(r => { r.barber.unit_id = allBarbers.find(b => b.name === r.barber.name)?.unit_id || ''; });
+      
+      potBaseValue = totalCommissionSigs;
+      valuePorMinutoGlobal = totalNetworkMinutes > 0 ? totalCommissionSigs / totalNetworkMinutes : 0;
     } else {
       // OPEN CYCLE
       const targetRecords = records.filter(r => r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id);
       
-      const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
+      potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
       potBaseValue = potGlobal;
       
-      const totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
+      totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         if (manual) return sum + manual.minutes;
         return sum + targetRecords.filter(r => r.barber_name === barber.name && r.category === 'assinatura').reduce((s, r) => s + r.duration_minutes, 0);
       }, 0);
         
-      const valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
+      valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
       const unitResultsMap: Record<string, any> = {};
 
       targetRecords.forEach(rec => {
