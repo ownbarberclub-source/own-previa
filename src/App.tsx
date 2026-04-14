@@ -346,7 +346,7 @@ export default function App() {
                 { id: 'units', label: 'Unidades', icon: Building2 },
                 { id: 'users', label: 'Usuários', icon: UserCog },
                 { id: 'barbers', label: 'Barbeiros (' + (currentUnit?.name || '...') + ')', icon: Users, disabled: activeUnitId === 'consolidated' },
-                { id: 'services', label: 'Serviços (' + (currentUnit?.name || '...') + ')', icon: Scissors, disabled: activeUnitId === 'consolidated' },
+                { id: 'services', label: 'Serviços e Produtos (' + (currentUnit?.name || '...') + ')', icon: Scissors, disabled: activeUnitId === 'consolidated' },
                 { id: 'general', label: 'Taxas Gerais', icon: TrendingUp, disabled: activeUnitId === 'consolidated' },
               ] as any[]).map(({ id, label, icon: Icon, disabled }) => (
                 <button

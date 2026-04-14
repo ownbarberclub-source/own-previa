@@ -90,14 +90,14 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
       <div style={card}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Plus size={18} color="var(--brand)" /> Cadastrar Tipo de Serviço
+            <Plus size={18} color="var(--brand)" /> Cadastrar Serviço ou Produto
           </h3>
         </div>
         <div style={{ padding: 24 }}>
           <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 220px 160px auto', gap: 12, alignItems: 'end' }}>
             <div>
               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>Nome do Item (exato da planilha)</label>
-              <input style={input} value={itemName} onChange={e => setItemName(e.target.value)} placeholder='Ex: 3. Assinantes - Corte + Barba' required />
+              <input style={input} value={itemName} onChange={e => setItemName(e.target.value)} placeholder='Ex: Corte, Cerveja Heineken, Pomada...' required />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>Categoria</label>
@@ -124,12 +124,12 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
       <div style={card}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Scissors size={18} color="var(--brand)" /> Serviços Mapeados ({serviceTypes.length})
+            <Scissors size={18} color="var(--brand)" /> Itens Mapeados ({serviceTypes.length})
           </h3>
         </div>
         <div>
           {serviceTypes.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>Nenhum serviço mapeado. Adicione os itens da sua planilha do AppBarber acima.</p>
+            <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>Nenhum serviço ou produto mapeado. Adicione os itens da sua planilha do AppBarber acima.</p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
