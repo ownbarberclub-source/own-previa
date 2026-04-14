@@ -84,12 +84,19 @@ function GoalSimulator({ result }: { result: BarberResult }) {
 
 interface PreviewDashboardProps {
   barberResults: BarberResult[];
+  potMetrics: {
+    totalSubscriptions: number;
+    potRate: number;
+    potBaseValue: number;
+    totalMinutes: number;
+    valuePerMinute: number;
+  } | null;
   activeCycle: Cycle | null;
   cycles: Cycle[];
   onSelectCycle: (id: string) => void;
 }
 
-export function PreviewDashboard({ barberResults, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
+export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
   if (!activeCycle) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
@@ -127,6 +134,29 @@ export function PreviewDashboard({ barberResults, activeCycle, cycles, onSelectC
           </select>
         </div>
       </div>
+      {/* Métricas Globais do POT */}
+      {potMetrics && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div style={{ ...cardStyle, padding: '20px', background: 'linear-gradient(145deg, #18181b 0%, #09090b 100%)' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Faturamento Rede</span>
+            <p style={{ fontSize: 20, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk', marginTop: 4 }}>{formatCurrency(potMetrics.totalSubscriptions)}</p>
+          </div>
+          <div style={{ ...cardStyle, padding: '20px', background: 'linear-gradient(145deg, #18181b 0%, #09090b 100%)' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Taxa Repasse (POT)</span>
+            <p style={{ fontSize: 20, fontWeight: 900, color: 'var(--brand)', fontFamily: 'Space Grotesk', marginTop: 4 }}>{(potMetrics.potRate * 100).toFixed(0)}%</p>
+          </div>
+          <div style={{ ...cardStyle, padding: '20px', background: 'linear-gradient(145deg, #18181b 0%, #09090b 100%)', border: '1px solid rgba(34,197,94,0.2)' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Comissão Base POT</span>
+            <p style={{ fontSize: 20, fontWeight: 900, color: '#4ade80', fontFamily: 'Space Grotesk', marginTop: 4 }}>{formatCurrency(potMetrics.potBaseValue)}</p>
+          </div>
+          <div style={{ ...cardStyle, padding: '20px', background: 'var(--brand)', border: 'none' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Valor do Minuto</span>
+            <p style={{ fontSize: 20, fontWeight: 900, color: 'white', fontFamily: 'Space Grotesk', marginTop: 4 }}>
+              {potMetrics.valuePerMinute.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 4 })}/min
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Grid de Barbeiros */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 24 }}>
