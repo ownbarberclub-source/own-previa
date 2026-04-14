@@ -1,0 +1,46 @@
+:root {
+  --brand: #E10600;
+  --brand-light: #ff1a16;
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #18181b; }
+::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+/* Date picker dark */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.font-mono {
+  font-family: 'Space Grotesk', monospace;
+}
+
+/* Tailwind-like utilities */
+.text-brand { color: var(--brand); }
+.bg-brand { background-color: var(--brand); }
+.border-brand { border-color: var(--brand); }
+.hover\:bg-brand-light:hover { background-color: var(--brand-light); }
