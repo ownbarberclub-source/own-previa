@@ -12,8 +12,8 @@ import { CycleManager } from './components/CycleManager';
 import { PreviewDashboard } from './components/PreviewDashboard';
 import { RankingPanel } from './components/RankingPanel';
 
-const ADMIN_EMAIL = 'admin@ownbarberclub.com';
-const ADMIN_PASSWORD = 'OwnPrevia2026!';
+const ADMIN_EMAIL = 'ownbarberclub@gmail.com';
+const ADMIN_PASSWORD = 'AdministrativoOwn7.';
 
 type Tab = 'preview' | 'ranking' | 'upload' | 'settings';
 type SettingsTab = 'barbers' | 'services' | 'general';
