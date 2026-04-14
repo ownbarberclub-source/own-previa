@@ -117,6 +117,8 @@ interface PreviewDashboardProps {
 }
 
 export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
+  const [selectedBarberId, setSelectedBarberId] = useState('all');
+
   if (!activeCycle) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
@@ -139,19 +141,37 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
           </h2>
           <p style={{ color: '#a1a1aa', fontSize: 14 }}>Acompanhamento de desempenho acumulado</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, backgroundColor: '#18181b', padding: '8px 16px', borderRadius: 12, border: '1px solid #27272a' }}>
-          <Calendar size={16} color="#71717a" />
-          <select 
-            value={activeCycle.id} 
-            onChange={e => onSelectCycle(e.target.value)}
-            style={{ background: 'none', border: 'none', color: '#f4f4f5', outline: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
-          >
-            {cycles.map(c => (
-              <option key={c.id} value={c.id} style={{ backgroundColor: '#18181b' }}>
-                {c.month_year.split('-').reverse().join('/')}
-              </option>
-            ))}
-          </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {barberResults.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, backgroundColor: '#18181b', padding: '8px 16px', borderRadius: 12, border: '1px solid #27272a' }}>
+              <Users size={16} color="#71717a" />
+              <select 
+                value={selectedBarberId} 
+                onChange={e => setSelectedBarberId(e.target.value)}
+                style={{ background: 'none', border: 'none', color: '#f4f4f5', outline: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
+              >
+                <option value="all" style={{ backgroundColor: '#18181b' }}>Visão Geral (Todos)</option>
+                {barberResults.map(r => (
+                  <option key={r.barber.id} value={r.barber.id} style={{ backgroundColor: '#18181b' }}>{r.barber.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, backgroundColor: '#18181b', padding: '8px 16px', borderRadius: 12, border: '1px solid #27272a' }}>
+            <Calendar size={16} color="#71717a" />
+            <select 
+              value={activeCycle.id} 
+              onChange={e => onSelectCycle(e.target.value)}
+              style={{ background: 'none', border: 'none', color: '#f4f4f5', outline: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
+            >
+              {cycles.map(c => (
+                <option key={c.id} value={c.id} style={{ backgroundColor: '#18181b' }}>
+                  {c.month_year.split('-').reverse().join('/')}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
       {/* Métricas Globais do POT */}
@@ -183,16 +203,21 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
         {barberResults.length === 0 ? (
           <p style={{ gridColumn: '1/-1', textAlign: 'center', padding: '60px 0', color: '#52525b' }}>Nenhum dado importado no período.</p>
         ) : (
-          barberResults.map(res => (
+          barberResults.filter(r => selectedBarberId === 'all' || r.barber.id === selectedBarberId).map(res => (
             <div key={res.barber.id} style={{ ...cardStyle, position: 'relative' }}>
               {/* Header do Card */}
               <div style={{ padding: '24px 28px', borderBottom: '1px solid #27272a', backgroundColor: 'rgba(9,9,11,0.3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <h3 style={{ fontSize: 20, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{res.barber.name}</h3>
-                    <span style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <span style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 8 }}>
                       Comissão {Math.round(res.barber.avulso_rate * 100)}%
                     </span>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', color: '#a1a1aa', fontWeight: 600, border: '1px solid rgba(255,255,255,0.1)' }}>Unidade: {res.rankUnit || '-'}º</span>
+                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, backgroundColor: 'rgba(225,6,0,0.05)', color: 'var(--brand)', fontWeight: 600, border: '1px solid rgba(225,6,0,0.2)' }}>Rede: {res.rankNetwork || '-'}º</span>
+                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, backgroundColor: 'rgba(234,179,8,0.05)', color: '#eab308', fontWeight: 600, border: '1px solid rgba(234,179,8,0.2)' }}>Anual: {res.rankAnnual || '-'}º</span>
+                    </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Total Acumulado</p>

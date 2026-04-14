@@ -111,6 +111,10 @@ export interface BarberResult {
 
   totalCommission: number;
   projectedCommission: number;
+  
+  rankUnit?: number;
+  rankNetwork?: number;
+  rankAnnual?: number;
 }
 
 export type UserRole = 'admin' | 'editor' | 'viewer';
