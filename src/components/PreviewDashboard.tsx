@@ -17,11 +17,29 @@ function GoalSimulator({ result }: { result: BarberResult }) {
   const avgProduct = result.productCount > 0 ? result.productCommission / result.productCount : 0;
   const avgBebida = result.bebidaCount > 0 ? result.bebidaCommission / result.bebidaCount : 0;
 
-  const subscriptionsNeeded = avgSubscription > 0 ? Math.ceil(missing / avgSubscription) : null;
-  const avulsosNeeded = avgAvulso > 0 ? Math.ceil(missing / avgAvulso) : null;
-  const extrasNeeded = avgExtra > 0 ? Math.ceil(missing / avgExtra) : null;
-  const productsNeeded = avgProduct > 0 ? Math.ceil(missing / avgProduct) : null;
-  const bebidasNeeded = avgBebida > 0 ? Math.ceil(missing / avgBebida) : null;
+  const weightMap = {
+    'ASSINATURAS': 10,
+    'AVULSOS': 4,
+    'EXTRAS': 3,
+    'PRODUTOS': 2,
+    'BEBIDAS': 1
+  };
+
+  const activeCategories = [
+    { key: 'ASSINATURAS', avg: avgSubscription, icon: Scissors, color: 'var(--brand)', unit: 'atend.' },
+    { key: 'AVULSOS', avg: avgAvulso, icon: Users, color: '#38bdf8', unit: 'atend.' },
+    { key: 'EXTRAS', avg: avgExtra, icon: Target, color: '#c084fc', unit: 'vendas' },
+    { key: 'PRODUTOS', avg: avgProduct, icon: Package, color: '#fbbf24', unit: 'vendas' },
+    { key: 'BEBIDAS', avg: avgBebida, icon: Beer, color: '#4ade80', unit: 'unid.' }
+  ].filter(item => item.avg > 0);
+
+  const totalWeight = activeCategories.reduce((sum, cat) => sum + weightMap[cat.key as keyof typeof weightMap], 0);
+
+  const comboPlan = activeCategories.map(cat => {
+    const share = missing * (weightMap[cat.key as keyof typeof weightMap] / totalWeight);
+    const qty = Math.ceil(share / cat.avg);
+    return { ...cat, qty };
+  });
 
   return (
     <div style={{ marginTop: 20, paddingTop: 20, borderTop: '2px dashed #27272a' }}>
@@ -49,46 +67,30 @@ function GoalSimulator({ result }: { result: BarberResult }) {
       {missing > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <p style={{ fontSize: 12, color: '#a1a1aa', fontWeight: 500 }}>
-            Faltam <strong style={{color: 'var(--brand)'}}>{formatCurrency(missing)}</strong>. Para bater a meta você precisaria de:
+            Faltam <strong style={{color: 'var(--brand)'}}>{formatCurrency(missing)}</strong>. Sugestão de plano de ação combado:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <Scissors size={12} color="var(--brand)" />
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>ASSINATURAS</span>
-              </div>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{subscriptionsNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>atend.</span></p>
+          
+          {comboPlan.length > 0 ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+              {comboPlan.map((item, idx) => (
+                <React.Fragment key={item.key}>
+                  <div style={{ flex: 1, minWidth: 100, padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <item.icon size={12} color={item.color} />
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>{item.key}</span>
+                    </div>
+                    <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{item.qty} <span style={{fontSize: 10, color: '#52525b'}}>{item.unit}</span></p>
+                  </div>
+                  {idx < comboPlan.length - 1 && (
+                    <span style={{ color: '#52525b', fontWeight: 800, fontSize: 16 }}>+</span>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
-            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <Users size={12} color="#38bdf8" />
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>AVULSOS</span>
-              </div>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{avulsosNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>atend.</span></p>
-            </div>
-            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <Target size={12} color="#c084fc" />
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>EXTRAS</span>
-              </div>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{extrasNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>vendas</span></p>
-            </div>
-            <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <Package size={12} color="#fbbf24" />
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>PRODUTOS</span>
-              </div>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5' }}>{productsNeeded ?? '—'} <span style={{fontSize: 10, color: '#52525b'}}>vendas</span></p>
-            </div>
-          </div>
-          {bebidasNeeded !== null && (
-             <div style={{ padding: '10px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Beer size={12} color="#4ade80" />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#71717a' }}>OU BEBIDAS:</span>
-                </div>
-                <p style={{ fontSize: 14, fontWeight: 800, color: '#f4f4f5' }}>{bebidasNeeded} <span style={{fontSize: 10, color: '#52525b'}}>unid.</span></p>
-             </div>
+          ) : (
+            <p style={{ fontSize: 13, color: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.1)', padding: 12, borderRadius: 8 }}>
+              Gere seus primeiros atendimentos no sistema para podermos calcular suas médias e gerar esse plano de ação automático.
+            </p>
           )}
         </div>
       ) : targetNum > 0 ? (
