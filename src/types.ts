@@ -96,3 +96,10 @@ export interface UserProfile {
   is_authorized: boolean;
   created_at?: string;
 }
+export interface ManualMinutes {
+  id: string;
+  cycle_id: string;
+  barber_id: string;
+  minutes: number;
+  created_at?: string;
+}

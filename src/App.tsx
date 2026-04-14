@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid } from 'lucide-react';
 import { supabase } from './supabaseClient';
-import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit } from './types';
+import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
 
 import { LoginPage } from './components/LoginPage';
@@ -34,6 +34,7 @@ export default function App() {
   
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [records, setRecords] = useState<CommissionRecord[]>([]);
+  const [manualMinutes, setManualMinutes] = useState<ManualMinutes[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -93,12 +94,14 @@ export default function App() {
     const [
       { data: b }, 
       { data: s }, 
+      { data: manual },
       { data: st }, 
       { data: cy }, 
       { data: rec }
     ] = await Promise.all([
       supabase.from('commission_barbers').select('*').in('unit_id', unitIds).order('name'),
       supabase.from('commission_settings').select('*').in('unit_id', unitIds),
+      supabase.from('commission_manual_minutes').select('*'),
       supabase.from('commission_services').select('*').in('unit_id', unitIds).order('item_name'),
       supabase.from('commission_cycles').select('*').order('month_year', { ascending: false }),
       // Importante: Para o cálculo do POT Global, carregamos TODAS as assinaturas da rede para o mês,
@@ -111,6 +114,7 @@ export default function App() {
       setAllUnitsSettings(s);
       setAppSettings(s.find(x => x.unit_id === activeUnitId) || s[0] || null);
     }
+    if (manual) setManualMinutes(manual);
     if (st) setServiceTypes(st);
     
     if (cy) {
@@ -131,35 +135,35 @@ export default function App() {
     await supabase.auth.signOut();
   };
 
-  // ─── Lógica Principal de Cálculo ────────────────────────────────────────────────
-  const barberResults = useMemo((): BarberResult[] => {
-    if (!activeCycle || barbers.length === 0) return [];
+  const barberResultsData = useMemo(() => {
+    if (!activeCycle || barbers.length === 0) return { results: [], metrics: null };
 
     const isConsolidated = activeUnitId === 'consolidated';
     const currentMonth = activeCycle.month_year;
     
-    // 1. Filtrar registros da unidade selecionada para comissões avulsas/extras
     const cycleRecords = isConsolidated 
       ? records.filter(r => r.service_date.startsWith(currentMonth))
       : records.filter(r => r.cycle_id === activeCycle.id);
 
-    // 2. Calcular o POT GLOBAL (Rede toda)
-    // Usamos a taxa da Unidade Matriz ou a primeira disponível como padrão global
     const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
     const potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.40);
     
-    // Soma de minutos de assinaturas de TODA a rede para este mês
-    const totalNetworkMinutes = records
-      .filter(r => r.category === 'assinatura' && r.service_date.startsWith(currentMonth))
-      .reduce((sum, r) => sum + r.duration_minutes, 0);
+    // NOVO: Cálculo de minutos totais da rede considerando lançamentos MANUAIS
+    const totalNetworkMinutes = barbers.reduce((sum, barber) => {
+      const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
+      if (manual) return sum + manual.minutes;
+      
+      const sheetMinutes = records
+        .filter(r => r.barber_name === barber.name && r.category === 'assinatura' && r.service_date.startsWith(currentMonth))
+        .reduce((s, r) => s + r.duration_minutes, 0);
+      return sum + sheetMinutes;
+    }, 0);
       
     const valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
 
     const unitResultsMap: Record<string, any> = {};
 
-    // 3. Mapear faturamento por barbeiro
     cycleRecords.forEach(rec => {
-      // Se for consolidado, agrupamos apenas pelo nome
       const key = isConsolidated ? rec.barber_name : `${rec.barber_name}-${rec.unit_id}`;
       if (!unitResultsMap[key]) {
         unitResultsMap[key] = { 
@@ -195,36 +199,34 @@ export default function App() {
     const { elapsed, total } = getWorkingHours(currentMonth);
     const projectionFactor = elapsed > 0 ? total / elapsed : 1;
 
-    // 4. Calcular comissões individuais usando o valor por minuto GLOBAL
-    Object.values(unitResultsMap).forEach(data => {
+    Object.values(unitResultsMap).forEach((data: any) => {
       const barber = barbers.find(b => b.name === data.barberName && (isConsolidated ? true : b.unit_id === data.unitId));
       if (!barber) return;
 
-      const uSettings = allUnitsSettings.find(s => s.unit_id === barber.unit_id);
-      if (!uSettings) return;
+      const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
+      
+      // Se tiver manual, usa o manual. Senão, usa o acumulado da planilha.
+      const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
 
-      const subscriptionCommission = data.subscriptionMinutes * valuePorMinutoGlobal;
-      const avulsoCommission = data.avulsoComm;
-      const extraCommission = data.extraComm;
-      const productCommission = data.productComm;
-      const bebidaCommission = data.bebidaComm;
-      const totalCommission = subscriptionCommission + avulsoCommission + extraCommission + productCommission + bebidaCommission;
+      const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
+      const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
 
       finalResults.push({
         barber,
         unit_name: units.find(u => u.id === barber.unit_id)?.name,
         ...data,
+        subscriptionMinutes: actualMinutes, // Atualiza para o dashboard mostrar o valor manual se existir
         subscriptionCommission,
-        avulsoCommission,
-        extraCommission,
-        productCommission,
-        bebidaCommission,
+        avulsoCommission: data.avulsoComm,
+        extraCommission: data.extraComm,
+        productCommission: data.productComm,
+        bebidaCommission: data.bebidaComm,
         totalCommission,
         projectedCommission: totalCommission * projectionFactor,
       });
     });
 
-    // 5. Agrupar por nome no consolidado
+    let results = finalResults;
     if (isConsolidated) {
       const grouped: Record<string, BarberResult> = {};
       finalResults.forEach(r => {
@@ -249,11 +251,21 @@ export default function App() {
           g.projectedCommission += r.projectedCommission;
         }
       });
-      return Object.values(grouped).sort((a, b) => b.totalCommission - a.totalCommission);
+      results = Object.values(grouped).sort((a, b) => b.totalCommission - a.totalCommission);
+    } else {
+      results = finalResults.sort((a, b) => b.totalCommission - a.totalCommission);
     }
 
-    return finalResults.sort((a, b) => b.totalCommission - a.totalCommission);
-  }, [records, barbers, allUnitsSettings, activeCycle, activeUnitId, units, cycles]);
+    const metrics = {
+      totalSubscriptions: activeCycle.subscription_total || 0,
+      potRate: globalSettings?.pot_rate || 0.40,
+      potBaseValue: potGlobal,
+      totalMinutes: totalNetworkMinutes,
+      valuePerMinute: valuePorMinutoGlobal
+    };
+
+    return { results, metrics };
+  }, [records, barbers, allUnitsSettings, activeCycle, activeUnitId, units, cycles, manualMinutes]);
 
   // 3. Renderização Condicional (Auth e Permissões)
   if (!session) return <LoginPage />;
@@ -349,25 +361,20 @@ export default function App() {
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
         {activeTab === 'preview' && (
           <PreviewDashboard
-            barberResults={barberResults}
+            barberResults={barberResultsData.results}
+            potMetrics={barberResultsData.metrics}
             activeCycle={activeCycle}
             cycles={cycles}
             onSelectCycle={setActiveCycleId}
           />
         )}
         {activeTab === 'ranking' && (
-          <RankingPanel barberResults={barberResults} activeCycle={activeCycle} />
+          <RankingPanel barberResults={barberResultsData.results} activeCycle={activeCycle} />
         )}
         {activeTab === 'upload' && canEdit && activeUnitId !== 'consolidated' && (
-          <CycleManager
-            cycles={cycles}
-            activeCycleId={activeCycle?.id || null}
-            serviceTypes={serviceTypes}
-            barbers={barbers}
-            records={records}
-            onSelectCycle={setActiveCycleId}
             onRefresh={loadAll}
             unitId={activeUnitId}
+            manualMinutes={manualMinutes}
           />
         )}
         {activeTab === 'settings' && isAdmin && (
