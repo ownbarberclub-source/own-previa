@@ -51,63 +51,92 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
     }
   };
 
+  const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, padding: 24, marginTop: 24 };
+  const inputStyle = {
+    width: '100%', padding: '10px 14px', backgroundColor: '#09090b', border: '1px solid #3f3f46',
+    borderRadius: 8, color: '#f4f4f5', fontSize: 14, outline: 'none', boxSizing: 'border-box' as const,
+  };
+
   return (
-    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div style={cardStyle}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2">
-            <Clock className="w-5 h-5 text-red-500" />
-            Minutagem Manual de Assinaturas
+          <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18, margin: 0 }}>
+            <Clock size={20} color="var(--brand)" /> Minutagem Manual de Assinaturas
           </h3>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p style={{ fontSize: 13, color: '#a1a1aa', marginTop: 4, marginBottom: 0 }}>
             Insira os minutos acumulados dos barbeiros para o ciclo {cycle.month_year}
           </p>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors font-medium shadow-lg shadow-red-600/20"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+            backgroundColor: saving ? '#52525b' : 'var(--brand)', 
+            color: '#fff', border: 'none',
+            borderRadius: 8, cursor: saving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700,
+            boxShadow: saving ? 'none' : '0 4px 14px 0 rgba(225, 6, 0, 0.39)', transition: 'background 0.2s'
+          }}
         >
-          {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-5 h-5" />}
+          {saving ? <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} /> : <Save size={18} />}
           {saving ? 'Salvando...' : 'Salvar Alterações'}
         </button>
       </div>
 
       {feedback && (
-        <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-sm ${
-          feedback.type === 'success' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'
-        }`}>
-          {feedback.type === 'success' ? <Save className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+        <div style={{
+          marginBottom: 20, padding: '12px 16px', borderRadius: 8, fontSize: 13,
+          display: 'flex', alignItems: 'center', gap: 8,
+          backgroundColor: feedback.type === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+          color: feedback.type === 'success' ? '#4ade80' : '#f87171',
+          border: '1px solid currentColor'
+        }}>
+          {feedback.type === 'success' ? <Save size={16} /> : <AlertCircle size={16} />}
           {feedback.msg}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
         {barbers.map(barber => (
-          <div key={barber.id} className="bg-zinc-800/50 p-4 rounded-lg border border-zinc-700/50 focus-within:border-red-500/50 transition-colors">
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+          <div key={barber.id} style={{
+            backgroundColor: 'rgba(9,9,11,0.5)', padding: 16, borderRadius: 12, border: '1px solid rgba(63,63,70,0.5)'
+          }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#f4f4f5', marginBottom: 8 }}>
               {barber.name}
             </label>
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               <input
                 type="number"
                 value={editingMinutes[barber.id] || ''}
                 onChange={(e) => setEditingMinutes(prev => ({ ...prev, [barber.id]: parseInt(e.target.value) || 0 }))}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                style={{ ...inputStyle, paddingRight: 40 }}
                 placeholder="0"
               />
-              <span className="absolute right-3 top-2 text-zinc-500 text-sm">min</span>
+              <span style={{ position: 'absolute', right: 12, top: 10, color: '#71717a', fontSize: 13 }}>min</span>
             </div>
           </div>
         ))}
       </div>
       
-      <div className="mt-6 flex items-start gap-3 bg-blue-500/5 border border-blue-500/10 p-4 rounded-lg">
-        <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-        <p className="text-sm text-blue-200/80 leading-relaxed">
-          <strong>Regra de Cálculo:</strong> Se você inserir minutos aqui, o sistema irá ignorar automaticamente o tempo carregado via planilha para este barbeiro no cálculo do POT. Deixe em zero para continuar usando os dados da planilha.
+      <div style={{
+        marginTop: 24, display: 'flex', alignItems: 'flex-start', gap: 12,
+        backgroundColor: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.2)', padding: 16, borderRadius: 12
+      }}>
+        <AlertCircle size={20} color="#60a5fa" style={{ flexShrink: 0, marginTop: 2 }} />
+        <p style={{ fontSize: 13, color: 'rgba(191,219,254,0.8)', margin: 0, lineHeight: 1.5 }}>
+          <strong style={{ color: '#60a5fa' }}>Regra de Cálculo:</strong> Se você inserir minutos aqui, o sistema irá ignorar automaticamente o tempo carregado via planilha para este barbeiro no cálculo do POT. Deixe em zero (ou vazio) para continuar usando os dados da planilha.
         </p>
       </div>
+      
+      <style>
+        {`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 }
