@@ -322,8 +322,8 @@ export default function App() {
           totalSubscriptions: activeCycle.subscription_total || 0, 
           potRate: globalSettings?.pot_rate || 0.42, 
           potBaseValue: potBaseValue, 
-          totalMinutes: 0, 
-          valuePerMinute: 0 
+          totalMinutes: totalNetworkMinutes, 
+          valuePerMinute: valuePorMinutoGlobal 
         } 
       }, 
       annualResultsData: finalAnnualResults 
