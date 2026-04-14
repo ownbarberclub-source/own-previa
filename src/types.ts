@@ -58,3 +58,13 @@ export interface BarberResult {
   totalCommission: number;
   projectedCommission: number;
 }
+
+export type UserRole = 'admin' | 'editor' | 'viewer';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: UserRole;
+  is_authorized: boolean;
+  created_at?: string;
+}

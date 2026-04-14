@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy } from 'lucide-react';
+import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock } from 'lucide-react';
 import { supabase } from './supabaseClient';
-import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult } from './types';
+import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
 
 import { LoginPage } from './components/LoginPage';
@@ -11,15 +11,14 @@ import { GeneralSettings } from './components/GeneralSettings';
 import { CycleManager } from './components/CycleManager';
 import { PreviewDashboard } from './components/PreviewDashboard';
 import { RankingPanel } from './components/RankingPanel';
-
-const ADMIN_EMAIL = 'ownbarberclub@gmail.com';
-const ADMIN_PASSWORD = 'AdministrativoOwn7.';
+import { UsersSettings } from './components/UsersSettings';
 
 type Tab = 'preview' | 'ranking' | 'upload' | 'settings';
-type SettingsTab = 'barbers' | 'services' | 'general';
+type SettingsTab = 'barbers' | 'services' | 'general' | 'users';
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [session, setSession] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('preview');
   const [settingsTab, setSettingsTab] = useState<SettingsTab>('barbers');
 
@@ -29,18 +28,52 @@ export default function App() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [records, setRecords] = useState<CommissionRecord[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const activeCycle = useMemo(() => cycles.find(c => c.id === activeCycleId) || cycles[0] || null, [cycles, activeCycleId]);
 
+  // 1. Gerenciamento de Sessão e Perfil
   useEffect(() => {
-    const stored = localStorage.getItem('@own-previa:logged');
-    if (stored === 'true') setIsLoggedIn(true);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) loadProfile(session.user.id);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) loadProfile(session.user.id);
+      else setProfile(null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
+  const loadProfile = async (userId: string) => {
+    const { data } = await supabase.from('commission_profiles').select('*').eq('id', userId).single();
+    if (data) setProfile(data);
+    setLoading(false);
+  };
+
+  // 2. Carregamento Inicial e Realtime
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!session || !profile?.is_authorized) return;
+    
     loadAll();
-  }, [isLoggedIn]);
+
+    // Inscrição em tempo real para sincronização automática
+    const channel = supabase.channel('app-realtime-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_barbers' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_settings' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_services' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_cycles' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_records' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_profiles', filter: `id=eq.${session.user.id}` }, (payload) => {
+        setProfile(payload.new as UserProfile);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [session, profile?.is_authorized]);
 
   const loadAll = async () => {
     const [{ data: b }, { data: s }, { data: st }, { data: cy }, { data: rec }] = await Promise.all([
@@ -54,22 +87,12 @@ export default function App() {
     if (b) setBarbers(b);
     if (s && s.length > 0) setAppSettings(s[0]);
     if (st) setServiceTypes(st);
-    if (cy) { setCycles(cy); if (cy.length > 0) setActiveCycleId(cy[0].id); }
+    if (cy) { setCycles(cy); if (cy.length > 0 && !activeCycleId) setActiveCycleId(cy[0].id); }
     if (rec) setRecords(rec);
   };
 
-  const handleLogin = (email: string, password: string): boolean => {
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      setIsLoggedIn(true);
-      localStorage.setItem('@own-previa:logged', 'true');
-      return true;
-    }
-    return false;
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('@own-previa:logged');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
   };
 
   // ─── Lógica Principal de Cálculo ────────────────────────────────────────────────
@@ -77,10 +100,8 @@ export default function App() {
     if (!activeCycle || !appSettings || barbers.length === 0) return [];
 
     const cycleRecords = records.filter(r => r.cycle_id === activeCycle.id);
+    const pot = (activeCycle.subscription_total || 0) * (appSettings.pot_rate || 0);
 
-    const pot = activeCycle.subscription_total * appSettings.pot_rate;
-
-    // Mapear serviços por barbeiro
     const barberData: Record<string, {
       subscriptionMinutes: number;
       avulsoRevenue: number;
@@ -139,9 +160,32 @@ export default function App() {
     }).sort((a, b) => b.totalCommission - a.totalCommission);
   }, [records, barbers, appSettings, activeCycle]);
 
-  if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+  // 3. Renderização Condicional (Auth e Permissões)
+  if (!session) {
+    return <LoginPage />;
   }
+
+  if (!profile || !profile.is_authorized) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div style={{ maxWidth: 450, textAlign: 'center', backgroundColor: '#18181b', padding: 40, borderRadius: 24, border: '1px solid #27272a' }}>
+          <div style={{ width: 64, height: 64, backgroundColor: 'rgba(234,179,8,0.1)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+            <Clock size={32} color="#eab308" />
+          </div>
+          <h2 style={{ color: '#f4f4f5', fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Acesso Pendente</h2>
+          <p style={{ color: '#a1a1aa', fontSize: 15, lineHeight: 1.6, marginBottom: 32 }}>
+            Sua conta foi criada com sucesso, mas ainda não foi autorizada por um administrador. Você será notificado assim que seu acesso for liberado.
+          </p>
+          <button onClick={handleLogout} style={{ width: '100%', padding: '12px', backgroundColor: '#27272a', color: '#f4f4f5', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
+            Sair e Voltar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const isAdmin = profile.role === 'admin';
+  const canEdit = profile.role === 'admin' || profile.role === 'editor';
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#09090b' }}>
@@ -163,15 +207,15 @@ export default function App() {
             </div>
 
             <nav style={{ display: 'flex', gap: 4 }}>
-              {([
-                { id: 'preview', label: 'Prévia', icon: BarChart3 },
-                { id: 'ranking', label: 'Ranking', icon: Trophy },
-                { id: 'upload', label: 'Ciclo & Upload', icon: Upload },
-                { id: 'settings', label: 'Configurações', icon: Settings },
-              ] as { id: Tab; label: string; icon: React.ComponentType<{size?: number}> }[]).map(({ id, label, icon: Icon }) => (
+              {[
+                { id: 'preview', label: 'Prévia', icon: BarChart3, show: true },
+                { id: 'ranking', label: 'Ranking', icon: Trophy, show: true },
+                { id: 'upload', label: 'Ciclo & Upload', icon: Upload, show: canEdit },
+                { id: 'settings', label: 'Configurações', icon: Settings, show: isAdmin },
+              ].filter(t => t.show).map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
-                  onClick={() => setActiveTab(id)}
+                  onClick={() => setActiveTab(id as Tab)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 6,
                     padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
@@ -188,9 +232,15 @@ export default function App() {
             </nav>
           </div>
 
-          <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 8 }} title="Sair">
-            <LogOut size={18} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+             <div style={{ textAlign: 'right', display: 'none' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#f4f4f5' }}>{profile.email}</div>
+                <div style={{ fontSize: 10, color: '#71717a', textTransform: 'uppercase' }}>{profile.role}</div>
+             </div>
+             <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 8 }} title="Sair">
+               <LogOut size={18} />
+             </button>
+          </div>
         </div>
       </header>
 
@@ -207,7 +257,7 @@ export default function App() {
         {activeTab === 'ranking' && (
           <RankingPanel barberResults={barberResults} activeCycle={activeCycle} />
         )}
-        {activeTab === 'upload' && (
+        {activeTab === 'upload' && canEdit && (
           <CycleManager
             cycles={cycles}
             activeCycleId={activeCycle?.id || null}
@@ -217,14 +267,15 @@ export default function App() {
             onRefresh={loadAll}
           />
         )}
-        {activeTab === 'settings' && (
+        {activeTab === 'settings' && isAdmin && (
           <div>
             {/* Sub-tabs */}
             <div style={{ display: 'flex', gap: 4, marginBottom: 32, borderBottom: '1px solid #27272a', paddingBottom: 16 }}>
-              {([
+              {( [
                 { id: 'barbers', label: 'Barbeiros', icon: Users },
                 { id: 'services', label: 'Serviços', icon: Scissors },
                 { id: 'general', label: 'Taxas Gerais', icon: TrendingUp },
+                { id: 'users', label: 'Usuários', icon: UserCog },
               ] as { id: SettingsTab; label: string; icon: React.ComponentType<{size?: number}> }[]).map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -252,6 +303,9 @@ export default function App() {
             )}
             {settingsTab === 'general' && (
               <GeneralSettings settings={appSettings} onRefresh={loadAll} />
+            )}
+            {settingsTab === 'users' && (
+              <UsersSettings onRefresh={loadAll} />
             )}
           </div>
         )}

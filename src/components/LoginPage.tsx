@@ -1,19 +1,56 @@
 import React, { useState } from 'react';
-import { Scissors, Lock } from 'lucide-react';
+import { Scissors, Lock, UserPlus, ArrowRight } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
-interface LoginPageProps {
-  onLogin: (email: string, password: string) => boolean;
-}
-
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = onLogin(email, password);
-    if (!ok) setError('E-mail ou senha incorretos.');
+    setLoading(true);
+    setError('');
+    
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message === 'Invalid login credentials' ? 'E-mail ou senha incorretos.' : authError.message);
+    }
+    setLoading(false);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    const { data, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message);
+    } else if (data.user) {
+      // Criar o perfil inicial
+      await supabase.from('commission_profiles').insert([{
+        id: data.user.id,
+        email: data.user.email,
+        role: 'viewer',
+        is_authorized: false
+      }]);
+      setMessage('Conta criada com sucesso! Aguarde a autorização de um administrador para acessar o sistema.');
+      setMode('login');
+    }
+    setLoading(false);
   };
 
   return (
@@ -40,10 +77,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <h1 style={{ fontSize: 24, fontWeight: 800, color: '#f4f4f5', fontFamily: 'Space Grotesk', letterSpacing: '-0.02em' }}>
             OWN <span style={{ color: 'var(--brand)' }}>PRÉVIA</span>
           </h1>
-          <p style={{ color: '#71717a', fontSize: 14, marginTop: 6 }}>Sistema de Comissões — Admin</p>
+          <p style={{ color: '#71717a', fontSize: 14, marginTop: 6 }}>
+            {mode === 'login' ? 'Entre na sua conta' : 'Solicite seu acesso'}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={mode === 'login' ? handleLogin : handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label style={{ display: 'block', fontSize: 13, color: '#a1a1aa', fontWeight: 500, marginBottom: 6 }}>E-mail</label>
             <input
@@ -51,7 +90,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="admin@ownbarberclub.com"
+              placeholder="seu@email.com"
               style={{
                 width: '100%', padding: '12px 16px', backgroundColor: '#09090b',
                 border: '1px solid #3f3f46', borderRadius: 10, color: '#f4f4f5',
@@ -81,19 +120,48 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             </p>
           )}
 
+          {message && (
+            <p style={{ color: '#4ade80', fontSize: 13, backgroundColor: 'rgba(34,197,94,0.1)', padding: '10px 14px', borderRadius: 8 }}>
+              {message}
+            </p>
+          )}
+
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: '100%', padding: '13px', backgroundColor: 'var(--brand)',
               color: 'white', border: 'none', borderRadius: 10, fontSize: 15,
-              fontWeight: 700, cursor: 'pointer', marginTop: 8,
+              fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 8,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               boxShadow: '0 4px 20px rgba(225,6,0,0.3)',
+              opacity: loading ? 0.7 : 1,
             }}
           >
-            <Lock size={16} /> Entrar
+            {loading ? 'Aguarde...' : (
+              <>
+                {mode === 'login' ? <Lock size={16} /> : <UserPlus size={16} />}
+                {mode === 'login' ? 'Entrar' : 'Cadastrar'}
+              </>
+            )}
           </button>
         </form>
+
+        <div style={{ marginTop: 24, textAlign: 'center' }}>
+          <button
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            style={{
+              background: 'none', border: 'none', color: '#a1a1aa', fontSize: 13,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, margin: '0 auto'
+            }}
+          >
+            {mode === 'login' ? (
+              <>Não tem uma conta? <span style={{ color: 'var(--brand)', fontWeight: 600 }}>Cadastre-se</span> <ArrowRight size={14} /></>
+            ) : (
+              <>Já tem uma conta? <span style={{ color: 'var(--brand)', fontWeight: 600 }}>Faça Login</span></>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
