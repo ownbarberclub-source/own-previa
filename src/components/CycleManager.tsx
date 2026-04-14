@@ -12,9 +12,10 @@ interface CycleManagerProps {
   records: CommissionRecord[];
   onSelectCycle: (id: string) => void;
   onRefresh: () => void;
+  unitId: string;
 }
 
-export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onSelectCycle, onRefresh }: CycleManagerProps) {
+export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
   const [subTotal, setSubTotal] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ type: '', text: '' });
@@ -23,6 +24,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
 
   const handleCreateCycle = async () => {
     const monthYear = currentMonthYear();
+    // Ciclo é global
     if (cycles.some(c => c.month_year === monthYear)) {
       alert('O ciclo para este mês já existe.');
       return;
@@ -51,7 +53,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !activeCycleId) return;
+    if (!file || !activeCycleId || !unitId) return;
 
     setIsUploading(true);
     setUploadStatus({ type: 'info', text: 'Processando planilha...' });
@@ -77,8 +79,8 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
 
           if (!itemName || !barberName) continue;
 
-          // Busca mapeamento do serviço
-          const mapping = serviceTypes.find(s => s.item_name === itemName);
+          // Busca mapeamento do serviço NESTA unidade
+          const mapping = serviceTypes.find(s => s.item_name === itemName && s.unit_id === unitId);
           if (!mapping || mapping.category === 'ignorar') continue;
 
           // Limpa o valor (pode vir como 'R$ 60,00' ou 60)
@@ -91,6 +93,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, records, onS
 
           newRecords.push({
             cycle_id: activeCycleId,
+            unit_id: unitId,
             barber_name: barberName,
             item_name: itemName,
             category: mapping.category,

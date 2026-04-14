@@ -6,9 +6,10 @@ import { Settings } from '../types';
 interface GeneralSettingsProps {
   settings: Settings | null;
   onRefresh: () => void;
+  unitId: string;
 }
 
-export function GeneralSettings({ settings, onRefresh }: GeneralSettingsProps) {
+export function GeneralSettings({ settings, onRefresh, unitId }: GeneralSettingsProps) {
   const [potRate, setPotRate] = useState('');
   const [extraRate, setExtraRate] = useState('');
   const [productRate, setProductRate] = useState('');
@@ -38,7 +39,7 @@ export function GeneralSettings({ settings, onRefresh }: GeneralSettingsProps) {
       if (settings?.id) {
         await supabase.from('commission_settings').update(newSettings).eq('id', settings.id);
       } else {
-        await supabase.from('commission_settings').insert([{ id: crypto.randomUUID(), ...newSettings }]);
+        await supabase.from('commission_settings').insert([{ id: crypto.randomUUID(), unit_id: unitId, ...newSettings }]);
       }
       setMessage({ type: 'success', text: 'Configurações salvas com sucesso!' });
       onRefresh();

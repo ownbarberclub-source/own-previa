@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, User as UserIcon, Check, X, Trash2, ArrowRight } from 'lucide-react';
+import { Shield, User as UserIcon, Check, X, Trash2, Building2 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import { UserProfile, UserRole } from '../types';
+import { UserProfile, UserRole, Unit, UserUnitAssignment } from '../types';
 
-interface UsersSettingsProps {
-  onRefresh: () => void;
-}
-
-export function UsersSettings({ onRefresh }: UsersSettingsProps) {
+export function UsersSettings() {
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [assignments, setAssignments] = useState<UserUnitAssignment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadUsers();
+    loadAll();
     
-    // Realtime para perfis
-    const channel = supabase.channel('realtime-profiles')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_profiles' }, () => {
-        loadUsers();
-      })
+    const channel = supabase.channel('realtime-users-mgmt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_profiles' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_user_units' }, () => loadAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const loadUsers = async () => {
-    const { data } = await supabase.from('commission_profiles').select('*').order('created_at', { ascending: false });
-    if (data) setUsers(data);
+  const loadAll = async () => {
+    const [
+      { data: p }, 
+      { data: u }, 
+      { data: a }
+    ] = await Promise.all([
+      supabase.from('commission_profiles').select('*').order('created_at', { ascending: false }),
+      supabase.from('commission_units').select('*').order('name'),
+      supabase.from('commission_user_units').select('*')
+    ]);
+
+    if (p) setUsers(p);
+    if (u) setUnits(u);
+    if (a) setAssignments(a);
     setLoading(false);
   };
 
@@ -38,10 +45,19 @@ export function UsersSettings({ onRefresh }: UsersSettingsProps) {
     await supabase.from('commission_profiles').update({ role }).eq('id', id);
   };
 
+  const toggleUnit = async (userId: string, unitId: string) => {
+    const isAssigned = assignments.some(a => a.user_id === userId && a.unit_id === unitId);
+    if (isAssigned) {
+      await supabase.from('commission_user_units').delete().match({ user_id: userId, unit_id: unitId });
+    } else {
+      await supabase.from('commission_user_units').insert([{ user_id: userId, unit_id: unitId }]);
+    }
+    loadAll();
+  };
+
   const deleteUser = async (id: string) => {
     if (!window.confirm('Excluir este usuário permanentemente?')) return;
     await supabase.from('commission_profiles').delete().eq('id', id);
-    // Nota: A exclusão no auth.users deve ser feita via Edge Function ou Painel se não houver trigger.
   };
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' as const };
@@ -50,14 +66,14 @@ export function UsersSettings({ onRefresh }: UsersSettingsProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div style={{ backgroundColor: 'rgba(225,6,0,0.05)', border: '1px solid rgba(225,6,0,0.1)', borderRadius: 12, padding: '14px 18px' }}>
         <p style={{ color: '#a1a1aa', fontSize: 13, lineHeight: 1.6 }}>
-          💡 <strong>Controle de Acessos:</strong> Novos usuários aparecem como "Inativos". Você deve autorizá-los e definir seu nível de acesso antes que possam ver os dados.
+          💡 <strong>Controle de Gestores:</strong> Como os barbeiros não acessam o sistema, use esta tela para cadastrar os gestores e definir a quais unidades cada um terá acesso.
         </p>
       </div>
 
       <div style={card}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Shield size={18} color="var(--brand)" /> Gerenciamento de Usuários
+            <Shield size={18} color="var(--brand)" /> Gestão de Acessos
           </h3>
           <span style={{ fontSize: 12, color: '#71717a' }}>{users.length} usuários</span>
         </div>
@@ -66,7 +82,7 @@ export function UsersSettings({ onRefresh }: UsersSettingsProps) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'rgba(9,9,11,0.5)' }}>
-                {['Usuário', 'Nível de Acesso', 'Status', 'Ações'].map(h => (
+                {['Usuário', 'Nível', 'Status', 'Unidades Permitidas', 'Ações'].map(h => (
                   <th key={h} style={{ padding: '12px 24px', textAlign: 'left', fontSize: 11, color: '#52525b', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
                 ))}
               </tr>
@@ -104,22 +120,39 @@ export function UsersSettings({ onRefresh }: UsersSettingsProps) {
                     </span>
                   </td>
                   <td style={{ padding: '14px 24px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxWidth: 300 }}>
+                      {units.map(unit => {
+                        const isAssigned = assignments.some(a => a.user_id === u.id && a.unit_id === unit.id);
+                        return (
+                          <button
+                            key={unit.id}
+                            onClick={() => toggleUnit(u.id, unit.id)}
+                            style={{
+                              backgroundColor: isAssigned ? 'rgba(225,6,0,0.15)' : '#09090b',
+                              color: isAssigned ? 'var(--brand)' : '#52525b',
+                              border: `1px solid ${isAssigned ? 'var(--brand)' : '#27272a'}`,
+                              padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 600,
+                              cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 4
+                            }}
+                          >
+                            <Building2 size={10} /> {unit.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </td>
+                  <td style={{ padding: '14px 24px' }}>
                     <div style={{ display: 'flex', gap: 8 }}>
                       {u.is_authorized ? (
-                        <button onClick={() => updateStatus(u.id, false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', display: 'flex', alignItems: 'center' }} title="Revogar Acesso"><X size={16} /></button>
+                        <button onClick={() => updateStatus(u.id, false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }} title="Revogar Acesso"><X size={16} /></button>
                       ) : (
-                        <button onClick={() => updateStatus(u.id, true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#22c55e', display: 'flex', alignItems: 'center' }} title="Autorizar"><Check size={16} /></button>
+                        <button onClick={() => updateStatus(u.id, true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#22c55e' }} title="Autorizar"><Check size={16} /></button>
                       )}
                       <button onClick={() => deleteUser(u.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><Trash2 size={16} /></button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {users.length === 0 && !loading && (
-                <tr>
-                  <td colSpan={4} style={{ padding: 40, textAlign: 'center', color: '#52525b', fontSize: 14 }}>Nenhum usuário cadastrado.</td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

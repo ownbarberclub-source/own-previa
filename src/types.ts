@@ -1,39 +1,56 @@
+// Unidade (Filial)
+export interface Unit {
+  id: string;
+  name: string;
+  created_at?: string;
+}
+
+// Vínculo entre Usuário e Unidade
+export interface UserUnitAssignment {
+  user_id: string;
+  unit_id: string;
+}
+
 // Barbeiro cadastrado no sistema
 export interface Barber {
   id: string;
+  unit_id: string;
   name: string;
-  avulso_rate: number;   // ex: 0.25 = 25% de comissão nos avulsos
+  avulso_rate: number;
   created_at?: string;
 }
 
 // Tipo de serviço mapeado da planilha do AppBarber
 export interface ServiceType {
   id: string;
-  item_name: string;                          // nome exato como aparece na coluna "Item" da planilha
+  unit_id: string;
+  item_name: string;
   category: 'assinatura' | 'avulso' | 'extra' | 'produto' | 'ignorar';
-  duration_minutes: number;                   // duração em minutos (para cálculo do POT de assinaturas)
+  duration_minutes: number;
   created_at?: string;
 }
 
-// Configurações gerais da empresa
+// Configurações gerais da empresa (por unidade)
 export interface Settings {
   id: string;
-  pot_rate: number;       // % do total de assinaturas que vai ao POT dos barbeiros (ex: 0.40 = 40%)
-  extra_rate: number;     // % de comissão geral para extras (ex: 0.10 = 10%)
-  product_rate: number;   // % de comissão geral para bebidas/produtos (ex: 0.10 = 10%)
+  unit_id: string;
+  pot_rate: number;
+  extra_rate: number;
+  product_rate: number;
 }
 
-// Ciclo mensal
+// Ciclo mensal (Global para todas as unidades)
 export interface Cycle {
   id: string;
-  month_year: string;          // ex: "2026-04"
-  subscription_total: number;  // total arrecadado em assinaturas (manual)
+  month_year: string;
+  subscription_total: number;
   created_at?: string;
 }
 
 // Registro individual lido da planilha
 export interface CommissionRecord {
   id: string;
+  unit_id: string;
   cycle_id: string;
   barber_name: string;
   item_name: string;
@@ -47,6 +64,7 @@ export interface CommissionRecord {
 // Resultado calculado por barbeiro
 export interface BarberResult {
   barber: Barber;
+  unit_name?: string; // Para a visão consolidada
   subscriptionMinutes: number;
   avulsoRevenue: number;
   extraRevenue: number;

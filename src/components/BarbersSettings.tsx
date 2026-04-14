@@ -6,9 +6,10 @@ import { Barber } from '../types';
 interface BarbersSettingsProps {
   barbers: Barber[];
   onRefresh: () => void;
+  unitId: string;
 }
 
-export function BarbersSettings({ barbers, onRefresh }: BarbersSettingsProps) {
+export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsProps) {
   const [name, setName] = useState('');
   const [rate, setRate] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -17,9 +18,10 @@ export function BarbersSettings({ barbers, onRefresh }: BarbersSettingsProps) {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !rate) return;
+    if (!name.trim() || !rate || !unitId) return;
     await supabase.from('commission_barbers').insert([{
       id: crypto.randomUUID(),
+      unit_id: unitId,
       name: name.trim(),
       avulso_rate: parseFloat(rate) / 100,
     }]);

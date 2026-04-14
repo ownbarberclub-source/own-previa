@@ -6,6 +6,7 @@ import { ServiceType } from '../types';
 interface ServicesSettingsProps {
   serviceTypes: ServiceType[];
   onRefresh: () => void;
+  unitId: string;
 }
 
 const CATEGORIES = [
@@ -24,7 +25,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
   ignorar:    { bg: 'rgba(113,113,122,0.1)', text: '#71717a' },
 };
 
-export function ServicesSettings({ serviceTypes, onRefresh }: ServicesSettingsProps) {
+export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSettingsProps) {
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState<ServiceType['category']>('assinatura');
   const [duration, setDuration] = useState('');
@@ -35,9 +36,10 @@ export function ServicesSettings({ serviceTypes, onRefresh }: ServicesSettingsPr
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!itemName.trim()) return;
+    if (!itemName.trim() || !unitId) return;
     await supabase.from('commission_services').insert([{
       id: crypto.randomUUID(),
+      unit_id: unitId,
       item_name: itemName.trim(),
       category,
       duration_minutes: parseInt(duration) || 0,
