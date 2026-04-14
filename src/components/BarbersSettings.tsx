@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Users, Plus, Trash2, Edit2, Check, X, Search } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { Barber } from '../types';
 
@@ -12,9 +12,14 @@ interface BarbersSettingsProps {
 export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsProps) {
   const [name, setName] = useState('');
   const [rate, setRate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editRate, setEditRate] = useState('');
+
+  const filteredBarbers = barbers.filter(b => 
+    b.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,15 +93,24 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
 
       {/* List */}
       <div style={card}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Users size={18} color="var(--brand)" /> Barbeiros Cadastrados
           </h3>
+          <div style={{ position: 'relative', width: 240 }}>
+            <Search size={14} color="#71717a" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              style={{ ...input, paddingLeft: 36, height: 36 }} 
+              value={searchTerm} 
+              onChange={e => setSearchTerm(e.target.value)} 
+              placeholder="Pesquisar barbeiro..." 
+            />
+          </div>
         </div>
         <div>
-          {barbers.length === 0 ? (
+          {filteredBarbers.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>
-              Nenhum barbeiro cadastrado ainda.
+              {searchTerm ? 'Nenhum barbeiro encontrado com esse nome.' : 'Nenhum barbeiro cadastrado ainda.'}
             </p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -108,7 +122,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
                 </tr>
               </thead>
               <tbody>
-                {barbers.map(b => (
+                {filteredBarbers.map(b => (
                   <React.Fragment key={b.id}>
                     <tr style={{ borderTop: '1px solid #27272a' }}>
                       <td style={{ padding: '14px 24px', color: '#e4e4e7', fontWeight: 500 }}>{b.name}</td>

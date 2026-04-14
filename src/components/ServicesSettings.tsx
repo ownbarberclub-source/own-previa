@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Edit2, Check, X, Scissors } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X, Scissors, Search } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { ServiceType } from '../types';
 
@@ -30,10 +30,15 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState<ServiceType['category']>('assinatura');
   const [duration, setDuration] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editItem, setEditItem] = useState('');
   const [editCategory, setEditCategory] = useState<ServiceType['category']>('assinatura');
   const [editDuration, setEditDuration] = useState('');
+
+  const filteredServices = serviceTypes.filter(s => 
+    s.item_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,14 +128,25 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
 
       {/* List */}
       <div style={card}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Scissors size={18} color="var(--brand)" /> Itens Mapeados ({serviceTypes.length})
           </h3>
+          <div style={{ position: 'relative', width: 280 }}>
+            <Search size={14} color="#71717a" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              style={{ ...input, paddingLeft: 36, height: 36 }} 
+              value={searchTerm} 
+              onChange={e => setSearchTerm(e.target.value)} 
+              placeholder="Pesquisar item ou categoria..." 
+            />
+          </div>
         </div>
         <div>
-          {serviceTypes.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>Nenhum serviço ou produto mapeado. Adicione os itens da sua planilha do AppBarber acima.</p>
+          {filteredServices.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>
+              {searchTerm ? 'Nenhum item encontrado com esse termo.' : 'Nenhum serviço ou produto mapeado. Adicione os itens da sua planilha do AppBarber acima.'}
+            </p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
@@ -141,7 +157,7 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
                 </tr>
               </thead>
               <tbody>
-                {serviceTypes.map(s => (
+                 {filteredServices.map(s => (
                   <React.Fragment key={s.id}>
                     <tr style={{ borderTop: '1px solid #27272a' }}>
                       <td style={{ padding: '14px 24px', color: '#e4e4e7', fontWeight: 500, fontSize: 13 }}>{s.item_name}</td>

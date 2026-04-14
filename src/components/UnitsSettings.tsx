@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Building2, Plus, Trash2, Edit2, Check, X, Search } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { Unit } from '../types';
 
@@ -10,9 +10,14 @@ interface UnitsSettingsProps {
 export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
   const [units, setUnits] = useState<Unit[]>([]);
   const [name, setName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const filteredUnits = units.filter(u => 
+    u.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     loadUnits();
@@ -99,13 +104,27 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
       </div>
 
       <div style={card}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Building2 size={18} color="var(--brand)" /> Unidades Cadastradas
           </h3>
+          <div style={{ position: 'relative', width: 240 }}>
+            <Search size={14} color="#71717a" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              style={{ ...input, paddingLeft: 36, height: 36 }} 
+              value={searchTerm} 
+              onChange={e => setSearchTerm(e.target.value)} 
+              placeholder="Pesquisar unidade..." 
+            />
+          </div>
         </div>
         <div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          {filteredUnits.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#52525b', padding: '40px 24px', fontSize: 14 }}>
+              {searchTerm ? 'Nenhuma unidade encontrada.' : 'Nenhuma unidade cadastrada.'}
+            </p>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'rgba(9,9,11,0.5)' }}>
                 <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: 12, color: '#52525b', fontWeight: 600, textTransform: 'uppercase' }}>Nome</th>
@@ -113,7 +132,7 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
               </tr>
             </thead>
             <tbody>
-              {units.map(u => (
+              {filteredUnits.map(u => (
                 <React.Fragment key={u.id}>
                   <tr style={{ borderTop: '1px solid #27272a' }}>
                     <td style={{ padding: '14px 24px', color: '#e4e4e7', fontWeight: 500 }}>{u.name}</td>
@@ -143,7 +162,8 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
               ))}
             </tbody>
           </table>
-        </div>
+        )}
+      </div>
       </div>
     </div>
   );

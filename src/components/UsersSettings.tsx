@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, User as UserIcon, Check, X, Trash2, Building2 } from 'lucide-react';
+import { Shield, User as UserIcon, Check, X, Trash2, Building2, Search } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { UserProfile, UserRole, Unit, UserUnitAssignment } from '../types';
 
@@ -7,7 +7,12 @@ export function UsersSettings() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [assignments, setAssignments] = useState<UserUnitAssignment[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const filteredUsers = users.filter(u => 
+    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     loadAll();
@@ -75,7 +80,21 @@ export function UsersSettings() {
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Shield size={18} color="var(--brand)" /> Gestão de Acessos
           </h3>
-          <span style={{ fontSize: 12, color: '#71717a' }}>{users.length} usuários</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ position: 'relative', width: 240 }}>
+              <Search size={14} color="#71717a" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+              <input 
+                style={{ 
+                  padding: '8px 12px 8px 36px', backgroundColor: '#09090b', border: '1px solid #3f3f46',
+                  borderRadius: 8, color: '#f4f4f5', fontSize: 13, outline: 'none', width: '100%', boxSizing: 'border-box'
+                }} 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+                placeholder="Pesquisar por email..." 
+              />
+            </div>
+            <span style={{ fontSize: 12, color: '#71717a' }}>{users.length} usuários</span>
+          </div>
         </div>
         
         <div style={{ overflowX: 'auto' }}>
@@ -88,7 +107,7 @@ export function UsersSettings() {
               </tr>
             </thead>
             <tbody>
-              {users.map(u => (
+              {filteredUsers.map(u => (
                 <tr key={u.id} style={{ borderTop: '1px solid #27272a' }}>
                   <td style={{ padding: '14px 24px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
