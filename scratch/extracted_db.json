@@ -1,0 +1,3953 @@
+{
+  "units": [
+    {
+      "id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa",
+      "name": "Matriz",
+      "created_at": "2026-04-14T14:25:38.217306+00:00"
+    },
+    {
+      "id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26",
+      "name": "Efapi",
+      "created_at": "2026-04-14T14:41:56.250605+00:00"
+    },
+    {
+      "id": "5a7834fc-c563-405e-b6ec-0250552ece23",
+      "name": "Avenida",
+      "created_at": "2026-04-14T14:42:04.187135+00:00"
+    }
+  ],
+  "barbers": [
+    {
+      "id": "a600b858-2775-4a6e-a82b-9773633f7f9b",
+      "name": "Carlos Eduardo Kilian Marion",
+      "avulso_rate": 0.42,
+      "created_at": "2026-04-14T16:37:33.999003+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0d0f0faa-52e9-433f-ba0b-afaddc6d8e69",
+      "name": "CARLOS JOSE CAMPOS",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T16:37:44.46814+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "8e9d29ef-ecf5-4041-85b0-5d8df5e034f5",
+      "name": "Eduardo Ferreira",
+      "avulso_rate": 0.5,
+      "created_at": "2026-04-14T16:37:52.649658+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "6f60d75d-7fa3-4f65-a95d-158094a7dafc",
+      "name": "Kaique Soares Da Silva",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T16:38:00.875589+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "e52a14fb-2bff-4e17-a1d6-bcbb1d43745e",
+      "name": "Tiago Oliveira Cataneo",
+      "avulso_rate": 0.45,
+      "created_at": "2026-04-14T16:38:12.359825+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "784338b5-6ce4-4e77-8ed3-da92e809df67",
+      "name": "Hernaldo Olivares",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T16:38:44.765188+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9c7632ee-eaf5-4efd-95ee-1ccfcbaa2b48",
+      "name": "Jair Aranda",
+      "avulso_rate": 0.45,
+      "created_at": "2026-04-14T16:38:56.122156+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "30f4ee8e-9800-49ee-8dfb-3874f63afa05",
+      "name": "Vitor Serpa",
+      "avulso_rate": 0.5,
+      "created_at": "2026-04-14T16:39:12.524273+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "0c8fedc5-8717-4f59-977d-93aced99c202",
+      "name": "john peres",
+      "avulso_rate": 0.5,
+      "created_at": "2026-04-14T15:33:35.918416+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "47c6251a-1af9-41b1-bed6-823077ebb267",
+      "name": "Jair Aranda",
+      "avulso_rate": 0.45,
+      "created_at": "2026-04-14T15:33:21.737136+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7a35c6e7-0446-405f-ba98-0905c57787bf",
+      "name": "Vitor Serpa",
+      "avulso_rate": 0.5,
+      "created_at": "2026-04-14T15:35:04.711063+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "1082486e-c9bb-4773-94e1-5d8fada2b739",
+      "name": "DOUGLAS TRINDADE",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T15:31:58.173179+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7b6e0a02-fb33-42ee-868d-39c448e50eb9",
+      "name": "JULIO CARLOS MOLINETTI",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T15:33:55.488017+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "10dfa435-b8ee-4918-9223-2af31578b287",
+      "name": "THIAGO HENN",
+      "avulso_rate": 0.4,
+      "created_at": "2026-04-14T15:34:30.56009+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    }
+  ],
+  "services": [
+    {
+      "id": "a52a882a-b2a4-428f-9c66-9cbfb6099b45",
+      "item_name": "1. Assinantes - Corte",
+      "category": "assinatura",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T15:35:39.957438+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "215ae83a-a126-4484-8c0b-d50cde19a3de",
+      "item_name": "2. Assinantes - Barba",
+      "category": "assinatura",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T15:35:51.175169+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "39e498a2-ac99-4f7b-b3f4-afecc6497b2d",
+      "item_name": "3. Assinantes - Corte + Barba",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T15:36:00.259148+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f3b85ab7-a826-438d-a29e-afdd4a7a0c03",
+      "item_name": "4. Assinantes - Corte - Pai e Filho",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T15:36:11.479001+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5591b496-d4c7-4869-b4a8-e317bfa2d6ef",
+      "item_name": "Acabamento",
+      "category": "avulso",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T15:36:33.161472+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "907c2c9f-f872-4053-ba16-e7871e787c4a",
+      "item_name": "Adicional Freestyle",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:36:47.290184+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "005d4706-b504-43ac-a048-d455cdb4344f",
+      "item_name": "Alisamento Americano",
+      "category": "extra",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T15:37:01.202972+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "322aba04-f5b1-4243-9ec4-ecbc12c7765f",
+      "item_name": "Argila",
+      "category": "extra",
+      "duration_minutes": 20,
+      "created_at": "2026-04-14T15:37:15.877508+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b3de7dd7-7067-41ce-b2b7-9517e37098d8",
+      "item_name": "Barba",
+      "category": "avulso",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T15:37:32.798281+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a00afc6f-6e52-4c5a-ad10-a9379371f512",
+      "item_name": "Cone Hindu",
+      "category": "extra",
+      "duration_minutes": 20,
+      "created_at": "2026-04-14T15:37:44.745707+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c80680b0-09cb-4044-b348-561deefb2953",
+      "item_name": "Corte",
+      "category": "avulso",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T15:37:54.749175+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "bd46746c-c74f-4432-883f-bafa447a5c98",
+      "item_name": "Corte + Barba",
+      "category": "avulso",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T15:38:03.504631+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5fe6db76-3b5a-4a2e-a9d6-0a0b419897d6",
+      "item_name": "Depilação na Cera - Nariz ou Orelha",
+      "category": "extra",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T15:38:16.113406+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "544ad313-332e-4c13-8fae-0f9bf20743c5",
+      "item_name": "Freestyle (corte com desenho)",
+      "category": "avulso",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T15:38:26.449129+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e0ecda6f-c23c-450b-9f98-0857e1f3f86f",
+      "item_name": "Hidratação",
+      "category": "extra",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T15:38:38.392758+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d98d7d3f-bbfa-4be1-9a32-829b032dcfaf",
+      "item_name": "Limpeza de Pele",
+      "category": "extra",
+      "duration_minutes": 20,
+      "created_at": "2026-04-14T15:38:50.229056+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d8b7dbef-2263-4ff6-bf30-438e087d498c",
+      "item_name": "Luzes",
+      "category": "avulso",
+      "duration_minutes": 180,
+      "created_at": "2026-04-14T15:38:57.441131+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0bd7a28f-c00e-4155-97f7-f6b953bcf786",
+      "item_name": "MATIZAÇÃO",
+      "category": "extra",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T15:39:17.730627+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "897da2eb-b4ab-43c3-9518-92ecdb54881f",
+      "item_name": "Pigmentação",
+      "category": "avulso",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T15:39:31.401118+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5fde3047-bfb4-463a-933c-7b391e527349",
+      "item_name": "Platinado",
+      "category": "avulso",
+      "duration_minutes": 180,
+      "created_at": "2026-04-14T15:39:40.243714+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b6a064d1-e9a9-46c7-9e41-74ffcdff5e72",
+      "item_name": "Raspar",
+      "category": "avulso",
+      "duration_minutes": 20,
+      "created_at": "2026-04-14T15:39:47.857227+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e45fddb4-9382-49bb-a352-8e379fb0a99c",
+      "item_name": "SELAGEM",
+      "category": "extra",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T15:40:00.803426+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ef21e56b-cad4-467d-adfb-c7b085b3b35f",
+      "item_name": "Sobrancelha",
+      "category": "extra",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T15:40:08.739973+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d2232cce-434c-47c6-ad8a-0adacede2b46",
+      "item_name": "Sobrancelha com Cera",
+      "category": "extra",
+      "duration_minutes": 15,
+      "created_at": "2026-04-14T15:40:34.106823+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0ac23b87-aac7-427f-85f3-803d14bdb649",
+      "item_name": "Tonalizante",
+      "category": "extra",
+      "duration_minutes": 20,
+      "created_at": "2026-04-14T15:40:42.519048+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "689a8522-9734-4084-8781-4954b4fff83d",
+      "item_name": "VIP - Barba",
+      "category": "assinatura",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T15:40:50.317646+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "667e3723-358f-4b43-9f58-8de3621f6a2f",
+      "item_name": "VIP - Corte",
+      "category": "assinatura",
+      "duration_minutes": 50,
+      "created_at": "2026-04-14T15:40:56.597324+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "22728d94-a66a-428b-9d2f-89e9bdb29f81",
+      "item_name": "VIP - Corte + Barba",
+      "category": "assinatura",
+      "duration_minutes": 80,
+      "created_at": "2026-04-14T15:41:02.012067+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c0b1c8cc-5c61-4dcb-9cd9-5b29c10c3083",
+      "item_name": "MONSTER",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "58083f0e-19f8-4dc4-bc5d-e189c30d357d",
+      "item_name": "3 EM 1 MINOXIDIL - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "bd1db3a3-5c62-4c0f-9cc7-a1dea2e92c42",
+      "item_name": "AFTERSHAVE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c62b0ac8-4422-4bfa-a732-0169dabb5f49",
+      "item_name": "AGUA SEM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "627a3a09-cf84-4ec7-bc1b-922492b2a08d",
+      "item_name": "ANTI CASPA - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d404759d-e3b0-4139-afdb-894413c9fa12",
+      "item_name": "B.URB - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "41735ddd-38b0-4185-8ba6-90b8da610ebe",
+      "item_name": "BABOON - CEMENT EFECT",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e0bf8300-7022-470c-8920-7facc96393cb",
+      "item_name": "BABOON - MATTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "067d5ffc-9eff-44c4-b280-05899c436d21",
+      "item_name": "BABOON - ULTRA HOLD",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5a8455aa-3261-48bc-9f3f-7f768f21b91e",
+      "item_name": "bala AZUL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "dc0b05fd-6248-4c3a-9e57-9a42848e779f",
+      "item_name": "bala ROSA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5f5be408-729c-49c0-b5d4-1adb066e5c7e",
+      "item_name": "bala VERDE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "908802cb-8e49-4a17-81bb-d950e09c700f",
+      "item_name": "BARBER'S BLEND",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e571a193-ab38-4ea5-9852-48e34676a664",
+      "item_name": "BELLBRUCK - IPA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ca7614f5-7aac-4571-afaa-c9c878bee8a0",
+      "item_name": "BELLBRUCK - LAGER",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "825b1b76-263f-428e-9ea1-4275e01c9427",
+      "item_name": "BELLBRUCK - PILSEN",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "104c00a1-27b6-4bf6-bc55-cb88530f36a7",
+      "item_name": "BELLBRUCK - WEISS",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "36451c8d-6165-4cab-b3c3-6624bbd48ccf",
+      "item_name": "CAFÉ",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "340199b4-a23a-4869-b1ed-0ad66618db77",
+      "item_name": "CAFÉ - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b1b7592b-f60b-4225-a3fe-2410124ccc8b",
+      "item_name": "CAFÉ COM LEITE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "94062f40-2f08-4c61-910f-6839b9ff0533",
+      "item_name": "CAFÉ COM LEITE - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "2194322a-b7f2-479f-997b-42cfe51fb117",
+      "item_name": "CAMPARI - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5839f8b3-1ce8-48a1-beed-c39a399f1900",
+      "item_name": "CAPUCCINO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "52fe2d56-d89e-42eb-9771-d1dd4cca1802",
+      "item_name": "CERVEJA HEINEKEN 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "67bcc051-2b03-426e-8891-6be5720fc2a6",
+      "item_name": "CERVEJA PETRA - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a4cb9ce9-7636-4dae-b77c-48ee8adf9c3d",
+      "item_name": "Cerveja Sol - ZERO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7b8e0826-5146-4d96-854d-e5f6490db5a7",
+      "item_name": "CERVEJA SOL 310ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "9ba020bb-c2dc-45d1-84b4-5c9f2167e8b7",
+      "item_name": "Chicletes AZUL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "168cc295-ae31-47a2-96fc-3e618dfef48e",
+      "item_name": "chicletes PRETO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "1d937d07-7c11-4fdd-95e6-2a1769094c43",
+      "item_name": "Chicletes VERDE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5e04c533-9be5-4d40-8c12-b351db037355",
+      "item_name": "Chicletes VERMELHO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d0f677a6-e1a5-4413-831d-206cd21abd4f",
+      "item_name": "CHOCOLATE QUENTE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0089bdac-3c3b-432e-96c8-d304420e9083",
+      "item_name": "COCA COLA MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d9ddd7a2-d7cb-4d3c-952f-c59f576cac13",
+      "item_name": "COCA COLA ZERO MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b33125fa-b2c7-4ae8-b3f1-fb0a8ec4e629",
+      "item_name": "COCA-COLA 310 ML lata",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "52e809f1-2375-4ef8-8285-5791da387014",
+      "item_name": "DERMA ROLLER",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b6e901b6-48b9-4a60-8966-c63c210b1c05",
+      "item_name": "DON ALCIDES - BALM CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e944dd0a-2edf-46e8-80a5-3862adf8b05a",
+      "item_name": "DON ALCIDES - LEAVE-IN CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6a5c549f-75bc-45f0-b09e-07ec3b470dd4",
+      "item_name": "DON ALCIDES - LEAVE-IN GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "735f6773-09d2-4e6f-b49d-1e67a7ed3c03",
+      "item_name": "DON ALCIDES - LEAVE-IN LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0926faa7-9b33-46b5-bc91-4ac43e4db086",
+      "item_name": "DON ALCIDES - POMADA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f296366d-6e63-4c92-8603-2d7423904b32",
+      "item_name": "DON ALCIDES - POMADA GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "00ae989d-9ac4-49f7-bc9d-e50a6a492147",
+      "item_name": "DON ALCIDES - POMADA LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "df7fb098-7869-4d8d-be55-18f5b3267c0a",
+      "item_name": "DON ALCIDES - SHAMPOO CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "170efe3d-d228-443c-aab2-6573f66d6479",
+      "item_name": "DON ALCIDES - SHAMPOO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a566aa98-0092-4621-92cc-0fb1941024fe",
+      "item_name": "DON ALCIDES - SHAMPOO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d3f4bf5c-519e-4f0a-9764-f3590c90adfe",
+      "item_name": "DON ALCIDES - SHAMPOO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a17cc638-c632-459e-9dbc-8196a7ed0d21",
+      "item_name": "DON ALCIDES - ÓLEO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5c2750db-2262-4422-bec2-7bb17a5ad91e",
+      "item_name": "DON ALCIDES - ÓLEO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "65149d45-e29d-4924-90a9-f88fefa285c1",
+      "item_name": "DON ALCIDES - ÓLEO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "aaca9fec-3765-4e67-a785-b17cfd62991a",
+      "item_name": "ERVEN - BALM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "038addc9-4ef8-427f-88ec-2912c38e6366",
+      "item_name": "ERVEN - BEARD OIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3e73f525-a76b-4709-a041-a8b90013306c",
+      "item_name": "ERVEN - CLASSIC GLOW",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5434cbf9-41e1-4450-b17d-d011a18533dc",
+      "item_name": "ERVEN - GOLD GEL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "970dce00-bab2-4e2d-b1f3-14708464f88e",
+      "item_name": "ERVEN - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "eb19130a-5826-43c6-80f6-332d4b64484f",
+      "item_name": "ERVEN - MATTE CREAM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "79719630-c153-42e1-adf9-d062d612ba2e",
+      "item_name": "ERVEN - POWDER WAX CERA EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5d215eea-bac8-4b21-bcff-1b4d855ae093",
+      "item_name": "ERVEN - PREMIUM PASTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "735bc6a0-59e1-4c53-aca8-24a7fcbcc998",
+      "item_name": "Erven Special Shine",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d7df95b2-b5b2-4315-bba6-e7b3b0129be8",
+      "item_name": "FIREBALL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e64d5e9a-adce-4963-8f6c-08a922d5d7be",
+      "item_name": "FOX - ACETINADO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c9dbfee5-be17-49a3-b00c-36b4b76532c1",
+      "item_name": "FOX - BALM PARA BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "dddfe0e4-7f4a-45d8-bd17-0194ba23c56d",
+      "item_name": "FOX - BLACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "935e1591-1cc5-4caf-ad96-092de6b8c302",
+      "item_name": "FOX - CARAMELO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "73c3c4b6-7bcd-42c7-99eb-2cd24ad46cb6",
+      "item_name": "FOX - COFFE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "155d2927-9682-476b-8286-2bebfc7e6cf4",
+      "item_name": "FOX - EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "98770b96-969d-45ce-8777-7a6d27c18db0",
+      "item_name": "FOX - GEL COLA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a548aa0e-8826-4878-9727-e9a815fe6717",
+      "item_name": "FOX - PISTACHE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "523dc5ee-c07e-4986-9051-89af7a4ee335",
+      "item_name": "FOX - PREMIUM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "63f76b6b-0381-45a5-b1da-f32f54a25e1d",
+      "item_name": "FOX - SHAMPOO 4x1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "af2dfbb4-6fa3-41fc-bbfa-f915c01abb60",
+      "item_name": "FOX - TOQUE SECO PEQUENA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b731e7e9-b87a-4b21-9c31-5cc96852b02a",
+      "item_name": "FOX - UVA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c69c9172-b60e-4d64-bce2-c2bf1af8cee9",
+      "item_name": "FOX - ÓLEO BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "72db0118-23b9-43f5-ba56-6c1e1aa67b5b",
+      "item_name": "FOX EFEITO TEIA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d84a68ec-098b-4318-934e-55fe7e09c058",
+      "item_name": "FOX GRANDE TOQUE SECO 120 GRAMAS",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "39e48b74-5980-4cca-8964-a371ecaef064",
+      "item_name": "GARDEN - CERA DE ABELHA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "051ee3b3-1d77-4255-82e7-9007437bc0f6",
+      "item_name": "GIUSEPPE - INK",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7504f16f-68fe-460e-960f-7cc945e80e85",
+      "item_name": "Grooming Fox",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ed7dc2df-4b92-4524-92d1-8d905bcd203e",
+      "item_name": "Imperio Larger",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "bc347d06-ecbd-449f-bcf9-35887483de7c",
+      "item_name": "KIRKLAND - MINOXIDIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ae9353fc-2559-4168-8e63-fc7390fc6398",
+      "item_name": "LEAVE-IN FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ca6ece50-ef36-45c7-b155-e5c406f1c5bf",
+      "item_name": "MINOX - SHAMPOO 4 EM 1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e0e47431-f4df-4dcf-965b-b679a53c2f28",
+      "item_name": "MONSTER MANGA 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "4141c056-a99d-433f-b65f-c14594de8664",
+      "item_name": "MONSTER PIPELINE PUNCH",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b5c10bf5-793c-401d-babf-e4cd575abdb5",
+      "item_name": "MONSTER PÊSSEGO 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "4a3e0144-80d8-4552-b39a-f6a4045b3357",
+      "item_name": "MONSTER TRADICIONAL 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "fe9374fa-c5cc-47c8-ab69-017c13a2af65",
+      "item_name": "MULLET EDGE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "377453b5-97c1-4dca-8109-d74c91c009ac",
+      "item_name": "Navalha",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3cf47c36-62aa-428b-9a8d-706957474b57",
+      "item_name": "OWN - MATIZADOR",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "838fe4cd-b5ab-4f9d-b1c4-871148ec16be",
+      "item_name": "OWN - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "8b69608c-6a30-4eb5-9f4c-db21c182f8c3",
+      "item_name": "OWN DRINK",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b2141fd0-a2f0-4a75-b35e-3a535da44ac8",
+      "item_name": "Pirulito chups",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "74ea4f5d-48bb-41ef-a8ab-afea657cc567",
+      "item_name": "REDBULL 250ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "fa719683-0348-4c23-b84d-cf91a93d7b80",
+      "item_name": "SOUR FADE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6afdaecb-cc06-448c-88b3-5f06d7cd765b",
+      "item_name": "WHISKY JIM BEAM - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "699964f6-86a3-42ff-a542-2724e8a2a0c6",
+      "item_name": "WHISKY WHITE HORSE - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7ad8f201-b470-49b2-9740-3223d2ab3b7a",
+      "item_name": "ÁGUA COM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:35.010699+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "eeed01d0-3bf3-4389-a53c-97485740d938",
+      "item_name": "MONSTER",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "9f39666c-b1f2-4269-8800-d6a201c957ce",
+      "item_name": "3 EM 1 MINOXIDIL - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c76baabb-54c3-4ccd-8ebe-1ff0ef8eec3b",
+      "item_name": "AFTERSHAVE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "166a48b8-202c-43c7-9d53-57777f194fde",
+      "item_name": "AGUA SEM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a6a8605e-1426-43c1-8616-a73dd8c7cb24",
+      "item_name": "ANTI CASPA - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "af765791-d803-45fe-9303-1db05e067ac6",
+      "item_name": "B.URB - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "50494c3f-dd54-4861-ba39-83af529d71e7",
+      "item_name": "BABOON - CEMENT EFECT",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5ccf59aa-225b-4af3-93cd-de8d8123e169",
+      "item_name": "BABOON - MATTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a1033a3f-3a78-4a32-8bb3-5af076b39918",
+      "item_name": "BABOON - ULTRA HOLD",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7ad377ca-ffe8-48ce-815b-c12aac4ffe05",
+      "item_name": "bala AZUL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ffbc9a2d-5f79-45b5-b7de-918159302625",
+      "item_name": "bala ROSA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6f294c38-88f1-4bb3-8c68-c1b608ced3b9",
+      "item_name": "bala VERDE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a477b66c-605b-409d-b8c8-a3f6836c5734",
+      "item_name": "BARBER'S BLEND",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a836b9a5-45c1-4d2f-8bd1-7bf4e7778ca7",
+      "item_name": "BELLBRUCK - IPA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "62da2f52-7de8-49c8-b29f-9ebd9be7f216",
+      "item_name": "BELLBRUCK - LAGER",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "23881784-a403-44ab-9c29-168dfb9a446b",
+      "item_name": "BELLBRUCK - PILSEN",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c61baf6b-1a60-4f58-97f0-7c4ae7d1b80c",
+      "item_name": "BELLBRUCK - WEISS",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3f1354fc-7379-4e21-bbe4-5be3cd467e9d",
+      "item_name": "CAFÉ",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5482dd3f-4b1b-4b0c-8b6b-41574c2a5408",
+      "item_name": "CAFÉ - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6969014c-c127-4c00-9980-e3a0a9729c44",
+      "item_name": "CAFÉ COM LEITE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "2cfdf0b3-faba-43e7-9450-6674cde73a01",
+      "item_name": "CAFÉ COM LEITE - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3a2662fd-a7a9-4b74-80a2-15d6f1af898e",
+      "item_name": "CAMPARI - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "08e2e006-3346-4ee1-92a8-277122528087",
+      "item_name": "CAPUCCINO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5e65e57b-9dfb-447e-b373-0298f39edd49",
+      "item_name": "CERVEJA HEINEKEN 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c985dece-466f-473a-8956-0a310fe695f6",
+      "item_name": "CERVEJA PETRA - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "4af8e1fb-e8f8-41ee-a7ce-97a303ce57f9",
+      "item_name": "Cerveja Sol - ZERO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "236038bf-d530-427c-92da-3b46f683ca4e",
+      "item_name": "CERVEJA SOL 310ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5332c810-48dd-4181-ba8e-b2902b6d9e1c",
+      "item_name": "Chicletes AZUL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c9a5d06e-8bd1-44c9-8446-7ff7a68ba613",
+      "item_name": "chicletes PRETO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c257c7be-906c-4e5b-8192-2f8d8379e36c",
+      "item_name": "Chicletes VERDE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "994225a6-c33d-4439-a21e-a7800847c4f8",
+      "item_name": "Chicletes VERMELHO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b31c3bea-8d9c-47e0-9055-e765bbedaee3",
+      "item_name": "CHOCOLATE QUENTE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d4f47f5d-d9c0-4e53-8a88-6335f3036ca1",
+      "item_name": "COCA COLA MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "88209434-36f7-44ca-95f5-22ed3f08d294",
+      "item_name": "COCA COLA ZERO MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "710b3ed6-dde1-4558-add3-ef856701c0c0",
+      "item_name": "COCA-COLA 310 ML lata",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f8dbdf11-d958-4b98-974f-6e2314269d6d",
+      "item_name": "DERMA ROLLER",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0414ab2b-8b36-43c8-b202-da7a6a751e17",
+      "item_name": "DON ALCIDES - BALM CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "fb888a17-edb7-48e1-b437-961fde4d4ee3",
+      "item_name": "DON ALCIDES - LEAVE-IN CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "296e4233-febc-4987-ab58-4d25b46f4f7f",
+      "item_name": "DON ALCIDES - LEAVE-IN GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a8a3bb58-5c9c-4dcc-ab49-9e23db1a38c2",
+      "item_name": "DON ALCIDES - LEAVE-IN LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f5bd9935-a20b-4573-8081-8d0907e022df",
+      "item_name": "DON ALCIDES - POMADA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "892cbf57-f3c3-436c-83fd-66876e0ce15b",
+      "item_name": "DON ALCIDES - POMADA GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "c3e8dadf-1637-4e82-bd72-e0a22bf1f853",
+      "item_name": "DON ALCIDES - POMADA LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f76a9204-c947-4825-a8c9-a75942bf2620",
+      "item_name": "DON ALCIDES - SHAMPOO CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3e40b1cc-1f12-4198-83a4-029ff517be4e",
+      "item_name": "DON ALCIDES - SHAMPOO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6a0e8f75-d3a4-413e-8e99-8dd7d64e66ae",
+      "item_name": "DON ALCIDES - SHAMPOO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "102dab96-8298-4d58-9231-e2a898625db8",
+      "item_name": "DON ALCIDES - SHAMPOO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b0251b7d-9171-48b5-97d5-ffbb6541a3d1",
+      "item_name": "DON ALCIDES - ÓLEO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d0f35755-04ac-47f4-89db-cfed87e79dfe",
+      "item_name": "DON ALCIDES - ÓLEO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "9064ea5b-9dd3-429e-a7ef-5cd2a38d5e17",
+      "item_name": "DON ALCIDES - ÓLEO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "bf1be43c-696f-47bc-b81a-182334a49a20",
+      "item_name": "ERVEN - BALM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "aec4f921-db35-4101-b791-b3cc70f296d5",
+      "item_name": "ERVEN - BEARD OIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d2e89e19-e6ab-4d08-a3bf-fe20ed3876ad",
+      "item_name": "ERVEN - CLASSIC GLOW",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "38dfce69-df3b-4e76-bcc6-26423a3a3081",
+      "item_name": "ERVEN - GOLD GEL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "753ca1e2-7ef3-4b8b-8890-9c7ac8ee920a",
+      "item_name": "ERVEN - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "2d20d53b-ba9c-41d4-97a9-590f8f554725",
+      "item_name": "ERVEN - MATTE CREAM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f7adfd3f-89fd-4278-bbfb-b56aba28a91a",
+      "item_name": "ERVEN - POWDER WAX CERA EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3cc15ce5-b0b3-4514-90f2-38fd54c7d67a",
+      "item_name": "ERVEN - PREMIUM PASTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "02b6f5be-d4fe-4c1c-a9d3-9f12ad9c7651",
+      "item_name": "Erven Special Shine",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "ac7e3242-4e1f-473f-b075-10719e395855",
+      "item_name": "FIREBALL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b6bc72b9-da34-48fe-bac5-986723cfe25f",
+      "item_name": "FOX - ACETINADO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f88834e4-35b2-4da6-8cf4-67b7ca9a9c22",
+      "item_name": "FOX - BALM PARA BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "5fd196c8-a7bf-406c-936f-63be21418186",
+      "item_name": "FOX - BLACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0cdd4253-0ef3-4fad-91dc-c74203c58cd4",
+      "item_name": "FOX - CARAMELO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "90eecb30-dbc9-4e08-b005-c5bcfad9a879",
+      "item_name": "FOX - COFFE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "58cc051f-df57-4198-b316-072180bc53ae",
+      "item_name": "FOX - EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "8d0d96ab-2958-4268-b36e-ae9dbca377ce",
+      "item_name": "FOX - GEL COLA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "e04be19a-0768-46e2-894c-854bf3fa466f",
+      "item_name": "FOX - PISTACHE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "0df0604c-1d8d-439a-816d-aeb02b56aaf7",
+      "item_name": "FOX - PREMIUM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "576209c8-d495-4910-bee3-9daa21d193e0",
+      "item_name": "FOX - SHAMPOO 4x1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "694d3ae5-32b7-4f24-898f-45939cfd209f",
+      "item_name": "FOX - TOQUE SECO PEQUENA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "d0c141aa-c69d-480f-963d-5f8994408fa5",
+      "item_name": "FOX - UVA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "75c0cc67-3d24-4060-8449-5442e5864513",
+      "item_name": "FOX - ÓLEO BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "f5041b88-b145-45e2-a818-5a3d3310350c",
+      "item_name": "FOX EFEITO TEIA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "bedc7765-16ab-493b-8dd4-485387e9f435",
+      "item_name": "FOX GRANDE TOQUE SECO 120 GRAMAS",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "47100e12-3050-40b1-9207-8f387e3111ed",
+      "item_name": "GARDEN - CERA DE ABELHA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "cf43eb40-934e-4559-9b9f-ef0a1b802f83",
+      "item_name": "GIUSEPPE - INK",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3818b71a-efd2-46a3-8842-3db6f823a1fa",
+      "item_name": "Grooming Fox",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6496e8c7-d95e-4641-a02d-0c1edfb9e3e8",
+      "item_name": "Imperio Larger",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "2eef3e30-3067-4e05-a5ac-29e936f20bb1",
+      "item_name": "KIRKLAND - MINOXIDIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a3d3f2ec-3d2a-427e-9d21-4ab43b30bf7e",
+      "item_name": "LEAVE-IN FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "4fc1617e-874b-4a18-a748-bf2ecd8d3990",
+      "item_name": "MINOX - SHAMPOO 4 EM 1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "9fa92ecd-d4c7-403d-a329-6994fc510f7b",
+      "item_name": "MONSTER MANGA 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "646f6616-652c-48e8-a273-c93ccbbfe185",
+      "item_name": "MONSTER PIPELINE PUNCH",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "6c97ef58-640e-47da-993d-bd1f3554b7b3",
+      "item_name": "MONSTER PÊSSEGO 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "41699fed-20e5-4b22-acb7-be4699ef9596",
+      "item_name": "MONSTER TRADICIONAL 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a7c18e9a-1637-44e8-8df4-bd4fccce9fdf",
+      "item_name": "MULLET EDGE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a24cb263-a2bb-4b76-8214-2af502b1a9ba",
+      "item_name": "Navalha",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "4db207d2-b3b1-47f0-84dc-19524a567904",
+      "item_name": "OWN - MATIZADOR",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "a2c7405a-5b7c-43df-a7cb-3f49fa98bf9a",
+      "item_name": "OWN - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7aa92d10-06a8-45d6-873c-6ff8cfa7364b",
+      "item_name": "OWN DRINK",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "17dc2a7d-14ff-4112-af5b-235b2af2e057",
+      "item_name": "Pirulito chups",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "9a172721-82d9-440c-b2e6-6e13642c0aa6",
+      "item_name": "REDBULL 250ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "7b11f099-61f9-4c4b-9a7a-59a37ff026d9",
+      "item_name": "SOUR FADE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "b469f5b3-20fa-47e4-8311-115c8ccc26ec",
+      "item_name": "WHISKY JIM BEAM - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "3df06af1-5df9-431a-9f50-dc08e00fe3ab",
+      "item_name": "WHISKY WHITE HORSE - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "72374e25-b9a4-4de8-b124-a1633f746850",
+      "item_name": "ÁGUA COM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T15:48:38.142173+00:00",
+      "unit_id": "d1af48cb-14e6-4ae7-a6d2-e28207deeafa"
+    },
+    {
+      "id": "aed91c15-7935-4872-aa43-d871e548ca7b",
+      "item_name": "3 EM 1 MINOXIDIL - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "faebc30b-f865-4dfb-9e53-e10f8336494d",
+      "item_name": "AGUA SEM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "f9a5b68b-75d4-4a15-a66e-2a5441bf3e51",
+      "item_name": "ANTI CASPA - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "1f06f487-a18b-4ea2-bfe8-e09a85a28b4d",
+      "item_name": "B.URB - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "3a5b1205-3b2c-4b51-b759-ad1811f88f36",
+      "item_name": "BABOON - CEMENT EFECT",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "78717484-293c-48c2-b7d8-757b13070ea1",
+      "item_name": "BABOON - MATTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "99c05a38-0324-47b3-a887-efd7749085a8",
+      "item_name": "BABOON - ULTRA HOLD",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "21ac2fb9-afd1-4b57-9431-a872050af719",
+      "item_name": "BALM CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "3645f53c-4aee-4881-a844-af83f6ca6b51",
+      "item_name": "Balm Erven",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "efcce09b-15ad-4f96-a93e-38cdb2dbde32",
+      "item_name": "BELLBRUCK - IPA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "5cc1490e-2434-42e3-9dec-302fcd995acb",
+      "item_name": "BELLBRUCK - LAGER",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "8836d33a-3ab3-4b77-ae7f-1d871d012d40",
+      "item_name": "BELLBRUCK - PILSEN",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "5f8a1bee-7420-4be0-8c0b-bff1a72dd053",
+      "item_name": "BELLBRUCK - WEISS",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "adee6229-1fa9-4f7f-9139-d9e843593b87",
+      "item_name": "CAFÉ",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "494ecd03-6b56-46c6-9076-6ae2fdd47f29",
+      "item_name": "CAFÉ - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d5af7b52-54d4-4155-8dd9-c0300e632678",
+      "item_name": "CAFÉ COM LEITE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "334fc00e-7186-4bf6-91ca-39d109792e07",
+      "item_name": "CAFÉ COM LEITE - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "dab65e72-ef15-4c19-9813-32c90add66b2",
+      "item_name": "CAPPUCINO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0cf38d76-5a7a-4eb1-bf11-17d13845d165",
+      "item_name": "CERVEJA HEINEKEN 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "a5cfb945-acbc-4903-bde2-7e2b4ad43d99",
+      "item_name": "CERVEJA PETRA - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d00f2896-e13d-4aa0-a528-bf01f6b7f471",
+      "item_name": "Cerveja Sol - ZERO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "c681fc8c-332b-4068-839f-8b3357c51229",
+      "item_name": "CERVEJA SOL 310ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "e3627c28-c1bd-4bbe-9178-ae00504af4d1",
+      "item_name": "CHOCOLATE QUENTE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "91f2c1e1-bc42-430b-834e-7725c94fe4ac",
+      "item_name": "COCA COLA LATA 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "02465f1c-4c23-493f-b7d4-3d3c258c4a61",
+      "item_name": "COCA COLA MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "a2324373-4887-4431-864f-7cac3ab7dee6",
+      "item_name": "COCA COLA ZERO MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "99eeadb3-dbf0-421c-b5a4-f73ffbde7dbf",
+      "item_name": "DERMA ROLLER",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "1ecb73da-a646-4b3b-b650-360f4d0cfd19",
+      "item_name": "DON ALCIDES - LEAVE-IN CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "097e1f7a-9a92-4c0e-b77e-b79429e2ba84",
+      "item_name": "DON ALCIDES - LEAVE-IN GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "c7fd2672-521b-497f-a26f-12edc77fb205",
+      "item_name": "DON ALCIDES - LEAVE-IN LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "7d352c3c-4c0c-42ac-83c8-526dfcefd6b1",
+      "item_name": "DON ALCIDES - SHAMPOO CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "f73319d3-6b24-4644-a25e-ccaba9dacee7",
+      "item_name": "DON ALCIDES - SHAMPOO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "10c4ec16-e11d-4b5d-a07b-ea9509512158",
+      "item_name": "DON ALCIDES - SHAMPOO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "86edc366-80eb-4073-af55-6392c88402c4",
+      "item_name": "ERVEN - BEARD OIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "93f601ec-20be-47bc-81f9-53d1c083f24d",
+      "item_name": "ERVEN - CLASSIC GLOW",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "6fa68593-3948-46aa-95b3-1a8d663879be",
+      "item_name": "ERVEN - GOLD GEL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "60d85d30-bba0-4308-9512-21b709000c6f",
+      "item_name": "ERVEN - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "32326ce8-738b-4803-921f-dcc86997ec4c",
+      "item_name": "ERVEN - MATTE CREAM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "ee93e746-81bd-440a-a6d1-d6cf19702cc7",
+      "item_name": "ERVEN - POWDER WAX CERA EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "da998512-348f-42a8-a0e2-58b1f70a8e56",
+      "item_name": "ERVEN - PREMIUM PASTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "a7b9e2ab-37ba-421c-b9b8-ad15238f09b2",
+      "item_name": "ERVEN- SPECIAL SHINE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "baf08379-c6b3-4234-b479-23a5b3134465",
+      "item_name": "FIXADOR FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "2bca55c0-79c5-40e3-a6b3-214c167e88e8",
+      "item_name": "FOX - ACETINADO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "7d27d695-5ee4-4bb9-9ba8-d525bdac6952",
+      "item_name": "FOX - BALM PARA BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d14189af-79a0-48c5-b356-9bacda54a117",
+      "item_name": "FOX - BLACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "3e6dcb4b-008f-45fd-bcbb-f1b2ef18e0c2",
+      "item_name": "FOX - CARAMELO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "ad71e6b9-f67d-4e55-85d9-491a9631a4f9",
+      "item_name": "FOX - COFFE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "9ffc6e01-7cf5-4736-ba57-a8a6ef69ea09",
+      "item_name": "FOX - EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "7aebee21-89cf-4cf5-8f50-3c258451d53c",
+      "item_name": "FOX - GEL COLA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "65906c2f-bcc6-427a-8804-abc0a0bb0729",
+      "item_name": "FOX - PISTACHE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "e60e32f7-5713-4b1d-b525-d0c1bd423cb7",
+      "item_name": "FOX - PREMIUM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "f90fc7d3-7d57-4dcc-8158-d8adb94ad232",
+      "item_name": "FOX - TEIA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "e8901f2f-4600-450a-9a2f-ef15d763ff1d",
+      "item_name": "FOX - TOQUE SECO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "aa3184d9-ae4d-4c35-809a-8626963c7a3a",
+      "item_name": "FOX - UVA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "12ad7f82-ae83-4ccd-a96f-d4d4b0b20f3a",
+      "item_name": "FOX - ÓLEO BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d0585027-8c4d-4f61-a35b-1e857ed03ea1",
+      "item_name": "FOX BLACK GRANDE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "3f8fe306-4559-4b1f-9bce-73f728e9a16d",
+      "item_name": "FOX TOQUE SECO GRANDE 120 G",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "b19f81c1-ce04-4a73-bd84-435773ee5952",
+      "item_name": "GARDEN - CERA DE ABELHA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "f5a6f0eb-0e1b-4c6c-a4ad-012e28cb4f44",
+      "item_name": "GROOMING FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "ba87a39a-871b-4d97-80cb-4602d28786de",
+      "item_name": "KIRKLAND - MINOXIDIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "467d05bb-d5a2-442f-9f91-14a9474cb1c5",
+      "item_name": "Leave in FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "ec1672b6-ea23-43c7-ba5f-68142bbf69f1",
+      "item_name": "MATIZADOR OWN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "7d8601c6-0fd8-472b-ad8e-edd0d102aaa6",
+      "item_name": "MINOX - SHAMPOO 4 EM 1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "34d48b23-bdb5-4e56-9b42-c58b349fd3f4",
+      "item_name": "MONSTER PÊSSEGO 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "64f6d483-65b2-4115-aaca-8450b910e58c",
+      "item_name": "MONSTER TRADICIONAL 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "2c197137-c593-4ce7-905b-5e5d0d6757c1",
+      "item_name": "OLEO BARBA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "75371062-bb56-4fa0-8221-4e65edea677a",
+      "item_name": "POMADA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "71ba78e6-782b-403a-a4e0-549278fc5ce2",
+      "item_name": "REDBULL 250ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "2b8df60a-4692-483e-ae25-c8870eb7e865",
+      "item_name": "SHAMPOO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "89d316a6-b06e-4c79-bf29-a60e9b76b785",
+      "item_name": "shampoo fox",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "233d21c2-929a-43ee-b215-69fe3efbab91",
+      "item_name": "SHAMPOO VERDE OWN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "3c9b0aad-ea88-4bd0-809b-211ea8ab3e58",
+      "item_name": "ÁGUA COM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "1d3d30e3-60a5-4963-ade1-e88a65de5ade",
+      "item_name": "ÓLEO BARBA GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:25:41.743032+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "60e075a4-aaf6-498b-b7ba-11d77352f2d2",
+      "item_name": "SHAMPOO OWN BARBER CLUB",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ccc91b73-3b38-451c-bf60-ed24fcef175b",
+      "item_name": "3 EM 1 MINOXIDIL - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "2afe4c7d-d79c-42ac-93d1-3f3cf87410bf",
+      "item_name": "AGUA SEM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "464c02d3-6d24-4c0c-a65d-083c0374ce2b",
+      "item_name": "BABOON - CEMENT EFECT",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "85694012-559b-47a0-b8cc-e8b948a796c6",
+      "item_name": "BABOON - MATTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4bffc371-1b56-4de3-974d-9f25ed9edd84",
+      "item_name": "BALM ERVEN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "c623fe32-d257-4c53-a424-a04131c86ce8",
+      "item_name": "BLACK LABEL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d0d2e15c-85dc-4581-83ae-823bff2162bc",
+      "item_name": "CAFÉ",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b82da94e-26fb-4634-a7d3-882a23fef570",
+      "item_name": "CAFÉ - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "219e65ef-04b1-4fef-9969-c282bd62db2c",
+      "item_name": "CAFÉ COM LEITE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3b0267fb-bf22-4641-bb75-e741f1bbcd47",
+      "item_name": "CAFÉ COM LEITE - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9be9f23a-9438-47fc-af2f-78a57ca49b8d",
+      "item_name": "CAMPARI - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b78d1703-14e5-41d1-a640-aa464427b5ce",
+      "item_name": "CAPUCCINO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "50c9b5b8-18a1-4c97-bee6-166fe4ddb203",
+      "item_name": "CERVEJA HEINEKEN 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4190cca2-e0e8-4f99-9cfa-5c0d0e2b68d6",
+      "item_name": "Cerveja Sol - ZERO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dbcb8f35-9ec3-4b3c-a82f-ccac2321b4d6",
+      "item_name": "CERVEJA SOL 310ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e5782f7f-271a-4753-8428-7e76ae7dea41",
+      "item_name": "COCA COLA 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "5f215493-f24b-4323-8565-785fc106d065",
+      "item_name": "COCA COLA MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "1ff80694-83c1-4868-ab19-4b70c3a7117d",
+      "item_name": "COCA COLA ZERO MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "6a15767e-6d1e-4ec4-ab83-8215d7082538",
+      "item_name": "DERMAROLLER",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "06d60100-a70e-4991-bf94-6148d4186e86",
+      "item_name": "DON ALCIDES - BALM CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "48aa3430-8572-4a70-b388-f3464cdc1d8f",
+      "item_name": "DON ALCIDES - LEAVE-IN CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ca385f57-c60d-4d78-9c83-6e18c14097ee",
+      "item_name": "DON ALCIDES - LEAVE-IN GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "af7429f0-634b-4a53-9742-fd1ffd863f5f",
+      "item_name": "DON ALCIDES - LEAVE-IN LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4be6779a-a8cf-4849-8006-cc90a647d3ec",
+      "item_name": "DON ALCIDES - POMADA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "bfe8ea83-8f13-46f2-96b3-dfaedc4b53ca",
+      "item_name": "DON ALCIDES - POMADA GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9354d69c-a517-47f6-80a0-6e03430d130b",
+      "item_name": "DON ALCIDES - POMADA LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "5007d8ca-1595-45a0-acfe-3b499cd5920d",
+      "item_name": "DON ALCIDES - SHAMPOO CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "0917767f-c7e6-434b-82e1-e62299843242",
+      "item_name": "DON ALCIDES - SHAMPOO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3879be44-6c28-4fe4-990b-b07d5995670c",
+      "item_name": "DON ALCIDES - SHAMPOO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "788e2077-6bc0-4811-a1aa-c590b6069dba",
+      "item_name": "DON ALCIDES - SHAMPOO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "11e0e195-2221-4e4f-b079-6b670ad2c211",
+      "item_name": "DON ALCIDES - ÓLEO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3fad20a0-abc0-4a81-b407-7015bc6b25af",
+      "item_name": "DON ALCIDES - ÓLEO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4dd991d8-0074-4f97-9684-c3f5656aa9e3",
+      "item_name": "DON ALCIDES - ÓLEO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "fbe8512b-620d-44e2-a92a-739df96b0132",
+      "item_name": "ERVEN - BEARD OIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e080862b-d477-4fc1-a921-904c54f5165e",
+      "item_name": "ERVEN - CLASSIC GLOW",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "162dd68a-5032-4433-85f7-9c894a52c7bf",
+      "item_name": "ERVEN - GOLD GEL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ef21f99c-8c6c-4ed6-bea0-89641369b72c",
+      "item_name": "ERVEN - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "51148538-2d5b-4dbf-8dd2-44f4c589f90e",
+      "item_name": "ERVEN - MATTE CREAM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d6e77886-bb97-4e42-a17c-0b343e7c9166",
+      "item_name": "ERVEN - POWDER WAX CERA EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4a636984-05cd-419d-819f-6200e2c74df9",
+      "item_name": "ERVEN - PREMIUM PASTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "54414e4d-0cc6-405f-96e7-78e7932ca064",
+      "item_name": "ERVEN- SPECIAL SHINE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b6a9c249-bc13-4af3-bc08-5f77d9af8124",
+      "item_name": "FIREBALL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ad1963ad-0cd3-4a2a-ab94-6c549e12a757",
+      "item_name": "FOX - ACETINADO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "99acd7f2-5aa7-45d1-a7c2-1ee7cd1a42a0",
+      "item_name": "FOX - BALM PARA BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "a8c0b506-673f-45b3-924b-599899269e4d",
+      "item_name": "FOX - BLACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "37397afa-e801-4138-ac6f-ce0dbccb128e",
+      "item_name": "FOX - CARAMELO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4570022e-ccc3-4721-b516-b86dff8fac6f",
+      "item_name": "FOX - COFFE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "fd733ef1-b412-4d8d-be43-c69c848ae156",
+      "item_name": "FOX - EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "54a0de11-47c1-40fc-9610-c32016ef5c0f",
+      "item_name": "FOX - GEL COLA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "67a80e6d-2f5b-4ac1-a6e9-5bf83f88e702",
+      "item_name": "FOX - GROOMING",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "0f1adb65-0949-43ad-b7a5-19e8e39298f5",
+      "item_name": "FOX - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "70d1572b-eaf2-46e9-aeb6-a4a7eb851d17",
+      "item_name": "FOX - PISTACHE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "27ece166-adb9-440c-ae2f-78eb7186ce31",
+      "item_name": "FOX - TEIA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "bbd01eb9-b8bd-4bea-8b85-f2032340575e",
+      "item_name": "FOX - TOQUE SECO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dd5104dd-95b4-43f1-83ed-c7186ccea07c",
+      "item_name": "FOX - UVA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "16d78f1b-09e1-4e67-91b5-3fd91c57bb0b",
+      "item_name": "FOX - ÓLEO BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "0f158157-b778-4804-8e25-da396639e34f",
+      "item_name": "FOX- TOQUE SECO GRANDE 120 G",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "20818cfa-2fde-4a9e-9460-3186668ce032",
+      "item_name": "GARDEN - CERA DE ABELHA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "db9fe5de-c99a-489e-abfa-02a73a3444b9",
+      "item_name": "KIRKLAND - MINOXIDIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "aade124f-c072-495c-9899-5317e0683ef4",
+      "item_name": "MINOX - SHAMPOO 4 EM 1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "efb37d33-25e7-449b-9290-f4842118b059",
+      "item_name": "MONSTER TRADICIONAL 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "50cd7428-924e-443d-bb6e-7c103c985369",
+      "item_name": "REDBULL 250ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ec66a28b-e5f8-44a3-925c-fffac41ca133",
+      "item_name": "SHAMPOO FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "f9f8db37-6ab8-4c30-a821-84250a6892b0",
+      "item_name": "WHISKY JIM BEAM - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ac5e3c0e-a483-4ef2-aa9f-aed697e73967",
+      "item_name": "WHISKY WHITE HORSE - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "797aca13-21f3-40f7-87cf-154d8a623d7d",
+      "item_name": "ÁGUA COM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:35.20216+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "a0876c58-c23c-45bc-b61d-dd3c7407c764",
+      "item_name": "SHAMPOO OWN BARBER CLUB",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ba2cb544-7933-4acf-b4dc-95f4bb5ed535",
+      "item_name": "3 EM 1 MINOXIDIL - SHAMPOO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b9bac131-f549-43ee-9876-9014cbc9d063",
+      "item_name": "AGUA SEM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "591348bd-7731-4690-90c2-d9e2abeb0caf",
+      "item_name": "BABOON - CEMENT EFECT",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3316247f-96a0-445d-871b-c1282b6fcd31",
+      "item_name": "BABOON - MATTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "492cf752-7943-43da-8fca-573fecbd9c7b",
+      "item_name": "BALM ERVEN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dd2bddd0-f39a-4d20-a663-8a03f7607c33",
+      "item_name": "BLACK LABEL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "18609f6f-2626-4fee-bdf3-e8eab4d823ed",
+      "item_name": "CAFÉ",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "1c7e4ef8-3c9d-4f66-9947-15ee7e3dc968",
+      "item_name": "CAFÉ - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "8addf0cb-052c-4048-9ccc-4a9829e60f55",
+      "item_name": "CAFÉ COM LEITE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "de8be6d0-c778-421f-8730-65049ac4cff0",
+      "item_name": "CAFÉ COM LEITE - CORTESIA",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "c4ab2bde-c4d2-42f2-a336-c8b583616677",
+      "item_name": "CAMPARI - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "47ddd256-8d40-4069-bcf5-60d72d9899bd",
+      "item_name": "CAPUCCINO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "cb69689b-ca3d-45f5-8f41-808b1627f7ad",
+      "item_name": "CERVEJA HEINEKEN 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "99790ce0-d9ce-4762-83f9-14cfc970053c",
+      "item_name": "Cerveja Sol - ZERO",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "36b919b1-2f00-4ae4-9329-e4ca9a530bb5",
+      "item_name": "CERVEJA SOL 310ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "fed8c62a-1b2d-430a-b1dd-7ecacc064641",
+      "item_name": "COCA COLA 310 ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e6b3903c-a431-454c-aef6-88bc2dae2545",
+      "item_name": "COCA COLA MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "829869e5-946d-4b55-a967-d3ed6bbae183",
+      "item_name": "COCA COLA ZERO MINI 200ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "8f690bd8-bd14-4522-bb6d-4620ea7e1646",
+      "item_name": "DERMAROLLER",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "f6a7d9ab-4f67-478e-8203-184431494c2f",
+      "item_name": "DON ALCIDES - BALM CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b030608c-10a1-44ba-91fd-4e2fdd6b9143",
+      "item_name": "DON ALCIDES - LEAVE-IN CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d74d4580-6663-47cf-b188-23394bf0a382",
+      "item_name": "DON ALCIDES - LEAVE-IN GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "111208b3-f389-498b-8ae8-b8471712557f",
+      "item_name": "DON ALCIDES - LEAVE-IN LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "6dc4de62-6f78-42af-9a93-f836fb5de919",
+      "item_name": "DON ALCIDES - POMADA CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "a99a01ef-7860-4fc1-adb1-7fd685921284",
+      "item_name": "DON ALCIDES - POMADA GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d88b142d-a19a-4527-ad9c-4746a1cb7aac",
+      "item_name": "DON ALCIDES - POMADA LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "577476ad-a38a-4511-ae13-a275bd4e300a",
+      "item_name": "DON ALCIDES - SHAMPOO CALICO JACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b6b8905c-44f7-4d1a-acc4-fc79d069ced3",
+      "item_name": "DON ALCIDES - SHAMPOO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "bb4fb035-e1c9-480f-b771-9f2b4b50ec69",
+      "item_name": "DON ALCIDES - SHAMPOO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ca9dc3c8-208f-415d-a23a-0ea77041b894",
+      "item_name": "DON ALCIDES - SHAMPOO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4186cf9a-8565-4ac2-b71d-2a26b28bafd2",
+      "item_name": "DON ALCIDES - ÓLEO CB2",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d5e5fde4-336a-40a0-b13a-ba86eb208df5",
+      "item_name": "DON ALCIDES - ÓLEO GUARANÁ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "61154407-043d-4755-b56b-82c70028fcc6",
+      "item_name": "DON ALCIDES - ÓLEO LEMON",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "c9bb5723-a81e-4869-a33c-a7e466968dcc",
+      "item_name": "ERVEN - BEARD OIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9e6d6671-155b-4545-9c68-d0f1fba9a555",
+      "item_name": "ERVEN - CLASSIC GLOW",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "7e0eaa90-e0eb-414f-9eab-1b110e5c3ebd",
+      "item_name": "ERVEN - GOLD GEL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "a6b8a9dd-d17a-45a1-9b46-505efbdf1cc6",
+      "item_name": "ERVEN - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "618e04b3-3e17-40a6-a0f0-3e0033fc0977",
+      "item_name": "ERVEN - MATTE CREAM",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "65d6e803-52d0-4a5c-a6d0-261f8b21e173",
+      "item_name": "ERVEN - POWDER WAX CERA EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "55955311-0dc0-44b5-8ecc-4a45ffd8744a",
+      "item_name": "ERVEN - PREMIUM PASTE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9667d128-6514-49bf-9d8a-33dd617cc819",
+      "item_name": "ERVEN- SPECIAL SHINE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e1ea83ab-6697-4985-9b99-ab2a1c4e3019",
+      "item_name": "FIREBALL - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9286c302-ec0b-4592-a1e2-900b77e6ace3",
+      "item_name": "FOX - ACETINADO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dcd36fef-4876-4085-8ea9-ca7c5491b186",
+      "item_name": "FOX - BALM PARA BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4ebbd956-a669-4fe1-a7b8-95b608dd2945",
+      "item_name": "FOX - BLACK",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "135eafcf-791e-4f08-a58f-c8ed131b65c5",
+      "item_name": "FOX - CARAMELO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "6866adcc-d18d-47ab-8886-11e53716841b",
+      "item_name": "FOX - COFFE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "70fe3355-bbee-45dc-8228-bcbe4618466a",
+      "item_name": "FOX - EM PÓ",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "466a82b9-5747-4d4a-b422-cbded85ddc7d",
+      "item_name": "FOX - GEL COLA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "0ead31d7-e8ae-4d67-9a33-70310553ee8a",
+      "item_name": "FOX - GROOMING",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "40dcc1b6-4745-47f8-ba49-abd7c4af1a55",
+      "item_name": "FOX - LEAVE-IN",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3e13f1dc-783e-475b-b44f-349c1930eb65",
+      "item_name": "FOX - PISTACHE",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d558b6c8-8ee5-4a94-be3c-71c716a2edf4",
+      "item_name": "FOX - TEIA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dc6990ad-3868-4835-9626-a37bf52653fc",
+      "item_name": "FOX - TOQUE SECO",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "1fa6e86f-e9c7-4b27-91a6-61a8622941f7",
+      "item_name": "FOX - UVA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "627d9556-73c9-41b4-a252-3edb166adb79",
+      "item_name": "FOX - ÓLEO BARBA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "60eb738f-8ef1-49fb-98ee-489c8c0602bd",
+      "item_name": "FOX- TOQUE SECO GRANDE 120 G",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "ddedb0e9-7685-4255-8a1f-ef3f1ce752a5",
+      "item_name": "GARDEN - CERA DE ABELHA",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "bd1dcad5-8150-4e8e-9380-a1f014cb72c0",
+      "item_name": "KIRKLAND - MINOXIDIL",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "779820b3-488e-4923-ac58-af56276072e3",
+      "item_name": "MINOX - SHAMPOO 4 EM 1",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "370b7a0c-49bb-4c45-b420-031e888b7dbd",
+      "item_name": "MONSTER TRADICIONAL 470ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "559d9b33-dc89-45d6-acfd-c3513237b710",
+      "item_name": "REDBULL 250ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "2f7e9e74-cc50-477a-b889-b537154dccfa",
+      "item_name": "SHAMPOO FOX",
+      "category": "produto",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3663523a-845e-4fd7-ac89-4aedadb96ba3",
+      "item_name": "WHISKY JIM BEAM - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "309f288e-0b8b-4058-ad88-7bad46ee64c7",
+      "item_name": "WHISKY WHITE HORSE - DOSE",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "b5ccac74-654f-4dbc-9566-370c16ee114c",
+      "item_name": "ÁGUA COM GÁS 500ML",
+      "category": "bebida",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:27:49.722605+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "927f16dd-61e2-4e26-9d27-45a03bf3e957",
+      "item_name": "1. Assinantes - Corte",
+      "category": "assinatura",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T16:28:54.78559+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "c6058725-da09-4215-b855-a422771ed6e9",
+      "item_name": "2. Assinantes - Barba",
+      "category": "assinatura",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T16:29:01.809397+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "fd9609df-a018-43de-818f-fd5221da0bfc",
+      "item_name": "3. Assinantes - Corte + Barba",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T16:29:08.623471+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "2ae8170a-ec0a-4d64-8723-3585ca9a1da5",
+      "item_name": "4. Assinantes - Corte - Pai e Filho",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T16:29:14.666101+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "60c8d716-4893-442d-9f2b-83a88f35782c",
+      "item_name": "Acabamento",
+      "category": "avulso",
+      "duration_minutes": 10,
+      "created_at": "2026-04-14T16:29:22.789697+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "3b443255-8481-4ba7-bc89-991ae191926f",
+      "item_name": "Adicional Freestyle",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:29.003821+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "4fff9da8-edaa-4ba1-abcf-32afc6b77aaa",
+      "item_name": "Alisamento Americano",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:36.452632+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "efd3a10c-c630-43f2-823f-b5e33bda5dd7",
+      "item_name": "Argila",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:43.469869+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "72a03860-9d42-4eb8-80af-d9a8a2f71bd6",
+      "item_name": "Barba",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:48.291844+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dd931370-1585-4ed1-80e8-4bc3228261b2",
+      "item_name": "Cone Hindu",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:54.780002+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "2e153f39-425d-45d1-9483-4ede3b8dd198",
+      "item_name": "Corte",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:29:59.4193+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e1a656d5-3082-4ab8-895e-6d15aa634fba",
+      "item_name": "Corte + Barba",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:05.092918+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "9e493fe6-0c4d-4e66-948d-a3d2d343ae38",
+      "item_name": "Depilação na Cera - Nariz ou Orelha",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:11.687356+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "d590c78c-0baf-4820-ae7b-ae1d46507b2e",
+      "item_name": "Freestyle (corte com desenho)",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:17.876887+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "cd9ba2e0-b3d2-4f47-ad8c-22cb47fb2a46",
+      "item_name": "Hidratação",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:23.288192+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "332c6ff0-bc7c-4250-a85e-d2383aca80de",
+      "item_name": "Limpeza de Pele",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:28.857548+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "dace80a0-2568-4b14-970a-d04b726e44fe",
+      "item_name": "Luzes",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:44.319978+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "131af7ff-58f8-4166-a068-792f3c8b8798",
+      "item_name": "MATIZAÇÃO",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:51.9456+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "17abbe40-11b6-45a3-b0f9-492035760b43",
+      "item_name": "Pigmentação",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:30:59.33588+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "92d596b2-604c-48b0-992b-4e3d5c5d9c71",
+      "item_name": "Platinado",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:05.810587+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e02b041f-bc0b-4489-8ccd-5336e46ca128",
+      "item_name": "Raspar",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:10.641554+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "7a0849ed-d012-421c-8396-e399261b72f5",
+      "item_name": "SELAGEM",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:16.078483+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "22f4eae8-8fc2-42aa-a679-a8d1988b8c41",
+      "item_name": "Sobrancelha",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:21.166935+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "e0091b59-34e0-4939-a43d-595d672d7bcd",
+      "item_name": "Sobrancelha com Cera",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:26.663319+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "de586ca3-7aee-4c92-9835-9beea335eddc",
+      "item_name": "Tonalizante",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:31:32.000204+00:00",
+      "unit_id": "5a7834fc-c563-405e-b6ec-0250552ece23"
+    },
+    {
+      "id": "a51ac7d3-daf6-4f5d-8cdc-23cd061027cd",
+      "item_name": "2. Assinantes - Barba",
+      "category": "assinatura",
+      "duration_minutes": 30,
+      "created_at": "2026-04-14T16:31:52.408729+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0b0d2921-52e8-4ac2-991f-7cc6719af5cf",
+      "item_name": "1. Assinantes - Corte",
+      "category": "assinatura",
+      "duration_minutes": 40,
+      "created_at": "2026-04-14T16:31:44.785197+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0fc2d3eb-c1bf-45c2-800e-bc6480f17b32",
+      "item_name": "3. Assinantes - Corte + Barba",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T16:32:07.043031+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "ba7fdf1f-e6dd-43a2-be29-1a65bccd3565",
+      "item_name": "4. Assinantes - Corte - Pai e Filho",
+      "category": "assinatura",
+      "duration_minutes": 60,
+      "created_at": "2026-04-14T16:32:16.243837+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "1622f734-8ddb-4c72-9fd2-2584b792031f",
+      "item_name": "Acabamento",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:30.236789+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "4fa49541-6fa6-472b-b801-eefd98cb955b",
+      "item_name": "Adicional Freestyle",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:38.441121+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "dea1b16a-d85a-4e8a-bb7b-33e3fe619d5e",
+      "item_name": "Alisamento Americano",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:43.985559+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "46492cd1-e811-4282-bd82-7792ad003464",
+      "item_name": "Argila",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:49.089644+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "8a85db6c-861f-4ed7-bfd7-42dc09c3650b",
+      "item_name": "Barba",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:53.258135+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "82ba7edc-b5e4-49c5-baf4-0c16e1fd7e21",
+      "item_name": "Cone Hindu",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:32:58.331588+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0605fcc8-6449-48c6-8fb7-5702b54d7ab4",
+      "item_name": "Corte",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:33:02.268728+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d1a8b669-9830-4c68-8380-8fa1741d9211",
+      "item_name": "Corte + Barba",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:33:07.349247+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "4ea46835-531e-4255-a497-49dbf49cef00",
+      "item_name": "Depilação Cera - Nariz ou Orelha",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:35:57.653871+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "6a5fdea1-71f8-4d86-a8c6-088549f67c0d",
+      "item_name": "Freestyle",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:02.769833+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "1e13759f-bac0-4e6a-96b5-910ee50c3ddf",
+      "item_name": "Hidratação",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:06.917671+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "23df6b41-2bbc-4b3f-9d40-73719dfb7548",
+      "item_name": "Limpeza de Pele",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:12.035685+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "2fc7da6e-31b7-4007-a61b-657433819a87",
+      "item_name": "Luzes",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:16.730947+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "a35329a3-2cc3-4947-8f9d-bf9b9cb62ae2",
+      "item_name": "MATIZAÇÃO",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:25.106821+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "d122c036-21f9-4195-9daf-ca781e319d6e",
+      "item_name": "Pigmentação",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:31.206341+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "8d1d4943-2d8a-46e7-9222-3444570f4048",
+      "item_name": "Platinado",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:45.539017+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "2b97d7a3-499c-4581-86fc-6b466612a059",
+      "item_name": "Raspar",
+      "category": "avulso",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:50.048132+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "0f7ecf1a-eb8d-440a-bb25-5e1cb87ac3a9",
+      "item_name": "SELAGEM",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:55.251851+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "5bae9e98-d6c1-4cc9-adbf-4a5d34bbbbbb",
+      "item_name": "Sobrancelha",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:36:59.809368+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "874b4f6e-6373-434f-a8f5-25a20b504227",
+      "item_name": "Sobrancelha com Cera",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:37:07.201163+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    },
+    {
+      "id": "6e3e6d2c-4a22-4db5-b6b9-f17069360ea2",
+      "item_name": "Tonalizante",
+      "category": "extra",
+      "duration_minutes": 0,
+      "created_at": "2026-04-14T16:37:12.182269+00:00",
+      "unit_id": "e82dd995-6aa5-4ee6-bf69-26c4d975ff26"
+    }
+  ]
+}

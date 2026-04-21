@@ -4,7 +4,6 @@ import { supabase } from './supabaseClient';
 import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
 
-import { LoginPage } from './components/LoginPage';
 import { BarbersSettings } from './components/BarbersSettings';
 import { ServicesSettings } from './components/ServicesSettings';
 import { GeneralSettings } from './components/GeneralSettings';
@@ -44,14 +43,40 @@ export default function App() {
 
   // 1. Gerenciamento de Sessão e Perfil
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) loadProfile(session.user.id);
-    });
+    const initAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      const searchParams = new URLSearchParams(window.location.search);
+      const hubUser = searchParams.get('hub_user');
+      const hubPass = searchParams.get('hub_pass');
+      
+      if (hubUser && hubPass) {
+        setLoading(true);
+        const { data: { session: newSession }, error: authError } = await supabase.auth.signInWithPassword({ 
+          email: hubUser, 
+          password: atob(hubPass) 
+        });
+        
+        if (!authError && newSession) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setSession(newSession);
+          loadProfile(newSession.user.id);
+          return;
+        }
+      }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) loadProfile(session.user.id);
+      if (error || !session) {
+        setLoading(false);
+      } else {
+        setSession(session);
+        loadProfile(session.user.id);
+      }
+    };
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, curSession) => {
+      setSession(curSession);
+      if (curSession) loadProfile(curSession.user.id);
       else setProfile(null);
     });
 
@@ -59,11 +84,17 @@ export default function App() {
   }, []);
 
   const loadProfile = async (userId: string) => {
-    const { data: p } = await supabase.from('commission_profiles').select('*').eq('id', userId).single();
-    if (p) setProfile(p);
+    // Busca perfil global do hub para saber nome e role global, ou podemos só forçar is_authorized
+    const { data: p } = await supabase.from('hub_profiles').select('*').eq('id', userId).single();
+    if (p) {
+      setProfile({ id: p.id, user_id: p.id, email: '', name: p.name, role: p.role, is_authorized: true, created_at: p.created_at } as UserProfile);
+    }
 
     // Carregar unidades permitidas
-    const { data: u } = await supabase.from('commission_units').select('*, commission_user_units!inner(user_id)').eq('commission_user_units.user_id', userId);
+    const { data: u } = await supabase.from('previa_units')
+      .select('*, previa_user_units!inner(user_id)')
+      .eq('previa_user_units.user_id', userId);
+      
     if (u) {
       setUnits(u);
       if (u.length > 0 && !activeUnitId) {
@@ -103,14 +134,14 @@ export default function App() {
       { data: allB },
       { data: hist }
     ] = await Promise.all([
-      supabase.from('commission_barbers').select('*').in('unit_id', unitIds).order('name'),
-      supabase.from('commission_settings').select('*').in('unit_id', unitIds),
-      supabase.from('commission_manual_minutes').select('*'),
-      supabase.from('commission_services').select('*').in('unit_id', unitIds).order('item_name'),
-      supabase.from('commission_cycles').select('*').order('month_year', { ascending: false }),
-      supabase.from('commission_records').select('*').order('service_date'),
-      supabase.from('commission_barbers').select('*'),
-      supabase.from('commission_historical_results').select('*')
+      supabase.from('previa_barbers').select('*').in('unit_id', unitIds).order('name'),
+      supabase.from('previa_settings').select('*').in('unit_id', unitIds),
+      supabase.from('previa_manual_minutes').select('*'),
+      supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
+      supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
+      supabase.from('previa_commission_records').select('*').order('service_date'),
+      supabase.from('previa_barbers').select('*'),
+      supabase.from('previa_historical_results').select('*')
     ]);
 
     if (b) setBarbers(b);
@@ -335,7 +366,15 @@ export default function App() {
   }, [records, barbers, activeCycle, activeUnitId, allUnitsSettings, manualMinutes, historicalResults, allBarbers, units, cycles]);
 
   // 3. Renderização Condicional (Auth e Permissões)
-  if (!session) return <LoginPage />;
+  if (!session) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#fff', padding: 24, textAlign: 'center' }}>
+        <h1 style={{ fontFamily: "'Titillium Web', sans-serif", fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Acesso Restrito</h1>
+        <p style={{ color: '#888', maxWidth: 400, }}>Você precisa estar logado pelo OWN Hub.</p>
+        <button onClick={() => window.location.href = 'https://ownpainel.vercel.app/'} style={{ marginTop: 32, padding: '14px 28px', background: '#E10600', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Acessar Hub</button>
+      </div>
+    );
+  }
 
   if (!profile || !profile.is_authorized) {
     return (
