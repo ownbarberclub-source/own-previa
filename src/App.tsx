@@ -12,6 +12,7 @@ import { PreviewDashboard } from './components/PreviewDashboard';
 import { RankingPanel } from './components/RankingPanel';
 import { UsersSettings } from './components/UsersSettings';
 import { UnitsSettings } from './components/UnitsSettings';
+import Logo from './assets/logo.png';
 
 type Tab = 'preview' | 'ranking' | 'upload' | 'settings';
 type SettingsTab = 'barbers' | 'services' | 'general' | 'users' | 'units';
@@ -426,7 +427,7 @@ export default function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 36, height: 36, backgroundColor: '#09090b', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #27272a', padding: 4, overflow: 'hidden' }}>
-                <img src="https://ownbarberclublp.vercel.app/assets/logo.png" alt="OWN" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                <img src={Logo} alt="OWN" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
               </div>
               <span style={{ fontWeight: 900, fontSize: 16, color: '#f4f4f5', letterSpacing: '-0.02em', fontFamily: 'Space Grotesk', textTransform: 'uppercase', fontStyle: 'italic' }}>
                 OWN <span style={{ color: 'var(--brand)' }}>PRÉVIA</span>
