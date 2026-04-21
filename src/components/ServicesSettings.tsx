@@ -43,7 +43,7 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemName.trim() || !unitId) return;
-    await supabase.from('commission_services').insert([{
+    await supabase.from('previa_services').insert([{
       id: crypto.randomUUID(),
       unit_id: unitId,
       item_name: itemName.trim(),
@@ -56,7 +56,7 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Remover este serviço?')) return;
-    await supabase.from('commission_services').delete().eq('id', id);
+    await supabase.from('previa_services').delete().eq('id', id);
     onRefresh();
   };
 
@@ -68,7 +68,7 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   };
 
   const handleSaveEdit = async (id: string) => {
-    await supabase.from('commission_services').update({
+    await supabase.from('previa_services').update({
       item_name: editItem.trim(),
       category: editCategory,
       duration_minutes: parseInt(editDuration) || 0,

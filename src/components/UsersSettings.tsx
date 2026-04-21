@@ -31,9 +31,9 @@ export function UsersSettings() {
       { data: u }, 
       { data: a }
     ] = await Promise.all([
-      supabase.from('commission_profiles').select('*').order('created_at', { ascending: false }),
-      supabase.from('commission_units').select('*').order('name'),
-      supabase.from('commission_user_units').select('*')
+      supabase.from('previa_profiles').select('*').order('created_at', { ascending: false }),
+      supabase.from('previa_units').select('*').order('name'),
+      supabase.from('previa_user_units').select('*')
     ]);
 
     if (p) setUsers(p);
@@ -43,26 +43,26 @@ export function UsersSettings() {
   };
 
   const updateStatus = async (id: string, is_authorized: boolean) => {
-    await supabase.from('commission_profiles').update({ is_authorized }).eq('id', id);
+    await supabase.from('previa_profiles').update({ is_authorized }).eq('id', id);
   };
 
   const updateRole = async (id: string, role: UserRole) => {
-    await supabase.from('commission_profiles').update({ role }).eq('id', id);
+    await supabase.from('previa_profiles').update({ role }).eq('id', id);
   };
 
   const toggleUnit = async (userId: string, unitId: string) => {
     const isAssigned = assignments.some(a => a.user_id === userId && a.unit_id === unitId);
     if (isAssigned) {
-      await supabase.from('commission_user_units').delete().match({ user_id: userId, unit_id: unitId });
+      await supabase.from('previa_user_units').delete().match({ user_id: userId, unit_id: unitId });
     } else {
-      await supabase.from('commission_user_units').insert([{ user_id: userId, unit_id: unitId }]);
+      await supabase.from('previa_user_units').insert([{ user_id: userId, unit_id: unitId }]);
     }
     loadAll();
   };
 
   const deleteUser = async (id: string) => {
     if (!window.confirm('Excluir este usuário permanentemente?')) return;
-    await supabase.from('commission_profiles').delete().eq('id', id);
+    await supabase.from('previa_profiles').delete().eq('id', id);
   };
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' as const };

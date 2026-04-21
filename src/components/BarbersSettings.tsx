@@ -24,7 +24,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !rate || !unitId) return;
-    await supabase.from('commission_barbers').insert([{
+    await supabase.from('previa_barbers').insert([{
       id: crypto.randomUUID(),
       unit_id: unitId,
       name: name.trim(),
@@ -36,7 +36,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Remover este barbeiro?')) return;
-    await supabase.from('commission_barbers').delete().eq('id', id);
+    await supabase.from('previa_barbers').delete().eq('id', id);
     onRefresh();
   };
 
@@ -47,7 +47,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   };
 
   const handleSaveEdit = async (id: string) => {
-    await supabase.from('commission_barbers').update({
+    await supabase.from('previa_barbers').update({
       name: editName.trim(),
       avulso_rate: parseFloat(editRate) / 100,
     }).eq('id', id);

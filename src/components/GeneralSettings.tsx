@@ -37,9 +37,9 @@ export function GeneralSettings({ settings, onRefresh, unitId }: GeneralSettings
 
     try {
       if (settings?.id) {
-        await supabase.from('commission_settings').update(newSettings).eq('id', settings.id);
+        await supabase.from('previa_settings').update(newSettings).eq('id', settings.id);
       } else {
-        await supabase.from('commission_settings').insert([{ id: crypto.randomUUID(), unit_id: unitId, ...newSettings }]);
+        await supabase.from('previa_settings').insert([{ id: crypto.randomUUID(), unit_id: unitId, ...newSettings }]);
       }
       setMessage({ type: 'success', text: 'Configurações salvas com sucesso!' });
       onRefresh();

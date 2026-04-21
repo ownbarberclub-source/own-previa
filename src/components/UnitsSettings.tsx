@@ -24,7 +24,7 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
   }, []);
 
   const loadUnits = async () => {
-    const { data } = await supabase.from('commission_units').select('*').order('name');
+    const { data } = await supabase.from('previa_units').select('*').order('name');
     if (data) setUnits(data);
     setLoading(false);
   };
@@ -34,14 +34,14 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
     if (!name.trim()) return;
     
     const unitId = crypto.randomUUID();
-    const { error } = await supabase.from('commission_units').insert([{
+    const { error } = await supabase.from('previa_units').insert([{
       id: unitId,
       name: name.trim(),
     }]);
 
     if (!error) {
       // Criar configurações padrão para a nova unidade
-      await supabase.from('commission_settings').insert([{
+      await supabase.from('previa_settings').insert([{
         unit_id: unitId,
         pot_rate: 0.40,
         extra_rate: 0.30,
@@ -60,13 +60,13 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
       return;
     }
     if (!window.confirm(`Remover a unidade "${unitName}"? Isso não apagará os dados vinculados, mas eles ficarão inacessíveis.`)) return;
-    await supabase.from('commission_units').delete().eq('id', id);
+    await supabase.from('previa_units').delete().eq('id', id);
     loadUnits();
     onRefresh();
   };
 
   const handleSaveEdit = async (id: string) => {
-    await supabase.from('commission_units').update({ name: editName.trim() }).eq('id', id);
+    await supabase.from('previa_units').update({ name: editName.trim() }).eq('id', id);
     setEditingId(null);
     loadUnits();
     onRefresh();

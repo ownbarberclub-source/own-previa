@@ -49,7 +49,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
       }));
 
       const { error } = await supabase
-        .from('commission_manual_minutes')
+        .from('previa_manual_minutes')
         .upsert(upserts, { onConflict: 'cycle_id,barber_id' });
 
       if (error) throw error;

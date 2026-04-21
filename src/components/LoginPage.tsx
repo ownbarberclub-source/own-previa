@@ -42,7 +42,7 @@ export function LoginPage() {
       setError(authError.message);
     } else if (data.user) {
       // Criar o perfil inicial
-      await supabase.from('commission_profiles').insert([{
+      await supabase.from('previa_profiles').insert([{
         id: data.user.id,
         email: data.user.email,
         role: 'viewer',

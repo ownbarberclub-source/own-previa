@@ -12,10 +12,10 @@ export const closeCycle = async (cycle: Cycle) => {
       { data: settings },
       { data: manualMinutes }
     ] = await Promise.all([
-      supabase.from('commission_records').select('*').eq('cycle_id', cycle.id),
-      supabase.from('commission_barbers').select('*'),
-      supabase.from('commission_settings').select('*'),
-      supabase.from('commission_manual_minutes').select('*').eq('cycle_id', cycle.id)
+      supabase.from('previa_records').select('*').eq('cycle_id', cycle.id),
+      supabase.from('previa_barbers').select('*'),
+      supabase.from('previa_settings').select('*'),
+      supabase.from('previa_manual_minutes').select('*').eq('cycle_id', cycle.id)
     ]);
 
     if (!records || !barbers || !settings) throw new Error('Data fetch failed');
@@ -101,12 +101,12 @@ export const closeCycle = async (cycle: Cycle) => {
 
     // 5. Insert into Supabase
     if (validPayload.length > 0) {
-      const { error: insErr } = await supabase.from('commission_historical_results').insert(validPayload);
+      const { error: insErr } = await supabase.from('previa_historical_results').insert(validPayload);
       if (insErr) throw insErr;
     }
 
     // 6. Update cycle
-    const { error: updErr } = await supabase.from('commission_cycles').update({ status: 'closed' }).eq('id', cycle.id);
+    const { error: updErr } = await supabase.from('previa_cycles').update({ status: 'closed' }).eq('id', cycle.id);
     if (updErr) throw updErr;
 
     alert('Mês fechado com sucesso!');
@@ -123,10 +123,10 @@ export const reopenCycle = async (cycle: Cycle) => {
   if (!window.confirm('Atenção: Ao reabrir, os rankings dinâmicos voltarão a usar as taxas atuais, substituindo os dados fechados. Tem certeza?')) return false;
 
   try {
-    const { error: delErr } = await supabase.from('commission_historical_results').delete().eq('cycle_id', cycle.id);
+    const { error: delErr } = await supabase.from('previa_historical_results').delete().eq('cycle_id', cycle.id);
     if (delErr) throw delErr;
 
-    const { error: updErr } = await supabase.from('commission_cycles').update({ status: 'open' }).eq('id', cycle.id);
+    const { error: updErr } = await supabase.from('previa_cycles').update({ status: 'open' }).eq('id', cycle.id);
     if (updErr) throw updErr;
 
     alert('Mês reaberto!');

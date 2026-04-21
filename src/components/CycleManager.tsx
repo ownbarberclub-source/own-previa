@@ -34,7 +34,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
       return;
     }
 
-    const { data, error } = await supabase.from('commission_cycles').insert([{
+    const { data, error } = await supabase.from('previa_cycles').insert([{
       id: crypto.randomUUID(),
       month_year: monthYear,
       subscription_total: 0
@@ -48,7 +48,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
 
   const handleUpdateSubTotal = async () => {
     if (!activeCycleId || !subTotal) return;
-    await supabase.from('commission_cycles').update({
+    await supabase.from('previa_cycles').update({
       subscription_total: parseFloat(subTotal.replace(',', '.'))
     }).eq('id', activeCycleId);
     setSubTotal('');
@@ -120,7 +120,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
 
         if (newRecords.length > 0) {
           // Salva no Supabase
-          const { error } = await supabase.from('commission_records').insert(newRecords);
+          const { error } = await supabase.from('previa_records').insert(newRecords);
           if (error) throw error;
           
           setUploadStatus({ type: 'success', text: `${newRecords.length} registros importados com sucesso!` });
@@ -142,7 +142,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
     if (!activeCycleId || !unitId) return;
     if (!window.confirm('Isso apagará OS REGISTROS DESTA UNIDADE para este ciclo. O faturamento de assinaturas e os dados de outras unidades serão mantidos. Continuar?')) return;
     
-    await supabase.from('commission_records').delete().match({ 
+    await supabase.from('previa_records').delete().match({ 
       cycle_id: activeCycleId,
       unit_id: unitId 
     });
