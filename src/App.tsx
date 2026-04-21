@@ -86,14 +86,13 @@ export default function App() {
   const loadProfile = async (userId: string) => {
     // Busca perfil global do hub para saber nome e role global, ou podemos só forçar is_authorized
     const { data: p } = await supabase.from('hub_profiles').select('*').eq('id', userId).single();
-    if (p) {
-      setProfile({ id: p.id, user_id: p.id, email: '', name: p.name, role: p.role, is_authorized: true, created_at: p.created_at } as UserProfile);
-    }
+    
+    // Auth bypass Incondicional se houver acesso ao JWT/Supabase
+    const userRole = p ? p.role : 'operator';
+    setProfile({ id: userId, user_id: userId, email: '', name: p?.name || 'Operador', role: userRole as any, is_authorized: true, created_at: p?.created_at || '' } as UserProfile);
 
-    // Carregar unidades permitidas
-    const { data: u } = await supabase.from('previa_units')
-      .select('*, previa_user_units!inner(user_id)')
-      .eq('previa_user_units.user_id', userId);
+    // Carregar todas as unidades da barbearia
+    const { data: u } = await supabase.from('previa_units').select('*');
       
     if (u) {
       setUnits(u);
@@ -376,19 +375,20 @@ export default function App() {
     );
   }
 
-  if (!profile || !profile.is_authorized) {
+  if (!profile || !profile.is_authorized || units.length === 0) {
+    if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#fff' }}>Sincronizando Nuvem...</div>;
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{ maxWidth: 450, textAlign: 'center', backgroundColor: '#18181b', padding: 40, borderRadius: 24, border: '1px solid #27272a' }}>
           <div style={{ width: 64, height: 64, backgroundColor: 'rgba(234,179,8,0.1)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
             <Clock size={32} color="#eab308" />
           </div>
-          <h2 style={{ color: '#f4f4f5', fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Acesso Pendente</h2>
+          <h2 style={{ color: '#f4f4f5', fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Carregando dados</h2>
           <p style={{ color: '#a1a1aa', fontSize: 15, lineHeight: 1.6, marginBottom: 32 }}>
-            Sua conta foi criada com sucesso, mas você precisa ser autorizado e vinculado a uma unidade por um administrador.
+            Sua conta tem acesso global via Hub, mas as planilhas da semana ainda estão carregando ou nenhuma unidade foi cadastrada no sistema.
           </p>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '12px', backgroundColor: '#27272a', color: '#f4f4f5', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
-            Sair e Voltar
+          <button onClick={() => window.location.href = 'https://ownpainel.vercel.app/'} style={{ width: '100%', padding: '12px', backgroundColor: '#27272a', color: '#f4f4f5', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
+            Voltar ao Hub
           </button>
         </div>
       </div>
@@ -396,7 +396,7 @@ export default function App() {
   }
 
   const isAdmin = profile.role === 'admin';
-  const canEdit = profile.role === 'admin' || profile.role === 'editor';
+  const canEdit = profile.role === 'admin' || profile.role === 'editor' || profile.role === 'operator';
   const currentUnit = units.find(u => u.id === activeUnitId);
 
   return (

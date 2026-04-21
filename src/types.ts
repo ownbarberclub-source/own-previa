@@ -117,7 +117,7 @@ export interface BarberResult {
   rankAnnual?: number;
 }
 
-export type UserRole = 'admin' | 'editor' | 'viewer';
+export type UserRole = 'admin' | 'editor' | 'viewer' | 'operator';
 
 export interface UserProfile {
   id: string;
