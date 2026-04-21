@@ -148,7 +148,7 @@ export default function App() {
       supabase.from('previa_manual_minutes').select('*'),
       supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
       supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
-      supabase.from('previa_commission_records').select('*').order('service_date'),
+      supabase.from('previa_records').select('*').order('service_date'),
       supabase.from('previa_barbers').select('*'),
       supabase.from('previa_historical_results').select('*')
     ]);
