@@ -135,7 +135,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
             category: finalCategory,
             value: val,
             commission: comm,
-            duration_minutes: finalCategory === 'assinatura' ? (mapping.duration_minutes || 0) : 0,
+            duration_minutes: 0,
             service_date: parseDate(dateStr)
           });
         }
