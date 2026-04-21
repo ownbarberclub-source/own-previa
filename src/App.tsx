@@ -123,7 +123,12 @@ export default function App() {
     loadAll();
 
     const channel = supabase.channel('app-realtime-sync')
-      .on('postgres_changes', { event: '*', schema: 'public' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_units' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_barbers' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_cycles' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_settings' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_manual_minutes' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_historical_results' }, () => loadAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
