@@ -384,7 +384,7 @@ export default function App() {
             Você precisa estar logado pelo OWN Hub para acessar este sistema.
           </p>
           <a 
-            href="https://own-hub.vercel.app"
+            href="https://ownpainel.vercel.app"
             style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: '#f4f4f5', color: '#09090b', fontWeight: 700, borderRadius: 12, textDecoration: 'none' }}
           >
             Ir para o Hub
