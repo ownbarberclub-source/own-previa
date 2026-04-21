@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid } from 'lucide-react';
+import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid, Lock, Database } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
@@ -24,7 +24,8 @@ export default function App() {
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [activeUnitId, setActiveUnitId] = useState<string | 'consolidated'>('');
-  
+  const [debugError, setDebugError] = useState<string>('');
+
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [allBarbers, setAllBarbers] = useState<Barber[]>([]);
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
@@ -57,6 +58,8 @@ export default function App() {
           password: atob(hubPass) 
         });
         
+        if (authError) setDebugError("Auth error: " + authError.message);
+
         if (!authError && newSession) {
           window.history.replaceState({}, document.title, window.location.pathname);
           setSession(newSession);
@@ -84,23 +87,29 @@ export default function App() {
   }, []);
 
   const loadProfile = async (userId: string) => {
-    // Busca perfil global do hub para saber nome e role global, ou podemos só forçar is_authorized
-    const { data: p } = await supabase.from('hub_profiles').select('*').eq('id', userId).single();
-    
-    // Auth bypass Incondicional se houver acesso ao JWT/Supabase
-    const userRole = p ? p.role : 'operator';
-    setProfile({ id: userId, user_id: userId, email: '', name: p?.name || 'Operador', role: userRole as any, is_authorized: true, created_at: p?.created_at || '' } as UserProfile);
+    try {
+      // Busca perfil global do hub para saber nome e role global, ou podemos só forçar is_authorized
+      const { data: p, error: pErr } = await supabase.from('hub_profiles').select('*').eq('id', userId).single();
+      if (pErr) setDebugError(prev => prev + " | HubProfileErr: " + pErr.message);
 
-    // Carregar todas as unidades da barbearia
-    const { data: u } = await supabase.from('previa_units').select('*');
-      
-    if (u) {
-      setUnits(u);
-      if (u.length > 0 && !activeUnitId) {
-        const stored = localStorage.getItem('@own-previa:last-unit');
-        const defaultUnitId = stored === 'consolidated' ? 'consolidated' : (u.find(x => x.id === stored)?.id || u[0].id);
-        setActiveUnitId(defaultUnitId);
+      // Auth bypass Incondicional se houver acesso ao JWT/Supabase
+      const userRole = p ? p.role : 'operator';
+      setProfile({ id: userId, user_id: userId, email: '', name: p?.name || 'Operador', role: userRole as any, is_authorized: true, created_at: p?.created_at || '' } as UserProfile);
+
+      // Carregar todas as unidades da barbearia
+      const { data: u, error: uErr } = await supabase.from('previa_units').select('*');
+      if (uErr) setDebugError(prev => prev + " | PreviaUnitsErr: " + uErr.message);
+        
+      if (u) {
+        setUnits(u);
+        if (u.length > 0 && !activeUnitId) {
+          const stored = localStorage.getItem('@own-previa:last-unit');
+          const defaultUnitId = stored === 'consolidated' ? 'consolidated' : (u.find(x => x.id === stored)?.id || u[0].id);
+          setActiveUnitId(defaultUnitId);
+        }
       }
+    } catch (e: any) {
+      setDebugError(prev => prev + " | Catch: " + e.message);
     }
     setLoading(false);
   };
@@ -367,10 +376,21 @@ export default function App() {
   // 3. Renderização Condicional (Auth e Permissões)
   if (!session) {
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#fff', padding: 24, textAlign: 'center' }}>
-        <h1 style={{ fontFamily: "'Titillium Web', sans-serif", fontSize: 24, fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Acesso Restrito</h1>
-        <p style={{ color: '#888', maxWidth: 400, }}>Você precisa estar logado pelo OWN Hub.</p>
-        <button onClick={() => window.location.href = 'https://ownpainel.vercel.app/'} style={{ marginTop: 32, padding: '14px 28px', background: '#E10600', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Acessar Hub</button>
+      <div style={{ minHeight: '100vh', backgroundColor: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div style={{ maxWidth: 400, width: '100%', textAlign: 'center', backgroundColor: '#18181b', padding: 40, borderRadius: 24, border: '1px solid #27272a' }}>
+          <Lock size={48} color="#52525b" style={{ margin: '0 auto 24px' }} />
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: '#f4f4f5', marginBottom: 16 }}>Acesso Restrito</h2>
+          <p style={{ color: '#a1a1aa', fontSize: 15, lineHeight: 1.6, marginBottom: 32 }}>
+            Você precisa estar logado pelo OWN Hub para acessar este sistema.
+          </p>
+          <a 
+            href="https://own-hub.vercel.app"
+            style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: '#f4f4f5', color: '#09090b', fontWeight: 700, borderRadius: 12, textDecoration: 'none' }}
+          >
+            Ir para o Hub
+          </a>
+          {debugError && <div style={{marginTop: 20, color: '#ef4444', fontSize: 12}}>{debugError}</div>}
+        </div>
       </div>
     );
   }
@@ -379,14 +399,13 @@ export default function App() {
     if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#fff' }}>Sincronizando Nuvem...</div>;
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <div style={{ maxWidth: 450, textAlign: 'center', backgroundColor: '#18181b', padding: 40, borderRadius: 24, border: '1px solid #27272a' }}>
-          <div style={{ width: 64, height: 64, backgroundColor: 'rgba(234,179,8,0.1)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-            <Clock size={32} color="#eab308" />
-          </div>
-          <h2 style={{ color: '#f4f4f5', fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Carregando dados</h2>
+        <div style={{ maxWidth: 400, width: '100%', textAlign: 'center', backgroundColor: '#18181b', padding: 40, borderRadius: 24, border: '1px solid #27272a' }}>
+          <Database size={48} color="#52525b" style={{ margin: '0 auto 24px' }} />
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: '#f4f4f5', marginBottom: 16 }}>Carregando dados...</h2>
           <p style={{ color: '#a1a1aa', fontSize: 15, lineHeight: 1.6, marginBottom: 32 }}>
             Sua conta tem acesso global via Hub, mas as planilhas da semana ainda estão carregando ou nenhuma unidade foi cadastrada no sistema.
           </p>
+          {debugError && <div style={{marginTop: 20, color: '#ef4444', fontSize: 12, textAlign: 'left', background: 'rgba(239,68,68,0.1)', padding: 10, borderRadius: 8}}>{debugError}</div>}
           <button onClick={() => window.location.href = 'https://ownpainel.vercel.app/'} style={{ width: '100%', padding: '12px', backgroundColor: '#27272a', color: '#f4f4f5', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
             Voltar ao Hub
           </button>
