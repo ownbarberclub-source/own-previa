@@ -105,6 +105,26 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           // significa que foi cobrado de forma avulsa.
           const finalCategory = (mapping.category === 'assinatura' && comm > 0) ? 'avulso' : mapping.category;
 
+          // Robust date parsing for Brazilian format (DD/MM/YYYY HH:mm:ss)
+          const parseDate = (dStr: string) => {
+            if (!dStr) return new Date().toISOString();
+            try {
+              if (dStr.includes('/')) {
+                const parts = dStr.split(' ');
+                const dateParts = parts[0].split('/');
+                if (dateParts.length === 3) {
+                  // Reconstruct as YYYY-MM-DD
+                  const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                  const time = parts[1] ? `T${parts[1]}` : 'T00:00:00';
+                  return new Date(`${isoDate}${time}`).toISOString();
+                }
+              }
+              return new Date(dStr).toISOString();
+            } catch (e) {
+              return new Date().toISOString();
+            }
+          };
+
           newRecords.push({
             cycle_id: activeCycleId,
             unit_id: unitId,
@@ -114,7 +134,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
             value: val,
             commission: comm,
             duration_minutes: finalCategory === 'assinatura' ? (mapping.duration_minutes || 0) : 0,
-            service_date: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString()
+            service_date: parseDate(dateStr)
           });
         }
 
