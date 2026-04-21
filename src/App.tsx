@@ -425,10 +425,10 @@ export default function App() {
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, backgroundColor: 'var(--brand)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Scissors size={16} color="white" />
+              <div style={{ width: 36, height: 36, backgroundColor: '#09090b', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #27272a', p: 4, overflow: 'hidden' }}>
+                <img src="https://ownbarberclublp.vercel.app/assets/logo.png" alt="OWN" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
               </div>
-              <span style={{ fontWeight: 800, fontSize: 16, color: '#f4f4f5', letterSpacing: '-0.02em', fontFamily: 'Space Grotesk' }}>
+              <span style={{ fontWeight: 900, fontSize: 16, color: '#f4f4f5', letterSpacing: '-0.02em', fontFamily: 'Space Grotesk', textTransform: 'uppercase', fontStyle: 'italic' }}>
                 OWN <span style={{ color: 'var(--brand)' }}>PRÉVIA</span>
               </span>
             </div>
