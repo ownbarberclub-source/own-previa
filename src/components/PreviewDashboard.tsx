@@ -211,7 +211,7 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                   <div>
                     <h3 style={{ fontSize: 20, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{res.barber.name}</h3>
                     <span style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 8 }}>
-                      Comissão {Math.round(res.barber.avulso_rate * 100)}%
+                      Comissão {Math.round(res.barber.avulso_rate)}%
                     </span>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', color: '#a1a1aa', fontWeight: 600, border: '1px solid rgba(255,255,255,0.1)' }}>Unidade: {res.rankUnit || '-'}º</span>
