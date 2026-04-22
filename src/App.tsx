@@ -378,13 +378,15 @@ export default function App() {
     // Assign Unit Rank
     finalMonthResults.forEach((r, i) => r.rankUnit = i + 1);
 
-    // 4. INTEGRATE CROSS-SITE DATA (Matching by Name)
-    const integrateCrossSite = (resList: BarberResult[]) => {
+    // 4. INTEGRATE CROSS-SITE DATA (Matching by Name and Period)
+    const integrateCrossSite = (resList: BarberResult[], period: 'month' | 'year') => {
       resList.forEach(r => {
-        const bEvals = crossSiteData.evaluations.filter(e => 
-          String(e.barber_id) === String(r.barber.id) || 
-          String(e.barberId) === String(r.barber.id)
-        );
+        const bEvals = crossSiteData.evaluations.filter(e => {
+          const matchesBarber = String(e.barber_id) === String(r.barber.id) || String(e.barberId) === String(r.barber.id);
+          const evalDate = e.service_date || e.date || '';
+          const matchesPeriod = period === 'month' ? evalDate.startsWith(currentMonth) : evalDate.startsWith(activeYear);
+          return matchesBarber && matchesPeriod;
+        });
         
         if (bEvals.length > 0) {
           const totalScore = bEvals.reduce((acc, curr) => acc + (Number(curr.satisfaction_level) || Number(curr.rating) || 0), 0);
@@ -393,10 +395,13 @@ export default function App() {
           r.adjustmentCount = bEvals.filter(e => !!e.needs_follow_up).length;
         }
 
-        const bRefs = crossSiteData.referrals.filter(ref => 
-          ref.barberId === r.barber.id || 
-          (ref.barberName || '').toLowerCase() === r.barber.name.toLowerCase()
-        );
+        const bRefs = crossSiteData.referrals.filter(ref => {
+          const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === r.barber.name.toLowerCase();
+          const refDate = ref.createdAt || ref.date || '';
+          const matchesPeriod = period === 'month' ? refDate.startsWith(currentMonth) : refDate.startsWith(activeYear);
+          return matchesBarber && matchesPeriod;
+        });
+        
         r.referralConversions = bRefs.reduce((acc, curr) => {
           const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed).length;
           return acc + closed;
@@ -404,8 +409,8 @@ export default function App() {
       });
     };
 
-    integrateCrossSite(finalMonthResults);
-    integrateCrossSite(finalAnnualResults);
+    integrateCrossSite(finalMonthResults, 'month');
+    integrateCrossSite(finalAnnualResults, 'year');
 
     return { 
       barberResultsData: { 
