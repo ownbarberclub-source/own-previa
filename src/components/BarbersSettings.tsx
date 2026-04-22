@@ -28,7 +28,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
       id: crypto.randomUUID(),
       unit_id: unitId,
       name: name.trim(),
-      avulso_rate: parseFloat(rate) / 100,
+      avulso_rate: parseInt(rate),
     }]);
     setName(''); setRate('');
     onRefresh();
@@ -43,13 +43,13 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const startEdit = (b: Barber) => {
     setEditingId(b.id);
     setEditName(b.name);
-    setEditRate(String(Math.round(b.avulso_rate * 100)));
+    setEditRate(String(b.avulso_rate));
   };
 
   const handleSaveEdit = async (id: string) => {
     await supabase.from('previa_barbers').update({
       name: editName.trim(),
-      avulso_rate: parseFloat(editRate) / 100,
+      avulso_rate: parseInt(editRate),
     }).eq('id', id);
     setEditingId(null);
     onRefresh();
@@ -128,7 +128,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
                       <td style={{ padding: '14px 24px', color: '#e4e4e7', fontWeight: 500 }}>{b.name}</td>
                       <td style={{ padding: '14px 24px' }}>
                         <span style={{ backgroundColor: 'rgba(225,6,0,0.1)', color: 'var(--brand)', padding: '4px 10px', borderRadius: 6, fontSize: 13, fontWeight: 700, border: '1px solid rgba(225,6,0,0.2)' }}>
-                          {Math.round(b.avulso_rate * 100)}%
+                          {b.avulso_rate}%
                         </span>
                       </td>
                       <td style={{ padding: '14px 24px', textAlign: 'right' }}>
