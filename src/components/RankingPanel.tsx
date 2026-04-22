@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package } from 'lucide-react';
+import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package, ShieldAlert } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 
@@ -32,6 +32,10 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
   const sortedByConversions = [...resultsToUse]
     .filter(res => (res.referralConversions || 0) > 0)
     .sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
+
+  const sortedByAdjustments = [...resultsToUse]
+    .filter(res => (res.adjustmentCount || 0) > 0)
+    .sort((a, b) => (b.adjustmentCount || 0) - (a.adjustmentCount || 0));
 
   const sortedByMinutes = [...resultsToUse].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
   const sortedByExtraCount = [...resultsToUse].sort((a, b) => b.extraCount - a.extraCount);
@@ -230,6 +234,25 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               ))}
             </div>
           </div>
+
+          {/* Ajustes - Ranking Negativo */}
+          <div style={{ ...cardStyle, border: '1px solid rgba(225,6,0,0.2)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'rgba(225,6,0,0.05)' }}>
+              <ShieldAlert size={16} color="var(--brand)" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Alertas de Controle (Ajustes)</h4>
+            </div>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByAdjustments.length > 0 ? sortedByAdjustments.map((res: BarberResult, idx: number) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByAdjustments.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: 'var(--brand)', fontWeight: 700 }}>{res.adjustmentCount} retornos</span>
+                </div>
+              )) : (
+                <p style={{ padding: '20px', fontSize: 12, color: '#52525b', textAlign: 'center' }}>Nenhum ajuste registrado</p>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

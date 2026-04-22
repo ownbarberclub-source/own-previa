@@ -121,6 +121,7 @@ export interface BarberResult {
   evaluationRating?: number;
   evaluationCount?: number;
   referralConversions?: number;
+  adjustmentCount?: number;
 }
 
 export type UserRole = 'admin' | 'editor' | 'viewer' | 'operator';

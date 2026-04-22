@@ -390,6 +390,7 @@ export default function App() {
           const totalScore = bEvals.reduce((acc, curr) => acc + (Number(curr.satisfaction_level) || Number(curr.rating) || 0), 0);
           r.evaluationRating = totalScore / bEvals.length;
           r.evaluationCount = bEvals.length;
+          r.adjustmentCount = bEvals.filter(e => !!e.needs_follow_up).length;
         }
 
         const bRefs = crossSiteData.referrals.filter(ref => 
