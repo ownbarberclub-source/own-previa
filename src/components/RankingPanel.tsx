@@ -33,6 +33,11 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
     .filter(res => (res.referralConversions || 0) > 0)
     .sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
 
+  const sortedByMinutes = [...resultsToUse].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
+  const sortedByExtraCount = [...resultsToUse].sort((a, b) => b.extraCount - a.extraCount);
+  const sortedByProductCount = [...resultsToUse].sort((a, b) => b.productCount - a.productCount);
+  const sortedByBebidaCount = [...resultsToUse].sort((a, b) => b.bebidaCount - a.bebidaCount);
+
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 20, overflow: 'hidden' as const };
 
   return (
@@ -131,7 +136,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Rei do Feedback</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByEvaluation.length > 0 ? sortedByEvaluation.map((res, idx) => (
+              {sortedByEvaluation.length > 0 ? sortedByEvaluation.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByEvaluation.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: '#eab308', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -151,7 +156,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre de Conversões</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByConversions.length > 0 ? sortedByConversions.map((res, idx) => (
+              {sortedByConversions.length > 0 ? sortedByConversions.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByConversions.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: 'var(--brand)', fontWeight: 700 }}>{res.referralConversions} vendas</span>
@@ -169,7 +174,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Rei das Assinaturas</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByMinutes.map((res, idx) => (
+              {sortedByMinutes.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByMinutes.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: '#60a5fa', fontWeight: 700 }}>{res.subscriptionMinutes} min</span>
@@ -185,7 +190,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre das Bebidas</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByBebidaCount.map((res, idx) => (
+              {sortedByBebidaCount.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByBebidaCount.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: '#4ade80', fontWeight: 700 }}>{res.bebidaCount} itens</span>
@@ -201,7 +206,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre dos Produtos</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByProductCount.map((res, idx) => (
+              {sortedByProductCount.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByProductCount.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{res.productCount} itens</span>
@@ -217,7 +222,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
               <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre dos Extras</h4>
             </div>
             <div style={{ padding: '8px 0' }}>
-              {sortedByExtraCount.map((res, idx) => (
+              {sortedByExtraCount.map((res: BarberResult, idx: number) => (
                 <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByExtraCount.length - 1 ? 'none' : '1px solid #27272a' }}>
                   <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
                   <span style={{ fontSize: 13, color: '#c084fc', fontWeight: 700 }}>{res.extraCount} serv.</span>
