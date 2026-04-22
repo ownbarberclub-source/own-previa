@@ -158,8 +158,8 @@ export default function App() {
       supabase.from('previa_records').select('*').order('service_date'),
       supabase.from('previa_barbers').select('*'),
       supabase.from('previa_historical_results').select('*'),
-      supabase.from('feedback_evaluations').select('barber_id, satisfaction_level, created_at, feedback_barbers(name)'),
-      supabase.from('referral_records').select('barberName, contacts, createdAt')
+      supabase.from('feedback_evaluations').select('barber_id, satisfaction_level, created_at'),
+      supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
     ]);
 
     if (b) setBarbers(b);
@@ -380,6 +380,7 @@ export default function App() {
     const integrateCrossSite = (resList: BarberResult[]) => {
       resList.forEach(r => {
         const bEvals = crossSiteData.evaluations.filter(e => 
+          e.barber_id === r.barber.id || 
           (e.feedback_barbers?.name || '').toLowerCase() === r.barber.name.toLowerCase()
         );
         if (bEvals.length > 0) {
@@ -388,6 +389,7 @@ export default function App() {
         }
 
         const bRefs = crossSiteData.referrals.filter(ref => 
+          ref.barberId === r.barber.id || 
           (ref.barberName || '').toLowerCase() === r.barber.name.toLowerCase()
         );
         r.referralConversions = bRefs.reduce((acc, curr) => {
