@@ -105,7 +105,6 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           // significa que foi cobrado de forma avulsa.
           const finalCategory = (mapping.category === 'assinatura' && comm > 0) ? 'avulso' : mapping.category;
 
-          if (finalCategory === 'assinatura') continue;
 
           // Robust date parsing for Brazilian format (DD/MM/YYYY HH:mm:ss)
           const parseDate = (dStr: string) => {
@@ -135,7 +134,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
             category: finalCategory,
             value: val,
             commission: comm,
-            duration_minutes: 0,
+            duration_minutes: mapping.duration_minutes || 0,
             service_date: parseDate(dateStr)
           });
         }
