@@ -51,7 +51,8 @@ export interface Cycle {
 export interface HistoricalResult {
   id: string;
   cycle_id: string;
-  barber_id: string;
+  barber_id: string | null;
+  barber_name?: string;
   unit_id: string;
   subscription_minutes: number;
   subscription_count: number;

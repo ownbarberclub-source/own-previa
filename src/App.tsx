@@ -206,8 +206,13 @@ export default function App() {
         totalNetworkMinutes += hr.subscription_minutes;
         totalCommissionSigs += hr.subscription_commission;
 
-        const barber = allBarbers.find(b => b.id === hr.barber_id);
-        if (!barber) return;
+        let barber = allBarbers.find(b => b.id === hr.barber_id);
+        const nameToUse = barber?.name || hr.barber_name || 'Ex-Barbeiro';
+        
+        if (!barber) {
+          // Create dummy barber for deleted ones
+          barber = { id: hr.barber_id || 'deleted', name: nameToUse, unit_id: hr.unit_id, avulso_rate: 0 } as Barber;
+        }
 
         networkMonthResults.push({
           barber: { ...barber }, unit_name: units.find(u => u.id === hr.unit_id)?.name || 'Unidade',
@@ -297,8 +302,13 @@ export default function App() {
     historicalResults.forEach(hr => {
        const cycle = cycles.find(c => c.id === hr.cycle_id);
        if (!cycle || !cycle.month_year.startsWith(activeYear)) return;
-       const barber = allBarbers.find(b => b.id === hr.barber_id);
-       if (!barber) return;
+       let barber = allBarbers.find(b => b.id === hr.barber_id);
+       const nameToUse = barber?.name || hr.barber_name || 'Ex-Barbeiro';
+
+       if (!barber) {
+         barber = { id: hr.barber_id || 'deleted', name: nameToUse, unit_id: hr.unit_id, avulso_rate: 0 } as Barber;
+       }
+
        processAnnual({
           barber: { ...barber },
           subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,

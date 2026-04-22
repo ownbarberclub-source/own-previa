@@ -76,6 +76,7 @@ export const closeCycle = async (cycle: Cycle) => {
         // Required payload for historical
         cycle_id: cycle.id,
         barber_id: barber.id,
+        barber_name: barber.name,
         unit_id: barber.unit_id,
         subscription_minutes: actualMinutes,
         subscription_count: actualSCnt,
