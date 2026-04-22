@@ -160,7 +160,7 @@ export default function App() {
       supabase.from('previa_records').select('*').order('service_date'),
       supabase.from('previa_barbers').select('*'),
       supabase.from('previa_historical_results').select('*'),
-      supabase.from('feedback_evaluations').select('barber_id, satisfaction_level, created_at'),
+      supabase.from('feedback_evaluations').select('*'),
       supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
     ]);
 
