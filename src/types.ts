@@ -116,6 +116,11 @@ export interface BarberResult {
   rankUnit?: number;
   rankNetwork?: number;
   rankAnnual?: number;
+
+  // Novos campos integrados
+  evaluationRating?: number;
+  evaluationCount?: number;
+  referralConversions?: number;
 }
 
 export type UserRole = 'admin' | 'editor' | 'viewer' | 'operator';

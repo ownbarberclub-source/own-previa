@@ -38,6 +38,7 @@ export default function App() {
   const [historicalResults, setHistoricalResults] = useState<HistoricalResult[]>([]);
   const [manualMinutes, setManualMinutes] = useState<ManualMinutes[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  const [crossSiteData, setCrossSiteData] = useState<{ evaluations: any[], referrals: any[] }>({ evaluations: [], referrals: [] });
   const [loading, setLoading] = useState(true);
 
   const activeCycle = useMemo(() => cycles.find(c => c.id === activeCycleId) || cycles[0] || null, [cycles, activeCycleId]);
@@ -145,7 +146,9 @@ export default function App() {
       { data: cy }, 
       { data: rec },
       { data: allB },
-      { data: hist }
+      { data: hist },
+      { data: evals },
+      { data: refs }
     ] = await Promise.all([
       supabase.from('previa_barbers').select('*').in('unit_id', unitIds).order('name'),
       supabase.from('previa_settings').select('*').in('unit_id', unitIds),
@@ -154,7 +157,9 @@ export default function App() {
       supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
       supabase.from('previa_records').select('*').order('service_date'),
       supabase.from('previa_barbers').select('*'),
-      supabase.from('previa_historical_results').select('*')
+      supabase.from('previa_historical_results').select('*'),
+      supabase.from('feedback_evaluations').select('barber_id, satisfaction_level, created_at, feedback_barbers(name)'),
+      supabase.from('referral_records').select('barberName, contacts, createdAt')
     ]);
 
     if (b) setBarbers(b);
@@ -179,6 +184,11 @@ export default function App() {
     }
     
     if (rec) setRecords(rec);
+
+    setCrossSiteData({ 
+      evaluations: evals || [], 
+      referrals: refs || [] 
+    });
   };
 
   const handleLogout = async () => {
@@ -366,6 +376,30 @@ export default function App() {
     // Assign Unit Rank
     finalMonthResults.forEach((r, i) => r.rankUnit = i + 1);
 
+    // 4. INTEGRATE CROSS-SITE DATA (Matching by Name)
+    const integrateCrossSite = (resList: BarberResult[]) => {
+      resList.forEach(r => {
+        const bEvals = crossSiteData.evaluations.filter(e => 
+          (e.feedback_barbers?.name || '').toLowerCase() === r.barber.name.toLowerCase()
+        );
+        if (bEvals.length > 0) {
+          r.evaluationRating = bEvals.reduce((acc, curr) => acc + curr.satisfaction_level, 0) / bEvals.length;
+          r.evaluationCount = bEvals.length;
+        }
+
+        const bRefs = crossSiteData.referrals.filter(ref => 
+          (ref.barberName || '').toLowerCase() === r.barber.name.toLowerCase()
+        );
+        r.referralConversions = bRefs.reduce((acc, curr) => {
+          const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed).length;
+          return acc + closed;
+        }, 0);
+      });
+    };
+
+    integrateCrossSite(finalMonthResults);
+    integrateCrossSite(finalAnnualResults);
+
     return { 
       barberResultsData: { 
         results: finalMonthResults, 
@@ -379,7 +413,7 @@ export default function App() {
       }, 
       annualResultsData: finalAnnualResults 
     };
-  }, [records, barbers, activeCycle, activeUnitId, allUnitsSettings, manualMinutes, historicalResults, allBarbers, units, cycles]);
+  }, [records, barbers, activeCycle, activeUnitId, allUnitsSettings, manualMinutes, historicalResults, allBarbers, units, cycles, crossSiteData]);
 
   // 3. Renderização Condicional (Auth e Permissões)
   if (!session) {

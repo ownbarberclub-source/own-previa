@@ -25,10 +25,13 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
   }
 
   const leader = resultsToUse[0];
-  const sortedByMinutes = [...resultsToUse].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
-  const sortedByExtraCount = [...resultsToUse].sort((a, b) => b.extraCount - a.extraCount);
-  const sortedByProductCount = [...resultsToUse].sort((a, b) => b.productCount - a.productCount);
-  const sortedByBebidaCount = [...resultsToUse].sort((a, b) => b.bebidaCount - a.bebidaCount);
+  const sortedByEvaluation = [...resultsToUse]
+    .filter(res => (res.evaluationCount || 0) > 0)
+    .sort((a, b) => (b.evaluationRating || 0) - (a.evaluationRating || 0));
+    
+  const sortedByConversions = [...resultsToUse]
+    .filter(res => (res.referralConversions || 0) > 0)
+    .sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
 
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 20, overflow: 'hidden' as const };
 
@@ -120,7 +123,45 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
         </div>
 
         {/* Grid de Sub-Rankings */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+          {/* Feedback */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <TrendingUp size={16} color="#eab308" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Rei do Feedback</h4>
+            </div>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByEvaluation.length > 0 ? sortedByEvaluation.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByEvaluation.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#eab308', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Target size={12} /> {res.evaluationRating?.toFixed(1)} <span style={{ fontSize: 10, color: '#52525b' }}>({res.evaluationCount})</span>
+                  </span>
+                </div>
+              )) : (
+                <p style={{ padding: '20px', fontSize: 12, color: '#52525b', textAlign: 'center' }}>Sem avaliações registradas</p>
+              )}
+            </div>
+          </div>
+
+          {/* Conversões */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <ArrowUpRight size={16} color="var(--brand)" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre de Conversões</h4>
+            </div>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByConversions.length > 0 ? sortedByConversions.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByConversions.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: 'var(--brand)', fontWeight: 700 }}>{res.referralConversions} vendas</span>
+                </div>
+              )) : (
+                <p style={{ padding: '20px', fontSize: 12, color: '#52525b', textAlign: 'center' }}>Sem conversões registradas</p>
+              )}
+            </div>
+          </div>
+
           {/* Assinaturas */}
           <div style={cardStyle}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
