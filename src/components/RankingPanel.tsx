@@ -69,8 +69,8 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32, alignItems: 'start' }}>
-        {/* Placar Geral */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        {/* Placar Geral - Destaque */}
         <div style={cardStyle}>
           <div style={{ padding: '24px 28px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 12 }}>
             <Trophy size={20} color="var(--brand)" />
@@ -119,68 +119,70 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
           </div>
         </div>
 
-        {/* Mini Rankings */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Top Assinaturas */}
-          <div style={{ ...cardStyle, padding: '20px 24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <div style={{ padding: 6, backgroundColor: 'rgba(59,130,246,0.1)', color: '#60a5fa', borderRadius: 8 }}>
-                <Users size={16} />
-              </div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rei das Assinaturas</h4>
+        {/* Grid de Sub-Rankings */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+          {/* Assinaturas */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Users size={16} color="#60a5fa" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Rei das Assinaturas</h4>
             </div>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByMinutes[0].barber.name}</p>
-            <p style={{ fontSize: 13, color: '#60a5fa', fontWeight: 600 }}>{sortedByMinutes[0].subscriptionMinutes} min atendidos</p>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByMinutes.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByMinutes.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#60a5fa', fontWeight: 700 }}>{res.subscriptionMinutes} min</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Top Bebidas (Qtd) */}
-          <div style={{ ...cardStyle, padding: '20px 24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <div style={{ padding: 6, backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80', borderRadius: 8 }}>
-                <Target size={16} />
-              </div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre das Bebidas</h4>
+          {/* Bebidas */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Beer size={16} color="#4ade80" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre das Bebidas</h4>
             </div>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByBebidaCount[0].barber.name}</p>
-            <p style={{ fontSize: 13, color: '#4ade80', fontWeight: 600 }}>{sortedByBebidaCount[0].bebidaCount} itens vendidos</p>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByBebidaCount.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByBebidaCount.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#4ade80', fontWeight: 700 }}>{res.bebidaCount} itens</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Top Produtos (Qtd) */}
-          <div style={{ ...cardStyle, padding: '20px 24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <div style={{ padding: 6, backgroundColor: 'rgba(234,179,8,0.1)', color: '#fbbf24', borderRadius: 8 }}>
-                <ArrowUpRight size={16} />
-              </div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre dos Produtos</h4>
+          {/* Produtos */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Package size={16} color="#fbbf24" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre dos Produtos</h4>
             </div>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByProductCount[0].barber.name}</p>
-            <p style={{ fontSize: 13, color: '#fbbf24', fontWeight: 600 }}>{sortedByProductCount[0].productCount} itens vendidos</p>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByProductCount.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByProductCount.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#fbbf24', fontWeight: 700 }}>{res.productCount} itens</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Top Extras (Qtd) */}
-          <div style={{ ...cardStyle, padding: '20px 24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <div style={{ padding: 6, backgroundColor: 'rgba(168,85,247,0.1)', color: '#c084fc', borderRadius: 8 }}>
-                <Target size={16} />
-              </div>
-              <h4 style={{ fontSize: 12, fontWeight: 700, color: '#a1a1aa', textTransform: 'uppercase' }}>Mestre dos Extras</h4>
+          {/* Extras */}
+          <div style={cardStyle}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Target size={16} color="#c084fc" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre dos Extras</h4>
             </div>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{sortedByExtraCount[0].barber.name}</p>
-            <p style={{ fontSize: 13, color: '#c084fc', fontWeight: 600 }}>{sortedByExtraCount[0].extraCount} serviços extras</p>
-          </div>
-
-          {/* Insights de Projeção */}
-          <div style={{ 
-            padding: 24, borderRadius: 20, backgroundColor: '#09090b', border: '1px solid #27272a',
-            backgroundImage: 'linear-gradient(to bottom right, rgba(225,6,0,0.05), transparent)'
-          }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <TrendingUp size={16} color="var(--brand)" />
-              <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--brand)', textTransform: 'uppercase' }}>Fim do Mês</span>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByExtraCount.map((res, idx) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByExtraCount.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#c084fc', fontWeight: 700 }}>{res.extraCount} serv.</span>
+                </div>
+              ))}
             </div>
-            <p style={{ fontSize: 14, color: '#e4e4e7', lineHeight: 1.5, fontWeight: 500 }}>
-              No ritmo atual, <strong style={{color: '#fff'}}>{[...barberResults].sort((a,b) => b.projectedCommission - a.projectedCommission)[0].barber.name}</strong> faturará mais no fim do mês!
-            </p>
           </div>
         </div>
       </div>
