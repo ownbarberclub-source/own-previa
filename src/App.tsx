@@ -10,7 +10,6 @@ import { GeneralSettings } from './components/GeneralSettings';
 import { CycleManager } from './components/CycleManager';
 import { PreviewDashboard } from './components/PreviewDashboard';
 import { RankingPanel } from './components/RankingPanel';
-import { RankingPanel } from './components/RankingPanel';
 import { UnitsSettings } from './components/UnitsSettings';
 import Logo from './assets/logo.png';
 
