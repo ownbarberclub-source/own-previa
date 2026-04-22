@@ -382,11 +382,13 @@ export default function App() {
     const integrateCrossSite = (resList: BarberResult[]) => {
       resList.forEach(r => {
         const bEvals = crossSiteData.evaluations.filter(e => 
-          e.barber_id === r.barber.id || 
-          (e.feedback_barbers?.name || '').toLowerCase() === r.barber.name.toLowerCase()
+          String(e.barber_id) === String(r.barber.id) || 
+          String(e.barberId) === String(r.barber.id)
         );
+        
         if (bEvals.length > 0) {
-          r.evaluationRating = bEvals.reduce((acc, curr) => acc + curr.satisfaction_level, 0) / bEvals.length;
+          const totalScore = bEvals.reduce((acc, curr) => acc + (Number(curr.satisfaction_level) || Number(curr.rating) || 0), 0);
+          r.evaluationRating = totalScore / bEvals.length;
           r.evaluationCount = bEvals.length;
         }
 
