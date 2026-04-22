@@ -10,12 +10,12 @@ import { GeneralSettings } from './components/GeneralSettings';
 import { CycleManager } from './components/CycleManager';
 import { PreviewDashboard } from './components/PreviewDashboard';
 import { RankingPanel } from './components/RankingPanel';
-import { UsersSettings } from './components/UsersSettings';
+import { RankingPanel } from './components/RankingPanel';
 import { UnitsSettings } from './components/UnitsSettings';
 import Logo from './assets/logo.png';
 
 type Tab = 'preview' | 'ranking' | 'upload' | 'settings';
-type SettingsTab = 'barbers' | 'services' | 'general' | 'users' | 'units';
+type SettingsTab = 'barbers' | 'services' | 'general' | 'units';
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
@@ -527,7 +527,6 @@ export default function App() {
             <div style={{ display: 'flex', gap: 4, marginBottom: 32, borderBottom: '1px solid #27272a', paddingBottom: 16 }}>
               {( [
                 { id: 'units', label: 'Unidades', icon: Building2 },
-                { id: 'users', label: 'Usuários', icon: UserCog },
                 { id: 'barbers', label: 'Barbeiros (' + (currentUnit?.name || '...') + ')', icon: Users, disabled: activeUnitId === 'consolidated' },
                 { id: 'services', label: 'Serviços e Produtos (' + (currentUnit?.name || '...') + ')', icon: Scissors, disabled: activeUnitId === 'consolidated' },
                 { id: 'general', label: 'Taxas Gerais', icon: TrendingUp, disabled: activeUnitId === 'consolidated' },
@@ -548,7 +547,6 @@ export default function App() {
             </div>
 
             {settingsTab === 'units' && <UnitsSettings onRefresh={loadAll} />}
-            {settingsTab === 'users' && <UsersSettings />}
             {activeUnitId !== 'consolidated' && (
               <>
                 {settingsTab === 'barbers' && <BarbersSettings barbers={barbers} onRefresh={loadAll} unitId={activeUnitId} />}
