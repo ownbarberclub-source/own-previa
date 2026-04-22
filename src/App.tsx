@@ -200,7 +200,6 @@ export default function App() {
     let potGlobal = 0;
     
     if (activeCycle.status === 'closed') {
-      const grouped: Record<string, BarberResult> = {};
       let totalCommissionSigs = 0;
 
       historicalResults.filter(hr => hr.cycle_id === activeCycle.id).forEach(hr => {
@@ -209,83 +208,67 @@ export default function App() {
 
         const barber = allBarbers.find(b => b.id === hr.barber_id);
         if (!barber) return;
-        if (!grouped[barber.name]) {
-          grouped[barber.name] = {
-             barber: { ...barber }, unit_name: 'Consolidado', // Will fix unit later
-             subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
-             avulsoRevenue: hr.avulso_revenue, extraRevenue: hr.extra_revenue, productRevenue: hr.product_revenue, bebidaRevenue: hr.bebida_revenue,
-             subscriptionCommission: hr.subscription_commission, avulsoCommission: hr.avulso_commission, extraCommission: hr.extra_commission, productCommission: hr.product_commission, bebidaCommission: hr.bebida_commission,
-             avulsoCount: hr.avulso_count, extraCount: hr.extra_count, productCount: hr.product_count, bebidaCount: hr.bebida_count,
-             totalCommission: hr.total_commission, projectedCommission: hr.total_commission
-          } as BarberResult;
-        } else {
-          const g = grouped[barber.name];
-          g.subscriptionMinutes += hr.subscription_minutes; g.subscriptionCount += hr.subscription_count;
-          g.avulsoRevenue += hr.avulso_revenue; g.extraRevenue += hr.extra_revenue; g.productRevenue += hr.product_revenue;
-          g.subscriptionCommission += hr.subscription_commission; g.avulsoCommission += hr.avulso_commission;
-          g.extraCommission += hr.extra_commission; g.productCommission += hr.product_commission; g.bebidaCommission += hr.bebida_commission;
-          g.avulsoCount += hr.avulso_count; g.extraCount += hr.extra_count; g.productCount += hr.product_count; g.bebidaCount += hr.bebida_count;
-          g.totalCommission += hr.total_commission; g.projectedCommission += hr.total_commission;
-        }
+
+        networkMonthResults.push({
+          barber: { ...barber }, unit_name: units.find(u => u.id === hr.unit_id)?.name || 'Unidade',
+          subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
+          avulsoRevenue: hr.avulso_revenue, extraRevenue: hr.extra_revenue, productRevenue: hr.product_revenue, bebidaRevenue: hr.bebida_revenue,
+          subscriptionCommission: hr.subscription_commission, avulsoCommission: hr.avulso_commission, extraCommission: hr.extra_commission, productCommission: hr.product_commission, bebidaCommission: hr.bebida_commission,
+          avulsoCount: hr.avulso_count, extraCount: hr.extra_count, productCount: hr.product_count, bebidaCount: hr.bebida_count,
+          totalCommission: hr.total_commission, projectedCommission: hr.total_commission
+        } as BarberResult);
       });
-      networkMonthResults = Object.values(grouped);
-      // Restore true unit for individual filtering later
-      networkMonthResults.forEach(r => { r.barber.unit_id = allBarbers.find(b => b.name === r.barber.name)?.unit_id || ''; });
       
       potBaseValue = totalCommissionSigs;
       valuePorMinutoGlobal = totalNetworkMinutes > 0 ? totalCommissionSigs / totalNetworkMinutes : 0;
     } else {
       // OPEN CYCLE
-      const targetRecords = records.filter(r => r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id);
-      
       potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
       potBaseValue = potGlobal;
       
       totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         if (manual) return sum + manual.minutes;
-        return sum + targetRecords.filter(r => r.barber_name === barber.name && r.category === 'assinatura').reduce((s, r) => s + r.duration_minutes, 0);
+        return sum + records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
       }, 0);
         
       valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
-      const unitResultsMap: Record<string, any> = {};
-
-      targetRecords.forEach(rec => {
-        if (!unitResultsMap[rec.barber_name]) {
-          unitResultsMap[rec.barber_name] = { 
-            subscriptionMinutes: 0, avulsoRevenue: 0, extraRevenue: 0, productRevenue: 0, bebidaRevenue: 0,
-            avulsoComm: 0, extraComm: 0, productComm: 0, bebidaComm: 0,
-            subscriptionCount: 0, avulsoCount: 0, extraCount: 0, productCount: 0, bebidaCount: 0,
-            barberName: rec.barber_name 
-          };
-        }
-        const bd = unitResultsMap[rec.barber_name];
-        if (rec.category === 'assinatura') { bd.subscriptionMinutes += rec.duration_minutes; bd.subscriptionCount++; }
-        else if (rec.category === 'avulso') { bd.avulsoRevenue += rec.value; bd.avulsoComm += (rec.commission || 0); bd.avulsoCount++; }
-        else if (rec.category === 'extra') { bd.extraRevenue += rec.value; bd.extraComm += (rec.commission || 0); bd.extraCount++; }
-        else if (rec.category === 'produto') { bd.productRevenue += rec.value; bd.productComm += (rec.commission || 0); bd.productCount++; }
-        else if (rec.category === 'bebida') { bd.bebidaRevenue += rec.value; bd.bebidaComm += (rec.commission || 0); bd.bebidaCount++; }
-      });
-
       const { elapsed, total } = getWorkingHours(currentMonth);
       const projectionFactor = elapsed > 0 ? total / elapsed : 1;
 
-      Object.values(unitResultsMap).forEach((data: any) => {
-        const barber = allBarbers.find(b => b.name === data.barberName);
-        if (!barber) return;
+      allBarbers.forEach(barber => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
+        const barberRecords = records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
+        
+        const data = {
+          subscriptionMinutes: 0, subscriptionCount: 0,
+          avulsoRevenue: 0, avulsoComm: 0, avulsoCount: 0,
+          extraRevenue: 0, extraComm: 0, extraCount: 0,
+          productRevenue: 0, productComm: 0, productCount: 0,
+          bebidaRevenue: 0, bebidaComm: 0, bebidaCount: 0
+        };
+
+        barberRecords.forEach(rec => {
+          if (rec.category === 'assinatura') { data.subscriptionMinutes += rec.duration_minutes; data.subscriptionCount++; }
+          else if (rec.category === 'avulso') { data.avulsoRevenue += rec.value; data.avulsoComm += (rec.commission || 0); data.avulsoCount++; }
+          else if (rec.category === 'extra') { data.extraRevenue += rec.value; data.extraComm += (rec.commission || 0); data.extraCount++; }
+          else if (rec.category === 'produto') { data.productRevenue += rec.value; data.productComm += (rec.commission || 0); data.productCount++; }
+          else if (rec.category === 'bebida') { data.bebidaRevenue += rec.value; data.bebidaComm += (rec.commission || 0); data.bebidaCount++; }
+        });
+
         const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
         const actualCount = manual ? Math.round(actualMinutes / 30) : data.subscriptionCount;
-
         const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
         const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
 
         networkMonthResults.push({
-          barber: { ...barber }, unit_name: units.find(u => u.id === barber.unit_id)?.name,
-          ...data,
-          subscriptionCount: actualCount, subscriptionMinutes: actualMinutes, subscriptionCommission,
-          avulsoCommission: data.avulsoComm, extraCommission: data.extraComm, productCommission: data.productComm, bebidaCommission: data.bebidaComm,
-          totalCommission, projectedCommission: totalCommission * projectionFactor,
+          barber: { ...barber }, unit_name: units.find(u => u.id === barber.unit_id)?.name || 'Unidade',
+          subscriptionMinutes: actualMinutes, subscriptionCount: actualCount,
+          avulsoRevenue: data.avulsoRevenue, avulsoCommission: data.avulsoComm, avulsoCount: data.avulsoCount,
+          extraRevenue: data.extraRevenue, extraCommission: data.extraComm, extraCount: data.extraCount,
+          productRevenue: data.productRevenue, productCommission: data.productComm, productCount: data.productCount,
+          bebidaRevenue: data.bebidaRevenue, bebidaCommission: data.bebidaComm, bebidaCount: data.bebidaCount,
+          subscriptionCommission, totalCommission, projectedCommission: totalCommission * projectionFactor,
         });
       });
     }
@@ -295,69 +278,79 @@ export default function App() {
     networkMonthResults.forEach((r, i) => r.rankNetwork = i + 1);
 
 
-    // 2. CALCULATE NETWORK WIDE ANNUAL RESULTS
+    // 2. CALCULATE NETWORK WIDE ANNUAL RESULTS (Always grouped by name)
     const groupedAnnual: Record<string, BarberResult> = {};
+    const processAnnual = (res: any) => {
+      if (!groupedAnnual[res.barber.name]) {
+        groupedAnnual[res.barber.name] = { ...res, unit_name: 'Consolidado' };
+      } else {
+        const g = groupedAnnual[res.barber.name];
+        g.subscriptionMinutes += res.subscriptionMinutes; g.subscriptionCount += res.subscriptionCount;
+        g.avulsoRevenue += res.avulsoRevenue; g.avulsoCommission += res.avulsoCommission; g.avulsoCount += res.avulsoCount;
+        g.extraRevenue += res.extraRevenue; g.extraCommission += res.extraCommission; g.extraCount += res.extraCount;
+        g.productRevenue += res.productRevenue; g.productCommission += res.productCommission; g.productCount += res.productCount;
+        g.bebidaRevenue += res.bebidaRevenue; g.bebidaCommission += res.bebidaCommission; g.bebidaCount += res.bebidaCount;
+        g.subscriptionCommission += res.subscriptionCommission; g.totalCommission += res.totalCommission; g.projectedCommission += res.projectedCommission;
+      }
+    };
+
     historicalResults.forEach(hr => {
        const cycle = cycles.find(c => c.id === hr.cycle_id);
        if (!cycle || !cycle.month_year.startsWith(activeYear)) return;
        const barber = allBarbers.find(b => b.id === hr.barber_id);
        if (!barber) return;
-       if (!groupedAnnual[barber.name]) {
-         groupedAnnual[barber.name] = {
-             barber: { ...barber }, unit_name: 'Consolidado',
-             subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
-             avulsoRevenue: hr.avulso_revenue, extraRevenue: hr.extra_revenue, productRevenue: hr.product_revenue, bebidaRevenue: hr.bebida_revenue,
-             subscriptionCommission: hr.subscription_commission, avulsoCommission: hr.avulso_commission, extraCommission: hr.extra_commission, productCommission: hr.product_commission, bebidaCommission: hr.bebida_commission,
-             avulsoCount: hr.avulso_count, extraCount: hr.extra_count, productCount: hr.product_count, bebidaCount: hr.bebida_count,
-             totalCommission: hr.total_commission, projectedCommission: hr.total_commission
-         } as BarberResult;
-       } else {
-         const g = groupedAnnual[barber.name];
-         g.subscriptionMinutes += hr.subscription_minutes; g.subscriptionCount += hr.subscription_count;
-         g.avulsoRevenue += hr.avulso_revenue; g.extraRevenue += hr.extra_revenue; g.productRevenue += hr.product_revenue;
-         g.subscriptionCommission += hr.subscription_commission; g.avulsoCommission += hr.avulso_commission;
-         g.extraCommission += hr.extra_commission; g.productCommission += hr.product_commission; g.bebidaCommission += hr.bebida_commission;
-         g.avulsoCount += hr.avulso_count; g.extraCount += hr.extra_count; g.productCount += hr.product_count; g.bebidaCount += hr.bebida_count;
-         g.totalCommission += hr.total_commission; g.projectedCommission += hr.total_commission;
-       }
+       processAnnual({
+          barber: { ...barber },
+          subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
+          avulsoRevenue: hr.avulso_revenue, avulsoCommission: hr.avulso_commission, avulsoCount: hr.avulso_count,
+          extraRevenue: hr.extra_revenue, extraCommission: hr.extra_commission, extraCount: hr.extra_count,
+          productRevenue: hr.product_revenue, productCommission: hr.product_commission, productCount: hr.product_count,
+          bebidaRevenue: hr.bebida_revenue, bebidaCommission: hr.bebida_commission, bebidaCount: hr.bebida_count,
+          subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission
+       });
     });
 
     if (activeCycle.status !== 'closed') {
-       networkMonthResults.forEach(r => {
-           if (!groupedAnnual[r.barber.name]) {
-               groupedAnnual[r.barber.name] = { ...r, projectedCommission: r.totalCommission, rankNetwork: 0, rankUnit: 0, rankAnnual: 0 }; 
-           } else {
-               const g = groupedAnnual[r.barber.name];
-               g.subscriptionMinutes += r.subscriptionMinutes; g.subscriptionCount += r.subscriptionCount;
-               g.avulsoRevenue += r.avulsoRevenue; g.extraRevenue += r.extraRevenue; g.productRevenue += r.productRevenue;
-               g.subscriptionCommission += r.subscriptionCommission; g.avulsoCommission += r.avulsoCommission;
-               g.extraCommission += r.extraCommission; g.productCommission += r.productCommission; g.bebidaCommission += r.bebidaCommission;
-               g.avulsoCount += r.avulsoCount; g.extraCount += r.extraCount; g.productCount += r.productCount; g.bebidaCount += r.bebidaCount;
-               g.totalCommission += r.totalCommission; g.projectedCommission += r.totalCommission;
-           }
-       });
+       networkMonthResults.forEach(r => processAnnual(r));
     }
 
     const networkAnnualResults = Object.values(groupedAnnual).sort((a,b) => b.totalCommission - a.totalCommission);
     networkAnnualResults.forEach((r, i) => r.rankAnnual = i + 1);
 
-    // Apply Annual Ranks to Month Results
+    // Apply Annual Ranks to Month Results (using name match)
     networkMonthResults.forEach(r => {
       const bAnnual = networkAnnualResults.find(a => a.barber.name === r.barber.name);
       if (bAnnual) r.rankAnnual = bAnnual.rankAnnual;
     });
 
 
-    // 3. FILTER RESULTS BY activeUnitId
+    // 3. FINAL FILTER AND CONSOLIDATION
     let finalMonthResults = networkMonthResults;
     let finalAnnualResults = networkAnnualResults;
 
-    if (!isConsolidated) {
-      finalMonthResults = networkMonthResults.filter(r => 
-        allBarbers.some(b => b.name === r.barber.name && b.unit_id === activeUnitId)
-      );
+    if (isConsolidated) {
+      // Group networkMonthResults by name
+      const groupedMonth: Record<string, BarberResult> = {};
+      networkMonthResults.forEach(r => {
+        if (!groupedMonth[r.barber.name]) {
+          groupedMonth[r.barber.name] = { ...r, unit_name: 'Consolidado' };
+        } else {
+          const g = groupedMonth[r.barber.name];
+          g.subscriptionMinutes += r.subscriptionMinutes; g.subscriptionCount += r.subscriptionCount;
+          g.avulsoRevenue += r.avulsoRevenue; g.avulsoCommission += r.avulsoCommission; g.avulsoCount += r.avulsoCount;
+          g.extraRevenue += r.extraRevenue; g.extraCommission += r.extraCommission; g.extraCount += r.extraCount;
+          g.productRevenue += r.productRevenue; g.productCommission += r.productCommission; g.productCount += r.productCount;
+          g.bebidaRevenue += r.bebidaRevenue; g.bebidaCommission += r.bebidaCommission; g.bebidaCount += r.bebidaCount;
+          g.subscriptionCommission += r.subscriptionCommission; g.totalCommission += r.totalCommission; g.projectedCommission += r.projectedCommission;
+        }
+      });
+      finalMonthResults = Object.values(groupedMonth).sort((a, b) => b.totalCommission - a.totalCommission);
+      // annual results are already grouped by name
+    } else {
+      // Individual unit filter
+      finalMonthResults = networkMonthResults.filter(r => r.barber.unit_id === activeUnitId);
       finalAnnualResults = networkAnnualResults.filter(r => 
-        allBarbers.some(b => b.name === r.barber.name && b.unit_id === activeUnitId)
+        allBarbers.filter(b => b.unit_id === activeUnitId).some(b => b.name === r.barber.name)
       );
     }
     
