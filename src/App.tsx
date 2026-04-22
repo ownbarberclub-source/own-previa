@@ -129,6 +129,8 @@ export default function App() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_settings' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_manual_minutes' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_historical_results' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'feedback_evaluations' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'referral_records' }, () => loadAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
