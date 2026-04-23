@@ -404,7 +404,8 @@ export default function App() {
         
         r.referralConversions = bRefs.reduce((acc, curr) => {
           const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed || c.status === 'converted').length;
-          return acc + closed;
+          const direct = curr.isDirectSale ? 1 : 0;
+          return acc + closed + direct;
         }, 0);
       });
     };
