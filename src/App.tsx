@@ -510,8 +510,8 @@ export default function App() {
               {[
                 { id: 'preview', label: 'Prévia', icon: BarChart3, show: true },
                 { id: 'ranking', label: 'Ranking', icon: Trophy, show: true },
-                { id: 'upload', label: 'Ciclo & Upload', icon: Upload, show: canEdit && activeUnitId !== 'consolidated' },
-                { id: 'settings', label: 'Configurações', icon: Settings, show: canEdit },
+                { id: 'upload', label: 'Ciclo & Upload', icon: Upload, show: true },
+                { id: 'settings', label: 'Configurações', icon: Settings, show: true },
               ].filter(t => t.show).map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -567,7 +567,7 @@ export default function App() {
             manualMinutes={manualMinutes}
           />
         )}
-        {activeTab === 'settings' && canEdit && (
+        {activeTab === 'settings' && (
           <div>
             <div style={{ display: 'flex', gap: 4, marginBottom: 32, borderBottom: '1px solid #27272a', paddingBottom: 16 }}>
               {( [
