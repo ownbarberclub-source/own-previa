@@ -403,7 +403,7 @@ export default function App() {
         });
         
         r.referralConversions = bRefs.reduce((acc, curr) => {
-          const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed).length;
+          const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed || c.status === 'converted').length;
           return acc + closed;
         }, 0);
       });
