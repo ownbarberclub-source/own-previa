@@ -58,6 +58,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
     setEditRate(String(b.avulso_rate));
   };
 
+  const handleSaveEdit = async (id: string) => {
     try {
       const { error } = await supabase.from('previa_barbers').update({
         name: editName.trim(),
@@ -70,6 +71,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
       console.error("Erro ao editar barbeiro:", err);
       alert("Falha ao atualizar dados do barbeiro.");
     }
+  };
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' };
   const input = {
