@@ -404,8 +404,7 @@ export default function App() {
         
         r.referralConversions = bRefs.reduce((acc, curr) => {
           const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed || c.status === 'converted').length;
-          const direct = curr.isDirectSale ? 1 : 0;
-          return acc + closed + direct;
+          return acc + closed;
         }, 0);
       });
     };
@@ -512,7 +511,7 @@ export default function App() {
                 { id: 'preview', label: 'Prévia', icon: BarChart3, show: true },
                 { id: 'ranking', label: 'Ranking', icon: Trophy, show: true },
                 { id: 'upload', label: 'Ciclo & Upload', icon: Upload, show: canEdit && activeUnitId !== 'consolidated' },
-                { id: 'settings', label: 'Configurações', icon: Settings, show: isAdmin },
+                { id: 'settings', label: 'Configurações', icon: Settings, show: canEdit },
               ].filter(t => t.show).map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
