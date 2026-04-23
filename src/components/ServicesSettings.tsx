@@ -43,21 +43,33 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemName.trim() || !unitId) return;
-    await supabase.from('previa_service_types').insert([{
-      id: crypto.randomUUID(),
-      unit_id: unitId,
-      item_name: itemName.trim(),
-      category,
-      duration_minutes: parseInt(duration) || 0,
-    }]);
-    setItemName(''); setCategory('assinatura'); setDuration('');
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_service_types').insert([{
+        id: crypto.randomUUID(),
+        unit_id: unitId,
+        item_name: itemName.trim(),
+        category,
+        duration_minutes: parseInt(duration) || 0,
+      }]);
+      if (error) throw error;
+      setItemName(''); setCategory('assinatura'); setDuration('');
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao adicionar serviço:", err);
+      alert("Falha ao salvar serviço no banco de dados.");
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Remover este serviço?')) return;
-    await supabase.from('previa_service_types').delete().eq('id', id);
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_service_types').delete().eq('id', id);
+      if (error) throw error;
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao excluir serviço:", err);
+      alert("Falha ao remover serviço.");
+    }
   };
 
   const startEdit = (s: ServiceType) => {
@@ -68,13 +80,19 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   };
 
   const handleSaveEdit = async (id: string) => {
-    await supabase.from('previa_service_types').update({
-      item_name: editItem.trim(),
-      category: editCategory,
-      duration_minutes: parseInt(editDuration) || 0,
-    }).eq('id', id);
-    setEditingId(null);
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_service_types').update({
+        item_name: editItem.trim(),
+        category: editCategory,
+        duration_minutes: parseInt(editDuration) || 0,
+      }).eq('id', id);
+      if (error) throw error;
+      setEditingId(null);
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao editar serviço:", err);
+      alert("Falha ao atualizar dados do serviço.");
+    }
   };
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' };

@@ -24,20 +24,32 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !rate || !unitId) return;
-    await supabase.from('previa_barbers').insert([{
-      id: crypto.randomUUID(),
-      unit_id: unitId,
-      name: name.trim(),
-      avulso_rate: parseInt(rate),
-    }]);
-    setName(''); setRate('');
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_barbers').insert([{
+        id: crypto.randomUUID(),
+        unit_id: unitId,
+        name: name.trim(),
+        avulso_rate: parseInt(rate),
+      }]);
+      if (error) throw error;
+      setName(''); setRate('');
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao adicionar barbeiro:", err);
+      alert("Falha ao salvar barbeiro no banco de dados.");
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Remover este barbeiro?')) return;
-    await supabase.from('previa_barbers').delete().eq('id', id);
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_barbers').delete().eq('id', id);
+      if (error) throw error;
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao excluir barbeiro:", err);
+      alert("Falha ao remover barbeiro. Verifique sua conexão.");
+    }
   };
 
   const startEdit = (b: Barber) => {
@@ -46,14 +58,18 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
     setEditRate(String(b.avulso_rate));
   };
 
-  const handleSaveEdit = async (id: string) => {
-    await supabase.from('previa_barbers').update({
-      name: editName.trim(),
-      avulso_rate: parseInt(editRate),
-    }).eq('id', id);
-    setEditingId(null);
-    onRefresh();
-  };
+    try {
+      const { error } = await supabase.from('previa_barbers').update({
+        name: editName.trim(),
+        avulso_rate: parseInt(editRate),
+      }).eq('id', id);
+      if (error) throw error;
+      setEditingId(null);
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao editar barbeiro:", err);
+      alert("Falha ao atualizar dados do barbeiro.");
+    }
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' };
   const input = {

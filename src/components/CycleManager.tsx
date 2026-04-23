@@ -34,25 +34,38 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
       return;
     }
 
-    const { data, error } = await supabase.from('previa_cycles').insert([{
-      id: crypto.randomUUID(),
-      month_year: monthYear,
-      subscription_total: 0
-    }]).select();
+    try {
+      const { data, error } = await supabase.from('previa_cycles').insert([{
+        id: crypto.randomUUID(),
+        month_year: monthYear,
+        subscription_total: 0
+      }]).select();
 
-    if (data) {
-      onRefresh();
-      onSelectCycle(data[0].id);
+      if (error) throw error;
+
+      if (data) {
+        onRefresh();
+        onSelectCycle(data[0].id);
+      }
+    } catch (err) {
+      console.error("Erro ao criar ciclo:", err);
+      alert("Falha ao criar novo mês no banco de dados.");
     }
   };
 
   const handleUpdateSubTotal = async () => {
     if (!activeCycleId || !subTotal) return;
-    await supabase.from('previa_cycles').update({
-      subscription_total: parseFloat(subTotal.replace(',', '.'))
-    }).eq('id', activeCycleId);
-    setSubTotal('');
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_cycles').update({
+        subscription_total: parseFloat(subTotal.replace(',', '.'))
+      }).eq('id', activeCycleId);
+      if (error) throw error;
+      setSubTotal('');
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao atualizar faturamento:", err);
+      alert("Falha ao salvar valor das assinaturas.");
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,11 +176,17 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
     if (!activeCycleId || !unitId) return;
     if (!window.confirm('Isso apagará OS REGISTROS DESTA UNIDADE para este ciclo. O faturamento de assinaturas e os dados de outras unidades serão mantidos. Continuar?')) return;
     
-    await supabase.from('previa_records').delete().match({ 
-      cycle_id: activeCycleId,
-      unit_id: unitId 
-    });
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_records').delete().match({ 
+        cycle_id: activeCycleId,
+        unit_id: unitId 
+      });
+      if (error) throw error;
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao limpar registros:", err);
+      alert("Falha ao limpar dados da unidade.");
+    }
   };
 
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' as const };

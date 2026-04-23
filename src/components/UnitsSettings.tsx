@@ -34,12 +34,14 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
     if (!name.trim()) return;
     
     const unitId = crypto.randomUUID();
-    const { error } = await supabase.from('previa_units').insert([{
-      id: unitId,
-      name: name.trim(),
-    }]);
+    try {
+      const { error } = await supabase.from('previa_units').insert([{
+        id: unitId,
+        name: name.trim(),
+      }]);
 
-    if (!error) {
+      if (error) throw error;
+
       // Criar configurações padrão para a nova unidade
       await supabase.from('previa_settings').insert([{
         unit_id: unitId,
@@ -51,6 +53,9 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
       setName('');
       loadUnits();
       onRefresh();
+    } catch (err) {
+      console.error("Erro ao adicionar unidade:", err);
+      alert("Falha ao cadastrar unidade no banco de dados.");
     }
   };
 
@@ -60,16 +65,28 @@ export function UnitsSettings({ onRefresh }: UnitsSettingsProps) {
       return;
     }
     if (!window.confirm(`Remover a unidade "${unitName}"? Isso não apagará os dados vinculados, mas eles ficarão inacessíveis.`)) return;
-    await supabase.from('previa_units').delete().eq('id', id);
-    loadUnits();
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_units').delete().eq('id', id);
+      if (error) throw error;
+      loadUnits();
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao excluir unidade:", err);
+      alert("Falha ao remover unidade. Verifique se há dados vinculados.");
+    }
   };
 
   const handleSaveEdit = async (id: string) => {
-    await supabase.from('previa_units').update({ name: editName.trim() }).eq('id', id);
-    setEditingId(null);
-    loadUnits();
-    onRefresh();
+    try {
+      const { error } = await supabase.from('previa_units').update({ name: editName.trim() }).eq('id', id);
+      if (error) throw error;
+      setEditingId(null);
+      loadUnits();
+      onRefresh();
+    } catch (err) {
+      console.error("Erro ao editar unidade:", err);
+      alert("Falha ao atualizar nome da unidade.");
+    }
   };
 
   const card = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 16, overflow: 'hidden' as const };
