@@ -567,7 +567,7 @@ export default function App() {
             manualMinutes={manualMinutes}
           />
         )}
-        {activeTab === 'settings' && isAdmin && (
+        {activeTab === 'settings' && canEdit && (
           <div>
             <div style={{ display: 'flex', gap: 4, marginBottom: 32, borderBottom: '1px solid #27272a', paddingBottom: 16 }}>
               {( [
