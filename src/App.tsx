@@ -152,13 +152,13 @@ export default function App() {
       { data: evals },
       { data: refs }
     ] = await Promise.all([
-      supabase.from('previa_barbers').select('*').in('unit_id', unitIds).order('name'),
+      supabase.from('previa_barbers').select('*').in('unit_id', unitIds).eq('is_hidden_crm', false).order('name'),
       supabase.from('previa_settings').select('*').in('unit_id', unitIds),
       supabase.from('previa_manual_minutes').select('*'),
       supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
       supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
       supabase.from('previa_records').select('*').order('service_date'),
-      supabase.from('previa_barbers').select('*'),
+      supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
       supabase.from('previa_historical_results').select('*'),
       supabase.from('feedback_evaluations').select('*'),
       supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
