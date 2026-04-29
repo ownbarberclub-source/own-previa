@@ -140,79 +140,85 @@ export default function App() {
     const isConsolidated = activeUnitId === 'consolidated';
     const unitIds = isConsolidated ? units.map(u => u.id) : [activeUnitId];
 
-    const [
-      { data: b }, 
-      { data: s }, 
-      { data: manual },
-      { data: st }, 
-      { data: cy }, 
-      { data: rec },
-      { data: allB },
-      { data: hist },
-      { data: evals },
-      { data: refs }
-    ] = await Promise.all([
-      supabase.from('previa_barbers').select('*').in('unit_id', unitIds).eq('is_hidden_crm', false).order('name'),
-      supabase.from('previa_settings').select('*').in('unit_id', unitIds),
-      supabase.from('previa_manual_minutes').select('*'),
-      supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
-      supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
-      (async () => {
-        let allData: any[] = [];
-        let from = 0;
-        while (true) {
-          const { data } = await supabase.from('previa_records').select('*').order('service_date').range(from, from + 999);
-          if (!data || data.length === 0) break;
-          allData = allData.concat(data);
-          if (data.length < 1000) break;
-          from += 1000;
-        }
-        return { data: allData };
-      })(),
-      supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
-      (async () => {
-        let allData: any[] = [];
-        let from = 0;
-        while (true) {
-          const { data } = await supabase.from('previa_historical_results').select('*').range(from, from + 999);
-          if (!data || data.length === 0) break;
-          allData = allData.concat(data);
-          if (data.length < 1000) break;
-          from += 1000;
-        }
-        return { data: allData };
-      })(),
-      supabase.from('feedback_evaluations').select('*'),
-      supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
-    ]);
+    try {
+      const [
+        { data: b }, 
+        { data: s }, 
+        { data: manual },
+        { data: st }, 
+        { data: cy }, 
+        { data: rec },
+        { data: allB },
+        { data: hist },
+        { data: evals },
+        { data: refs }
+      ] = await Promise.all([
+        supabase.from('previa_barbers').select('*').in('unit_id', unitIds).eq('is_hidden_crm', false).order('name'),
+        supabase.from('previa_settings').select('*').in('unit_id', unitIds),
+        supabase.from('previa_manual_minutes').select('*'),
+        supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
+        supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
+        (async () => {
+          let allData: any[] = [];
+          let from = 0;
+          while (true) {
+            const { data, error } = await supabase.from('previa_records').select('*').order('service_date').range(from, from + 999);
+            if (error) throw error;
+            if (!data || data.length === 0) break;
+            allData = allData.concat(data);
+            if (data.length < 1000) break;
+            from += 1000;
+          }
+          return { data: allData };
+        })(),
+        supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
+        (async () => {
+          let allData: any[] = [];
+          let from = 0;
+          while (true) {
+            const { data, error } = await supabase.from('previa_historical_results').select('*').range(from, from + 999);
+            if (error) throw error;
+            if (!data || data.length === 0) break;
+            allData = allData.concat(data);
+            if (data.length < 1000) break;
+            from += 1000;
+          }
+          return { data: allData };
+        })(),
+        supabase.from('feedback_evaluations').select('*'),
+        supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
+      ]);
 
-    if (b) setBarbers(b);
-    if (s) {
-      setAllUnitsSettings(s);
-      setAppSettings(s.find(x => x.unit_id === activeUnitId) || s[0] || null);
-    }
-    if (manual) setManualMinutes(manual);
-    if (st) setServiceTypes(st);
-    if (allB) setAllBarbers(allB);
-    if (hist) setHistoricalResults(hist);
-    
-    if (cy) {
-      setCycles(cy);
-      if (cy.length > 0) {
-        if (!activeCycleId) {
-          setActiveCycleId(cy[0].id);
-        } else if (!cy.find(c => c.id === activeCycleId)) {
-          setActiveCycleId(cy[0].id);
+      if (b) setBarbers(b);
+      if (s) {
+        setAllUnitsSettings(s);
+        setAppSettings(s.find(x => x.unit_id === activeUnitId) || s[0] || null);
+      }
+      if (manual) setManualMinutes(manual);
+      if (st) setServiceTypes(st);
+      if (allB) setAllBarbers(allB);
+      if (hist) setHistoricalResults(hist);
+      
+      if (cy) {
+        setCycles(cy);
+        if (cy.length > 0) {
+          if (!activeCycleId) {
+            setActiveCycleId(cy[0].id);
+          } else if (!cy.find(c => c.id === activeCycleId)) {
+            setActiveCycleId(cy[0].id);
+          }
         }
       }
-    }
-    
-    if (rec) setRecords(rec);
+      
+      if (rec) setRecords(rec);
 
-    setCrossSiteData({ 
-      evaluations: evals || [], 
-      referrals: refs || [] 
-    });
+      setCrossSiteData({ 
+        evaluations: evals || [], 
+        referrals: refs || [] 
+      });
+    } catch (err: any) {
+      setDebugError("loadAll Error: " + (err.message || String(err)));
+    }
   };
 
   const handleLogout = async () => {
