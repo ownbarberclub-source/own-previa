@@ -87,8 +87,10 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
         // Processamento dos dados da planilha
         // Colunas esperadas: Data, Valor, Tipo, Item, Profissional, Cliente
         const newRecords: Omit<CommissionRecord, 'id' | 'created_at'>[] = [];
+        const newIgnoredRows: { row: number; item: string; barber: string; reason: string }[] = [];
 
-        for (const row of data) {
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
           const itemName = String(row['Item'] || '').trim();
           const barberName = String(row['Profissional'] || '').trim();
           const rawValue = row['Valor'];
@@ -97,29 +99,34 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
 
           // 1. Verifica se o profissional na planilha existe no sistema PARA ESTA UNIDADE
           const barberExists = barbers.some(b => b.name === barberName && b.unit_id === unitId);
-          if (!barberExists) continue;
+          if (!barberExists) {
+            newIgnoredRows.push({ row: i + 2, item: itemName, barber: barberName, reason: 'Barbeiro não cadastrado nesta unidade' });
+            continue;
+          }
 
           // 2. Busca mapeamento do serviço NESTA unidade
           const mapping = serviceTypes.find(s => s.item_name === itemName && s.unit_id === unitId);
-          if (!mapping || mapping.category === 'ignorar') continue;
+          if (!mapping) {
+            newIgnoredRows.push({ row: i + 2, item: itemName, barber: barberName, reason: 'Serviço/Produto não mapeado nas configurações' });
+            continue;
+          }
+          if (mapping.category === 'ignorar') {
+            newIgnoredRows.push({ row: i + 2, item: itemName, barber: barberName, reason: 'Mapeado propositalmente como "Ignorar"' });
+            continue;
+          }
 
           // Função auxiliar para converter valores monetários da planilha
           const parseCurrency = (val: any) => {
             if (val === null || val === undefined) return 0;
             if (typeof val === 'string') {
-              // Remove R$ and spaces
               let clean = val.replace(/R\$\s*/g, '').trim();
-              // If it contains both dot and comma (e.g. 1.234,56 or 1,234.56)
               if (clean.includes('.') && clean.includes(',')) {
-                // If comma is after dot (Brazilian format 1.234,56)
                 if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
                   clean = clean.replace(/\./g, '').replace(',', '.');
                 } else {
-                  // If dot is after comma (US format 1,234.56)
                   clean = clean.replace(/,/g, '');
                 }
               } else if (clean.includes(',')) {
-                // Only comma, probably Brazilian decimal
                 clean = clean.replace(',', '.');
               }
               return parseFloat(clean) || 0;
@@ -134,8 +141,6 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           // significa que foi cobrado de forma avulsa.
           const finalCategory = (mapping.category === 'assinatura' && comm > 0) ? 'avulso' : mapping.category;
 
-
-          // Robust date parsing for Brazilian format (DD/MM/YYYY HH:mm:ss)
           const parseDate = (dStr: string) => {
             if (!dStr) return new Date().toISOString();
             try {
@@ -143,7 +148,6 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
                 const parts = dStr.split(' ');
                 const dateParts = parts[0].split('/');
                 if (dateParts.length === 3) {
-                  // Reconstruct as YYYY-MM-DD
                   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
                   const time = parts[1] ? `T${parts[1]}` : 'T00:00:00';
                   return new Date(`${isoDate}${time}`).toISOString();
@@ -168,12 +172,14 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           });
         }
 
-        if (newRecords.length > 0) {
-          // Salva no Supabase
-          const { error } = await supabase.from('previa_records').insert(newRecords);
-          if (error) throw error;
+        if (newRecords.length > 0 || newIgnoredRows.length > 0) {
+          if (newRecords.length > 0) {
+            const { error } = await supabase.from('previa_records').insert(newRecords);
+            if (error) throw error;
+          }
           
-          setUploadStatus({ type: 'success', text: `${newRecords.length} registros importados com sucesso!` });
+          setIgnoredRows(newIgnoredRows);
+          setUploadStatus({ type: 'success', text: `${newRecords.length} registros importados com sucesso! ${newIgnoredRows.length} ignorados.` });
           onRefresh();
         } else {
           setUploadStatus({ type: 'error', text: 'Nenhum registro compatível encontrado na planilha.' });
@@ -348,6 +354,37 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
                       }}>
                         {uploadStatus.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                         {uploadStatus.text}
+                      </div>
+                    )}
+
+                    {ignoredRows.length > 0 && (
+                      <div style={{ marginTop: 24, padding: 16, backgroundColor: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 12 }}>
+                        <h5 style={{ color: '#f87171', fontSize: 14, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <AlertCircle size={14} /> Relatório de Itens Ignorados ({ignoredRows.length})
+                        </h5>
+                        <p style={{ fontSize: 12, color: '#a1a1aa', marginBottom: 12 }}>Estes itens constam na planilha, mas não entraram no sistema. O valor final no sistema ficará menor do que o da planilha por causa deles:</p>
+                        <div style={{ maxHeight: 200, overflowY: 'auto', paddingRight: 8 }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                            <thead>
+                              <tr style={{ borderBottom: '1px solid #3f3f46', color: '#71717a' }}>
+                                <th style={{ textAlign: 'left', paddingBottom: 6 }}>Linha</th>
+                                <th style={{ textAlign: 'left', paddingBottom: 6 }}>Profissional</th>
+                                <th style={{ textAlign: 'left', paddingBottom: 6 }}>Serviço/Produto</th>
+                                <th style={{ textAlign: 'left', paddingBottom: 6 }}>Motivo</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {ignoredRows.map((r, i) => (
+                                <tr key={i} style={{ borderBottom: '1px solid #27272a' }}>
+                                  <td style={{ padding: '8px 0', color: '#a1a1aa' }}>{r.row}</td>
+                                  <td style={{ padding: '8px 0', color: '#f4f4f5' }}>{r.barber || '-'}</td>
+                                  <td style={{ padding: '8px 0', color: '#f4f4f5' }}>{r.item || '-'}</td>
+                                  <td style={{ padding: '8px 0', color: '#f87171' }}>{r.reason}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     )}
                   </div>
