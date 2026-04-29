@@ -23,6 +23,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
   const [subTotal, setSubTotal] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ type: '', text: '' });
+  const [ignoredRows, setIgnoredRows] = useState<{ row: number; item: string; barber: string; reason: string }[]>([]);
 
   const activeCycle = cycles.find(c => c.id === activeCycleId);
 
