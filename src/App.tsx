@@ -229,7 +229,7 @@ export default function App() {
     const isConsolidated = activeUnitId === 'consolidated';
     const currentMonth = activeCycle.month_year;
     const globalSettings = allUnitsSettings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || allUnitsSettings[0];
-    const activeYear = activeCycle.month_year.split('-')[0] || new Date().getFullYear().toString();
+    const activeYear = (activeCycle.month_year || '').split('-')[0] || new Date().getFullYear().toString();
 
     // 1. CALCULATE NETWORK WIDE MONTH RESULTS
     let networkMonthResults: BarberResult[] = [];
@@ -340,7 +340,7 @@ export default function App() {
 
     historicalResults.forEach(hr => {
        const cycle = cycles.find(c => c.id === hr.cycle_id);
-       if (!cycle || !cycle.month_year.startsWith(activeYear)) return;
+       if (!cycle || !cycle.month_year?.startsWith(activeYear)) return;
        let barber = allBarbers.find(b => b.id === hr.barber_id);
        const nameToUse = barber?.name || hr.barber_name || 'Ex-Barbeiro';
 
@@ -424,7 +424,7 @@ export default function App() {
         }
 
         const bRefs = crossSiteData.referrals.filter(ref => {
-          const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === r.barber.name.toLowerCase();
+          const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
           const refDate = ref.createdAt || ref.date || '';
           const matchesPeriod = period === 'month' ? refDate.startsWith(currentMonth) : refDate.startsWith(activeYear);
           return matchesBarber && matchesPeriod;
