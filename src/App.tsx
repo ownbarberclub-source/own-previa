@@ -161,7 +161,9 @@ export default function App() {
         (async () => {
           let allData: any[] = [];
           let from = 0;
-          while (true) {
+          let safetyCount = 0;
+          while (safetyCount < 100) {
+            safetyCount++;
             const { data, error } = await supabase.from('previa_records').select('*').order('service_date').range(from, from + 999);
             if (error) throw error;
             if (!data || data.length === 0) break;
@@ -175,7 +177,9 @@ export default function App() {
         (async () => {
           let allData: any[] = [];
           let from = 0;
-          while (true) {
+          let safetyCount = 0;
+          while (safetyCount < 100) {
+            safetyCount++;
             const { data, error } = await supabase.from('previa_historical_results').select('*').range(from, from + 999);
             if (error) throw error;
             if (!data || data.length === 0) break;
@@ -566,6 +570,12 @@ export default function App() {
 
       {/* Main */}
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+        {debugError && (
+          <div style={{ backgroundColor: '#7f1d1d', color: 'white', padding: 16, borderRadius: 8, marginBottom: 24 }}>
+            <strong>Erro Encontrado:</strong> {debugError}
+          </div>
+        )}
+        
         {activeTab === 'preview' && (
           <PreviewDashboard
             barberResults={barberResultsData.results}
