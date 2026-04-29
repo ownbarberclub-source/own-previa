@@ -157,11 +157,33 @@ export default function App() {
       supabase.from('previa_manual_minutes').select('*'),
       supabase.from('previa_service_types').select('*').in('unit_id', unitIds).order('item_name'),
       supabase.from('previa_cycles').select('*').order('month_year', { ascending: false }),
-      supabase.from('previa_records').select('*').order('service_date').limit(100000),
+      (async () => {
+        let allData: any[] = [];
+        let from = 0;
+        while (true) {
+          const { data } = await supabase.from('previa_records').select('*').order('service_date').range(from, from + 999);
+          if (!data || data.length === 0) break;
+          allData = allData.concat(data);
+          if (data.length < 1000) break;
+          from += 1000;
+        }
+        return { data: allData };
+      })(),
       supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
-      supabase.from('previa_historical_results').select('*').limit(100000),
-      supabase.from('feedback_evaluations').select('*').limit(100000),
-      supabase.from('referral_records').select('barberId, barberName, contacts, createdAt').limit(100000)
+      (async () => {
+        let allData: any[] = [];
+        let from = 0;
+        while (true) {
+          const { data } = await supabase.from('previa_historical_results').select('*').range(from, from + 999);
+          if (!data || data.length === 0) break;
+          allData = allData.concat(data);
+          if (data.length < 1000) break;
+          from += 1000;
+        }
+        return { data: allData };
+      })(),
+      supabase.from('feedback_evaluations').select('*'),
+      supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
     ]);
 
     if (b) setBarbers(b);
@@ -245,7 +267,7 @@ export default function App() {
       totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         if (manual) return sum + manual.minutes;
-        return sum + records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
+        return sum + records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
       }, 0);
         
       valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
@@ -254,7 +276,7 @@ export default function App() {
 
       allBarbers.forEach(barber => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
-        const barberRecords = records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
+        const barberRecords = records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
         
         const data = {
           subscriptionMinutes: 0, subscriptionCount: 0,
