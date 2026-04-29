@@ -180,7 +180,7 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           }
           
           setIgnoredRows(newIgnoredRows);
-          setUploadStatus({ type: 'success', text: `${newRecords.length} registros importados com sucesso! ${newIgnoredRows.length} ignorados.` });
+          setUploadStatus({ type: 'success', text: `O arquivo tinha ${data.length} linhas. ${newRecords.length} foram importadas e ${newIgnoredRows.length} ignoradas.` });
           onRefresh();
         } else {
           setUploadStatus({ type: 'error', text: 'Nenhum registro compatível encontrado na planilha.' });
