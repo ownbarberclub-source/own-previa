@@ -105,8 +105,24 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
 
           // Função auxiliar para converter valores monetários da planilha
           const parseCurrency = (val: any) => {
+            if (val === null || val === undefined) return 0;
             if (typeof val === 'string') {
-              return parseFloat(val.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+              // Remove R$ and spaces
+              let clean = val.replace(/R\$\s*/g, '').trim();
+              // If it contains both dot and comma (e.g. 1.234,56 or 1,234.56)
+              if (clean.includes('.') && clean.includes(',')) {
+                // If comma is after dot (Brazilian format 1.234,56)
+                if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                  clean = clean.replace(/\./g, '').replace(',', '.');
+                } else {
+                  // If dot is after comma (US format 1,234.56)
+                  clean = clean.replace(/,/g, '');
+                }
+              } else if (clean.includes(',')) {
+                // Only comma, probably Brazilian decimal
+                clean = clean.replace(',', '.');
+              }
+              return parseFloat(clean) || 0;
             }
             return parseFloat(val) || 0;
           };

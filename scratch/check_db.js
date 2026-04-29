@@ -1,0 +1,23 @@
+require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
+
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
+
+async function check() {
+  const { data, error } = await supabase
+    .from('previa_records')
+    .select('id, barber_name, item_name, value, commission, category')
+    .order('created_at', { ascending: false })
+    .limit(20);
+    
+  if (error) {
+    console.error(error);
+  } else {
+    console.table(data);
+  }
+}
+
+check();
