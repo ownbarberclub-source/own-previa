@@ -18,8 +18,8 @@ export function UsersSettings() {
     loadAll();
     
     const channel = supabase.channel('realtime-users-mgmt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_profiles' }, () => loadAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'commission_user_units' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_profiles' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_user_units' }, () => loadAll())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };

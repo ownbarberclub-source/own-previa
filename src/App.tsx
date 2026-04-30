@@ -129,8 +129,34 @@ export default function App() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_settings' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_manual_minutes' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_historical_results' }, () => loadAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'feedback_evaluations' }, () => loadAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'referral_records' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'feedback_evaluations' }, (payload) => {
+        setCrossSiteData(prev => {
+          const { evaluations, referrals } = prev;
+          let newEvals = [...evaluations];
+          if (payload.eventType === 'INSERT') {
+            if (!newEvals.some(x => x.id === payload.new.id)) newEvals = [payload.new, ...newEvals];
+          } else if (payload.eventType === 'UPDATE') {
+            newEvals = newEvals.map(x => x.id === payload.new.id ? payload.new : x);
+          } else if (payload.eventType === 'DELETE') {
+            newEvals = newEvals.filter(x => x.id !== payload.old.id);
+          }
+          return { evaluations: newEvals, referrals };
+        });
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'referral_records' }, (payload) => {
+        setCrossSiteData(prev => {
+          const { evaluations, referrals } = prev;
+          let newRefs = [...referrals];
+          if (payload.eventType === 'INSERT') {
+            if (!newRefs.some(x => x.id === payload.new.id)) newRefs = [payload.new, ...newRefs];
+          } else if (payload.eventType === 'UPDATE') {
+            newRefs = newRefs.map(x => x.id === payload.new.id ? payload.new : x);
+          } else if (payload.eventType === 'DELETE') {
+            newRefs = newRefs.filter(x => x.id !== payload.old.id);
+          }
+          return { evaluations, referrals: newRefs };
+        });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
