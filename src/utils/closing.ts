@@ -13,7 +13,7 @@ export const closeCycle = async (cycle: Cycle) => {
       { data: manualMinutes }
     ] = await Promise.all([
       supabase.from('previa_records').select('*').eq('cycle_id', cycle.id),
-      supabase.from('previa_barbers').select('*'),
+      supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
       supabase.from('previa_settings').select('*'),
       supabase.from('previa_manual_minutes').select('*').eq('cycle_id', cycle.id)
     ]);
