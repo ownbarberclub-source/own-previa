@@ -6,17 +6,36 @@ export const closeCycle = async (cycle: Cycle) => {
 
   try {
     // 1. Fetch all data for this cycle
+    let allRecords: any[] = [];
+    let from = 0;
+    let hasMore = true;
+    while (hasMore) {
+      const { data, error } = await supabase
+        .from('previa_records')
+        .select('*')
+        .eq('cycle_id', cycle.id)
+        .range(from, from + 999);
+      if (error) throw error;
+      if (data && data.length > 0) {
+        allRecords = [...allRecords, ...data];
+        from += 1000;
+        if (data.length < 1000) hasMore = false;
+      } else {
+        hasMore = false;
+      }
+    }
+
     const [
-      { data: records },
       { data: barbers },
       { data: settings },
       { data: manualMinutes }
     ] = await Promise.all([
-      supabase.from('previa_records').select('*').eq('cycle_id', cycle.id),
       supabase.from('previa_barbers').select('*').eq('is_hidden_crm', false),
       supabase.from('previa_settings').select('*'),
       supabase.from('previa_manual_minutes').select('*').eq('cycle_id', cycle.id)
     ]);
+
+    const records = allRecords;
 
     if (!records || !barbers || !settings) throw new Error('Data fetch failed');
 
