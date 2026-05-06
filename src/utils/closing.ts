@@ -98,7 +98,7 @@ export const closeCycle = async (cycle: Cycle) => {
     });
 
     // Filtra barbeiros que não venderam nem trabalharam para n poluir (opcional, mas bom pra evitar 0s)
-    const validPayload = insertPayload.filter(p => p.total_commission > 0 || p.subscription_minutes > 0 || p.avulso_count > 0);
+    const validPayload = insertPayload.filter(p => p.total_commission > 0 || p.subscription_minutes > 0 || p.avulso_count > 0 || p.extra_count > 0 || p.product_count > 0 || p.bebida_count > 0 || p.avulso_revenue > 0 || p.extra_revenue > 0 || p.product_revenue > 0 || p.bebida_revenue > 0);
 
     // 5. Insert into Supabase
     if (validPayload.length > 0) {
