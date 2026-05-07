@@ -1,353 +1,351 @@
 import jsPDF from 'jspdf';
 import { BarberResult, Cycle } from '../types';
 
-const BRAND = [225, 6, 0] as [number, number, number];
-const BG_DARK = [24, 24, 27] as [number, number, number];
-const BG_CARD = [9, 9, 11] as [number, number, number];
-const TEXT_WHITE = [244, 244, 245] as [number, number, number];
-const TEXT_MUTED = [113, 113, 122] as [number, number, number];
-const TEXT_SUBTLE = [63, 63, 70] as [number, number, number];
-const BORDER = [39, 39, 42] as [number, number, number];
-const GOLD = [234, 179, 8] as [number, number, number];
-const SILVER = [161, 161, 170] as [number, number, number];
-const BRONZE = [180, 83, 9] as [number, number, number];
-const BLUE = [96, 165, 250] as [number, number, number];
-const GREEN = [74, 222, 128] as [number, number, number];
-const AMBER = [251, 191, 36] as [number, number, number];
-const PURPLE = [192, 132, 252] as [number, number, number];
+// ─── Paleta Light (para impressão) ────────────────────────────────────────────
+const BRAND      : [number,number,number] = [200,  10,  10]; // vermelho legível em papel
+const TEXT_BLACK : [number,number,number] = [ 15,  15,  15];
+const TEXT_DARK  : [number,number,number] = [ 50,  50,  55];
+const TEXT_GRAY  : [number,number,number] = [110, 110, 118];
+const TEXT_LIGHT : [number,number,number] = [170, 170, 178];
+const BG_WHITE   : [number,number,number] = [255, 255, 255];
+const BG_SOFT    : [number,number,number] = [248, 248, 250];
+const BG_HEADER  : [number,number,number] = [240, 240, 244];
+const BORDER_CLR : [number,number,number] = [220, 220, 228];
+const GOLD       : [number,number,number] = [180, 130,   0];
+const SILVER     : [number,number,number] = [110, 110, 118];
+const BRONZE     : [number,number,number] = [150,  90,  20];
+const BLUE       : [number,number,number] = [ 37, 99, 235];
+const GREEN      : [number,number,number] = [ 22, 163, 74];
+const AMBER      : [number,number,number] = [180, 120,   0];
+const PURPLE     : [number,number,number] = [124,  58, 237];
+const CYAN       : [number,number,number] = [  6, 148, 162];
 
-const PAGE_W = 210;
-const PAGE_H = 297;
-const MARGIN = 14;
-const COL_W = PAGE_W - MARGIN * 2;
+const PAGE_W  = 210;
+const PAGE_H  = 297;
+const MARGIN  = 14;
+const COL_W   = PAGE_W - MARGIN * 2;
 
-function rgb(doc: jsPDF, color: [number, number, number]) {
-  doc.setTextColor(color[0], color[1], color[2]);
-}
+// ─── Utilitários ──────────────────────────────────────────────────────────────
+const setRgb   = (doc: jsPDF, c: [number,number,number]) => doc.setTextColor (c[0], c[1], c[2]);
+const setFill  = (doc: jsPDF, c: [number,number,number]) => doc.setFillColor (c[0], c[1], c[2]);
+const setStroke= (doc: jsPDF, c: [number,number,number]) => doc.setDrawColor (c[0], c[1], c[2]);
 
-function fillColor(doc: jsPDF, color: [number, number, number]) {
-  doc.setFillColor(color[0], color[1], color[2]);
-}
-
-function strokeColor(doc: jsPDF, color: [number, number, number]) {
-  doc.setDrawColor(color[0], color[1], color[2]);
-}
-
-function formatCurrencyPdf(val: number) {
+function formatBRL(val: number) {
   return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function checkPageBreak(doc: jsPDF, y: number, needed = 20): number {
-  if (y + needed > PAGE_H - 16) {
+function checkBreak(doc: jsPDF, y: number, needed = 20): number {
+  if (y + needed > PAGE_H - 18) {
     doc.addPage();
-    return drawPageBg(doc);
+    return initPage(doc);
   }
   return y;
 }
 
-function drawPageBg(doc: jsPDF): number {
-  fillColor(doc, BG_DARK);
+function initPage(doc: jsPDF): number {
+  setFill(doc, BG_WHITE);
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
   return MARGIN;
 }
 
+// ─── Cabeçalho ────────────────────────────────────────────────────────────────
 function drawHeader(doc: jsPDF, cycle: Cycle | null, mode: 'month' | 'year'): number {
-  let y = drawPageBg(doc);
+  initPage(doc);
 
-  // Red accent bar
-  fillColor(doc, BRAND);
-  doc.rect(0, 0, 4, PAGE_H, 'F');
+  // Faixa superior vermelha
+  setFill(doc, BRAND);
+  doc.rect(0, 0, PAGE_W, 22, 'F');
 
-  // OWN Logo text
+  // Logo "OWN PRÉVIA"
   doc.setFont('helvetica', 'bolditalic');
-  doc.setFontSize(18);
-  rgb(doc, TEXT_WHITE);
-  doc.text('OWN', MARGIN + 2, y + 10);
+  doc.setFontSize(14);
+  doc.setTextColor(255, 255, 255);
+  doc.text('OWN', MARGIN + 2, 14);
 
-  doc.setFontSize(18);
-  rgb(doc, BRAND);
-  doc.text('PRÉVIA', MARGIN + 20, y + 10);
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(14);
+  doc.setTextColor(255, 200, 200);
+  doc.text('PRÉVIA', MARGIN + 18, 14);
 
-  // Period badge
-  const period = mode === 'year' ? 'ACUMULADO DO ANO' : (cycle ? cycle.month_year.split('-').reverse().join('/') : '');
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  rgb(doc, TEXT_MUTED);
-  doc.text(period, PAGE_W - MARGIN, y + 10, { align: 'right' });
+  // Período (canto direito)
+  const label = mode === 'year'
+    ? 'ACUMULADO DO ANO'
+    : cycle ? cycle.month_year.split('-').reverse().join('/') : '';
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(255, 255, 255);
+  doc.text(label, PAGE_W - MARGIN, 14, { align: 'right' });
 
-  y += 16;
+  let y = 30;
 
-  // Title
+  // Título principal
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(22);
-  rgb(doc, TEXT_WHITE);
+  setRgb(doc, TEXT_BLACK);
   doc.text('RANKING DE ', MARGIN + 2, y);
-  const titleW = doc.getTextWidth('RANKING DE ');
-  rgb(doc, BRAND);
-  doc.text('DISPUTA', MARGIN + 2 + titleW, y);
+  const tw = doc.getTextWidth('RANKING DE ');
+  setRgb(doc, BRAND);
+  doc.text('DISPUTA', MARGIN + 2 + tw, y);
 
   y += 5;
-
-  // Subtitle
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  rgb(doc, TEXT_MUTED);
-  doc.text('O placar operacional da barbearia', MARGIN + 2, y);
+  setRgb(doc, TEXT_GRAY);
+  doc.text('Placar operacional de desempenho da barbearia', MARGIN + 2, y);
 
-  y += 6;
-
-  // Divider
-  strokeColor(doc, BORDER);
-  doc.setLineWidth(0.3);
+  y += 5;
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.4);
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
+  y += 7;
 
-  y += 8;
   return y;
 }
 
-function drawSectionTitle(doc: jsPDF, y: number, title: string, color: [number, number, number]): number {
-  y = checkPageBreak(doc, y, 18);
-  
-  // Card background
-  fillColor(doc, BG_CARD);
-  strokeColor(doc, BORDER);
-  doc.setLineWidth(0.2);
-  doc.roundedRect(MARGIN, y - 1, COL_W, 8, 1, 1, 'FD');
+// ─── Título de seção ──────────────────────────────────────────────────────────
+function drawSectionTitle(
+  doc: jsPDF, y: number,
+  title: string,
+  color: [number,number,number]
+): number {
+  y = checkBreak(doc, y, 16);
 
-  // Accent dot
-  fillColor(doc, color);
-  doc.circle(MARGIN + 5, y + 3, 1.5, 'F');
+  setFill(doc, BG_HEADER);
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(MARGIN, y, COL_W, 9, 1.2, 1.2, 'FD');
+
+  // Barra colorida lateral
+  setFill(doc, color);
+  doc.roundedRect(MARGIN, y, 3, 9, 0.5, 0.5, 'F');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  rgb(doc, TEXT_WHITE);
-  doc.text(title, MARGIN + 10, y + 4.5);
+  setRgb(doc, TEXT_BLACK);
+  doc.text(title, MARGIN + 7, y + 6);
 
-  return y + 10;
+  return y + 12;
 }
 
+// ─── Pódio geral ──────────────────────────────────────────────────────────────
 function drawPodium(doc: jsPDF, y: number, results: BarberResult[]): number {
-  const leader = results[0];
-  const rowH = 11;
+  const leader   = results[0];
+  const ROW_H    = 13;
+
+  // Cabeçalho da tabela
+  setFill(doc, BG_HEADER);
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.2);
+  doc.rect(MARGIN, y, COL_W, 7, 'FD');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  setRgb(doc, TEXT_GRAY);
+  doc.text('POS.',        MARGIN + 6,              y + 5);
+  doc.text('PROFISSIONAL',MARGIN + 18,             y + 5);
+  doc.text('COMISSÃO',    PAGE_W - MARGIN - 2,     y + 5, { align: 'right' });
+  doc.text('DIFERENÇA',   PAGE_W - MARGIN - 38,    y + 5, { align: 'right' });
+  y += 7;
 
   for (let i = 0; i < results.length; i++) {
-    const res = results[i];
-    y = checkPageBreak(doc, y, rowH + 2);
+    const res      = results[i];
+    const isFirst  = i === 0;
+    y = checkBreak(doc, y, ROW_H + 1);
 
-    const isFirst = i === 0;
-    const rowBg: [number, number, number] = isFirst ? [30, 20, 10] : BG_DARK;
-
-    // Row background
-    fillColor(doc, rowBg);
-    strokeColor(doc, isFirst ? GOLD : BORDER);
+    // Linha alternada
+    setFill(doc, isFirst ? [255, 245, 245] : (i % 2 === 0 ? BG_WHITE : BG_SOFT));
+    setStroke(doc, isFirst ? [220, 180, 180] : BORDER_CLR);
     doc.setLineWidth(isFirst ? 0.4 : 0.2);
-    doc.roundedRect(MARGIN, y, COL_W, rowH, 1, 1, 'FD');
+    doc.rect(MARGIN, y, COL_W, ROW_H, 'FD');
 
-    // Rank badge
-    const badgeColor: [number, number, number] = i === 0 ? GOLD : i === 1 ? SILVER : i === 2 ? BRONZE : TEXT_SUBTLE;
-    fillColor(doc, badgeColor);
-    doc.circle(MARGIN + 6, y + rowH / 2, 3.5, 'F');
-
+    // Badge de posição
+    const badgeColor: [number,number,number] = i === 0 ? GOLD : i === 1 ? SILVER : i === 2 ? BRONZE : TEXT_LIGHT;
+    setFill(doc, badgeColor);
+    doc.circle(MARGIN + 6, y + ROW_H / 2, 3.8, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7);
-    rgb(doc, [10, 10, 10]);
-    const rankLabel = i === 0 ? '1' : String(i + 1);
-    doc.text(rankLabel, MARGIN + 6, y + rowH / 2 + 2.5, { align: 'center' });
+    doc.setTextColor(255, 255, 255);
+    doc.text(String(i + 1), MARGIN + 6, y + ROW_H / 2 + 2.5, { align: 'center' });
 
-    // Name
-    doc.setFont('helvetica', 'bold');
+    // Nome
+    doc.setFont('helvetica', isFirst ? 'bold' : 'normal');
     doc.setFontSize(10);
-    rgb(doc, isFirst ? TEXT_WHITE : [228, 228, 231]);
-    doc.text(res.barber.name, MARGIN + 14, y + 4.5);
+    setRgb(doc, isFirst ? BRAND : TEXT_DARK);
+    doc.text(res.barber.name, MARGIN + 14, y + ROW_H / 2 + 1);
 
-    // Unit
+    // Unidade
     if (res.unit_name) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
-      rgb(doc, TEXT_MUTED);
-      doc.text(res.unit_name, MARGIN + 14, y + 8.5);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(res.unit_name, MARGIN + 14, y + ROW_H / 2 + 5);
     }
 
-    // Gap behind leader
+    // Diferença do líder
     if (i > 0) {
       const gap = leader.totalCommission - res.totalCommission;
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      rgb(doc, TEXT_SUBTLE);
-      doc.text(`-${formatCurrencyPdf(gap)}`, PAGE_W - MARGIN - 36, y + 8.5, { align: 'right' });
+      doc.setFontSize(8);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(`-${formatBRL(gap)}`, PAGE_W - MARGIN - 36, y + ROW_H / 2 + 1, { align: 'right' });
     }
 
-    // Commission value
+    // Comissão total
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    rgb(doc, isFirst ? BRAND : TEXT_WHITE);
-    doc.text(formatCurrencyPdf(res.totalCommission), PAGE_W - MARGIN - 2, y + 5.5, { align: 'right' });
+    doc.setFontSize(10);
+    setRgb(doc, isFirst ? BRAND : TEXT_BLACK);
+    doc.text(formatBRL(res.totalCommission), PAGE_W - MARGIN - 2, y + ROW_H / 2 + 1, { align: 'right' });
 
-    // Progress bar
-    const barW = 36;
-    const barX = PAGE_W - MARGIN - 2 - barW;
-    const barY = y + 8;
-    fillColor(doc, BORDER);
-    doc.roundedRect(barX, barY, barW, 1.5, 0.5, 0.5, 'F');
-    const pct = leader.totalCommission > 0 ? (res.totalCommission / leader.totalCommission) : 0;
-    fillColor(doc, isFirst ? BRAND : TEXT_SUBTLE);
-    if (pct > 0) doc.roundedRect(barX, barY, barW * pct, 1.5, 0.5, 0.5, 'F');
-
-    y += rowH + 2;
+    y += ROW_H;
   }
 
-  return y + 4;
+  return y + 8;
 }
 
+// ─── Sub-ranking único (coluna cheia) ─────────────────────────────────────────
 function drawSubRanking(
   doc: jsPDF,
   y: number,
   title: string,
-  color: [number, number, number],
-  items: { name: string; value: string; unit?: string }[]
+  color: [number,number,number],
+  items: { name: string; value: string }[]
 ): number {
   y = drawSectionTitle(doc, y, title, color);
-  const rowH = 8;
+  const ROW_H = 8;
 
-  for (let i = 0; i < Math.min(items.length, 8); i++) {
-    const item = items[i];
-    y = checkPageBreak(doc, y, rowH + 1);
-
+  for (let i = 0; i < Math.min(items.length, 10); i++) {
+    y = checkBreak(doc, y, ROW_H + 1);
     const isFirst = i === 0;
-    if (isFirst) {
-      fillColor(doc, [18, 18, 22]);
-      strokeColor(doc, color);
-      doc.setLineWidth(0.3);
-    } else {
-      fillColor(doc, BG_DARK);
-      strokeColor(doc, BORDER);
-      doc.setLineWidth(0.15);
-    }
-    doc.roundedRect(MARGIN, y, COL_W, rowH, 0.8, 0.8, 'FD');
 
-    // Position dot
-    fillColor(doc, isFirst ? color : TEXT_SUBTLE);
-    doc.circle(MARGIN + 4, y + rowH / 2, 1.8, 'F');
+    setFill(doc, isFirst ? BG_SOFT : BG_WHITE);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.2);
+    doc.rect(MARGIN, y, COL_W, ROW_H, 'FD');
+
+    // Posição
+    setFill(doc, isFirst ? color : TEXT_LIGHT);
+    doc.circle(MARGIN + 4.5, y + ROW_H / 2, 2, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6);
-    rgb(doc, isFirst ? [0, 0, 0] : [200, 200, 200]);
-    doc.text(String(i + 1), MARGIN + 4, y + rowH / 2 + 2, { align: 'center' });
+    doc.setFontSize(6.5);
+    doc.setTextColor(255, 255, 255);
+    doc.text(String(i + 1), MARGIN + 4.5, y + ROW_H / 2 + 2, { align: 'center' });
 
-    // Name
+    // Nome
     doc.setFont('helvetica', isFirst ? 'bold' : 'normal');
-    doc.setFontSize(8);
-    rgb(doc, isFirst ? TEXT_WHITE : [161, 161, 170]);
-    doc.text(item.name, MARGIN + 9, y + rowH / 2 + 2.5);
+    doc.setFontSize(8.5);
+    setRgb(doc, isFirst ? TEXT_BLACK : TEXT_DARK);
+    doc.text(items[i].name, MARGIN + 10, y + ROW_H / 2 + 2.5);
 
-    // Value
+    // Valor
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    rgb(doc, color);
-    doc.text(item.value + (item.unit ? ' ' + item.unit : ''), PAGE_W - MARGIN - 2, y + rowH / 2 + 2.5, { align: 'right' });
+    doc.setFontSize(8.5);
+    setRgb(doc, isFirst ? color : TEXT_DARK);
+    doc.text(items[i].value, PAGE_W - MARGIN - 2, y + ROW_H / 2 + 2.5, { align: 'right' });
 
-    y += rowH + 1;
+    y += ROW_H;
   }
 
-  return y + 6;
+  return y + 8;
 }
 
-function drawTwoColumnSubRankings(
+// ─── Sub-rankings em duas colunas ─────────────────────────────────────────────
+function drawDualRanking(
   doc: jsPDF,
   y: number,
-  left: { title: string; color: [number, number, number]; items: { name: string; value: string; unit?: string }[] },
-  right: { title: string; color: [number, number, number]; items: { name: string; value: string; unit?: string }[] }
+  left:  { title: string; color: [number,number,number]; items: { name: string; value: string }[] },
+  right: { title: string; color: [number,number,number]; items: { name: string; value: string }[] }
 ): number {
-  y = checkPageBreak(doc, y, 50);
-  const halfW = (COL_W - 6) / 2;
-  const rowH = 7.5;
-  const maxItems = Math.min(Math.max(left.items.length, right.items.length), 6);
+  const maxRows = Math.min(Math.max(left.items.length, right.items.length), 8);
+  const HALF    = (COL_W - 5) / 2;
+  const ROW_H   = 7.5;
+  const needed  = 12 + maxRows * (ROW_H + 1) + 6;
 
-  // Left header
-  fillColor(doc, BG_CARD);
-  strokeColor(doc, BORDER);
-  doc.setLineWidth(0.2);
-  doc.roundedRect(MARGIN, y - 1, halfW, 8, 1, 1, 'FD');
-  fillColor(doc, left.color);
-  doc.circle(MARGIN + 5, y + 3, 1.5, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  rgb(doc, TEXT_WHITE);
-  doc.text(left.title, MARGIN + 10, y + 4.5);
+  y = checkBreak(doc, y, needed);
 
-  // Right header
-  const rx = MARGIN + halfW + 6;
-  fillColor(doc, BG_CARD);
-  strokeColor(doc, BORDER);
-  doc.roundedRect(rx, y - 1, halfW, 8, 1, 1, 'FD');
-  fillColor(doc, right.color);
-  doc.circle(rx + 5, y + 3, 1.5, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  rgb(doc, TEXT_WHITE);
-  doc.text(right.title, rx + 10, y + 4.5);
+  // Cabeçalhos
+  const drawColHeader = (x: number, title: string, color: [number,number,number]) => {
+    setFill(doc, BG_HEADER);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x, y, HALF, 9, 1.2, 1.2, 'FD');
+    setFill(doc, color);
+    doc.roundedRect(x, y, 3, 9, 0.5, 0.5, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_BLACK);
+    doc.text(title, x + 7, y + 6);
+  };
+  drawColHeader(MARGIN,          left.title,  left.color);
+  drawColHeader(MARGIN + HALF + 5, right.title, right.color);
 
-  y += 10;
+  y += 11;
 
-  for (let i = 0; i < maxItems; i++) {
-    const li = left.items[i];
-    const ri = right.items[i];
-    const isFirst = i === 0;
+  for (let i = 0; i < maxRows; i++) {
+    const drawRow = (
+      x: number, half: number,
+      item: { name: string; value: string } | undefined,
+      color: [number,number,number]
+    ) => {
+      if (!item) return;
+      const isFirst = i === 0;
+      setFill(doc, isFirst ? BG_SOFT : BG_WHITE);
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.2);
+      doc.rect(x, y, half, ROW_H, 'FD');
 
-    // Left row
-    if (li) {
-      fillColor(doc, isFirst ? [18, 18, 22] : BG_DARK);
-      strokeColor(doc, isFirst ? left.color : BORDER);
-      doc.setLineWidth(isFirst ? 0.25 : 0.15);
-      doc.roundedRect(MARGIN, y, halfW, rowH, 0.8, 0.8, 'FD');
-      fillColor(doc, isFirst ? left.color : TEXT_SUBTLE);
-      doc.circle(MARGIN + 3.5, y + rowH / 2, 1.5, 'F');
-      doc.setFont('helvetica', isFirst ? 'bold' : 'normal');
-      doc.setFontSize(7);
-      rgb(doc, isFirst ? TEXT_WHITE : [161, 161, 170]);
-      doc.text(li.name, MARGIN + 7.5, y + rowH / 2 + 2);
+      setFill(doc, isFirst ? color : TEXT_LIGHT);
+      doc.circle(x + 4, y + ROW_H / 2, 1.8, 'F');
       doc.setFont('helvetica', 'bold');
-      rgb(doc, left.color);
-      doc.text(li.value, MARGIN + halfW - 2, y + rowH / 2 + 2, { align: 'right' });
-    }
+      doc.setFontSize(6);
+      doc.setTextColor(255, 255, 255);
+      doc.text(String(i + 1), x + 4, y + ROW_H / 2 + 2, { align: 'center' });
 
-    // Right row
-    if (ri) {
-      fillColor(doc, isFirst ? [18, 18, 22] : BG_DARK);
-      strokeColor(doc, isFirst ? right.color : BORDER);
-      doc.setLineWidth(isFirst ? 0.25 : 0.15);
-      doc.roundedRect(rx, y, halfW, rowH, 0.8, 0.8, 'FD');
-      fillColor(doc, isFirst ? right.color : TEXT_SUBTLE);
-      doc.circle(rx + 3.5, y + rowH / 2, 1.5, 'F');
       doc.setFont('helvetica', isFirst ? 'bold' : 'normal');
-      doc.setFontSize(7);
-      rgb(doc, isFirst ? TEXT_WHITE : [161, 161, 170]);
-      doc.text(ri.name, rx + 7.5, y + rowH / 2 + 2);
-      doc.setFont('helvetica', 'bold');
-      rgb(doc, right.color);
-      doc.text(ri.value, rx + halfW - 2, y + rowH / 2 + 2, { align: 'right' });
-    }
+      doc.setFontSize(7.5);
+      setRgb(doc, isFirst ? TEXT_BLACK : TEXT_DARK);
+      doc.text(item.name, x + 9, y + ROW_H / 2 + 2.3);
 
-    y += rowH + 1.5;
+      doc.setFont('helvetica', 'bold');
+      setRgb(doc, isFirst ? color : TEXT_DARK);
+      doc.text(item.value, x + half - 2, y + ROW_H / 2 + 2.3, { align: 'right' });
+    };
+
+    drawRow(MARGIN,              HALF, left.items[i],  left.color);
+    drawRow(MARGIN + HALF + 5,   HALF, right.items[i], right.color);
+    y += ROW_H;
   }
 
-  return y + 6;
+  return y + 8;
 }
 
-function drawFooter(doc: jsPDF) {
-  const totalPages = doc.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
+// ─── Rodapé ───────────────────────────────────────────────────────────────────
+function drawFooters(doc: jsPDF) {
+  const total = doc.getNumberOfPages();
+  const dataHora = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  for (let i = 1; i <= total; i++) {
     doc.setPage(i);
+
+    // Linha de rodapé
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, PAGE_H - 10, PAGE_W - MARGIN, PAGE_H - 10);
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7);
-    rgb(doc, TEXT_SUBTLE);
-    doc.text(`OWN Prévia • Gerado em ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`, MARGIN + 2, PAGE_H - 6);
-    doc.text(`Página ${i}/${totalPages}`, PAGE_W - MARGIN, PAGE_H - 6, { align: 'right' });
-    // Bottom red accent
-    fillColor(doc, BRAND);
+    setRgb(doc, TEXT_GRAY);
+    doc.text(`OWN Prévia  •  Gerado em ${dataHora}`, MARGIN, PAGE_H - 6);
+    doc.text(`Página ${i} de ${total}`, PAGE_W - MARGIN, PAGE_H - 6, { align: 'right' });
+
+    // Faixa vermelha no rodapé
+    setFill(doc, BRAND);
     doc.rect(0, PAGE_H - 2, PAGE_W, 2, 'F');
   }
 }
 
+// ─── Função principal de exportação ───────────────────────────────────────────
 export function exportRankingPdf(
   results: BarberResult[],
   cycle: Cycle | null,
@@ -356,72 +354,83 @@ export function exportRankingPdf(
   if (results.length === 0) return;
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
   let y = drawHeader(doc, cycle, mode);
 
-  // ---- PÓDIO GERAL ----
-  y = drawSectionTitle(doc, y, '🏆  PÓDIO GERAL — Comissão Acumulada', BRAND);
+  // ── Pódio Geral ──
+  y = drawSectionTitle(doc, y, 'PÓDIO GERAL — Comissão Acumulada por Barbeiro', BRAND);
   y = drawPodium(doc, y, results);
 
-  // ---- SUB-RANKINGS DUPLOS ----
-  // Assinaturas + Avulsos
-  const sortedByMinutes = [...results].sort((a, b) => b.subscriptionMinutes - a.subscriptionMinutes);
-  const sortedByAvulso = [...results].sort((a, b) => b.avulsoCount - a.avulsoCount);
-  y = drawTwoColumnSubRankings(doc, y,
+  // ── Assinaturas × Serviços Avulsos ──
+  const porMinutos   = [...results].sort((a, b) => b.subscriptionMinutes   - a.subscriptionMinutes);
+  const porAvulso    = [...results].sort((a, b) => b.avulsoCount           - a.avulsoCount);
+  y = drawDualRanking(doc, y,
     {
-      title: '👑  REI DAS ASSINATURAS',
+      title: 'REI DAS ASSINATURAS',
       color: BLUE,
-      items: sortedByMinutes.map(r => ({ name: r.barber.name, value: `${r.subscriptionMinutes} min`, unit: `(${r.subscriptionCount} atend.)` }))
+      items: porMinutos.map(r => ({
+        name : r.barber.name,
+        value: `${r.subscriptionMinutes} min  (${r.subscriptionCount} atendimentos)`
+      }))
     },
     {
-      title: '✂️  REI DOS AVULSOS',
+      title: 'REI DOS SERVIÇOS AVULSOS',
       color: BRAND,
-      items: sortedByAvulso.map(r => ({ name: r.barber.name, value: `${r.avulsoCount} atend.` }))
+      items: porAvulso.map(r => ({
+        name : r.barber.name,
+        value: `${r.avulsoCount} atendimentos`
+      }))
     }
   );
 
-  // Bebidas + Produtos
-  const sortedByBebida = [...results].sort((a, b) => b.bebidaCount - a.bebidaCount);
-  const sortedByProduct = [...results].sort((a, b) => b.productCount - a.productCount);
-  y = drawTwoColumnSubRankings(doc, y,
+  // ── Bebidas × Produtos ──
+  const porBebida  = [...results].sort((a, b) => b.bebidaCount  - a.bebidaCount);
+  const porProduto = [...results].sort((a, b) => b.productCount - a.productCount);
+  y = drawDualRanking(doc, y,
     {
-      title: '🍺  MESTRE DAS BEBIDAS',
+      title: 'MESTRE DAS BEBIDAS',
       color: GREEN,
-      items: sortedByBebida.map(r => ({ name: r.barber.name, value: `${r.bebidaCount} itens` }))
+      items: porBebida.map(r => ({ name: r.barber.name, value: `${r.bebidaCount} itens vendidos` }))
     },
     {
-      title: '📦  MESTRE DOS PRODUTOS',
+      title: 'MESTRE DOS PRODUTOS',
       color: AMBER,
-      items: sortedByProduct.map(r => ({ name: r.barber.name, value: `${r.productCount} itens` }))
+      items: porProduto.map(r => ({ name: r.barber.name, value: `${r.productCount} itens vendidos` }))
     }
   );
 
-  // Extras
-  const sortedByExtra = [...results].sort((a, b) => b.extraCount - a.extraCount);
-  y = drawSubRanking(doc, y, '⚡  MESTRE DOS EXTRAS', PURPLE,
-    sortedByExtra.map(r => ({ name: r.barber.name, value: `${r.extraCount} serv.` }))
+  // ── Serviços Extras ──
+  const porExtras = [...results].sort((a, b) => b.extraCount - a.extraCount);
+  y = drawSubRanking(doc, y, 'MESTRE DOS SERVIÇOS EXTRAS', PURPLE,
+    porExtras.map(r => ({ name: r.barber.name, value: `${r.extraCount} serviços realizados` }))
   );
 
-  // Conversões (if any)
-  const hasConversions = results.some(r => (r.referralConversions || 0) > 0);
-  if (hasConversions) {
-    const sortedByConv = [...results].filter(r => (r.referralConversions || 0) > 0).sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
-    y = drawSubRanking(doc, y, '🚀  MESTRE DE CONVERSÕES', [56, 189, 248],
-      sortedByConv.map(r => ({ name: r.barber.name, value: `${r.referralConversions} vendas` }))
+  // ── Conversões de indicações (exibe apenas se houver dados) ──
+  const temConversoes = results.some(r => (r.referralConversions || 0) > 0);
+  if (temConversoes) {
+    const porConversao = [...results]
+      .filter(r => (r.referralConversions || 0) > 0)
+      .sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
+    y = drawSubRanking(doc, y, 'MESTRE DAS CONVERSÕES DE INDICAÇÕES', CYAN,
+      porConversao.map(r => ({ name: r.barber.name, value: `${r.referralConversions} vendas realizadas` }))
     );
   }
 
-  // Avaliações (if any)
-  const hasEvals = results.some(r => (r.evaluationCount || 0) > 0);
-  if (hasEvals) {
-    const sortedByEval = [...results].filter(r => (r.evaluationCount || 0) > 0).sort((a, b) => (b.evaluationRating || 0) - (a.evaluationRating || 0));
-    y = drawSubRanking(doc, y, '⭐  REI DO FEEDBACK', GOLD,
-      sortedByEval.map(r => ({ name: r.barber.name, value: `${r.evaluationRating?.toFixed(1)} ★`, unit: `(${r.evaluationCount} aval.)` }))
+  // ── Avaliações de clientes (exibe apenas se houver dados) ──
+  const temAvaliacoes = results.some(r => (r.evaluationCount || 0) > 0);
+  if (temAvaliacoes) {
+    const porAvaliacao = [...results]
+      .filter(r => (r.evaluationCount || 0) > 0)
+      .sort((a, b) => (b.evaluationRating || 0) - (a.evaluationRating || 0));
+    y = drawSubRanking(doc, y, 'REI DO FEEDBACK DE CLIENTES', GOLD,
+      porAvaliacao.map(r => ({
+        name : r.barber.name,
+        value: `${r.evaluationRating?.toFixed(1)} estrelas  (${r.evaluationCount} avaliações)`
+      }))
     );
   }
 
-  drawFooter(doc);
+  drawFooters(doc);
 
-  const label = mode === 'year' ? 'anual' : (cycle?.month_year || 'mes');
-  doc.save(`OWN_Ranking_${label}.pdf`);
+  const sufixo = mode === 'year' ? 'anual' : (cycle?.month_year || 'mes');
+  doc.save(`OWN_Ranking_${sufixo}.pdf`);
 }
