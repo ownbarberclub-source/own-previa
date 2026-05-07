@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package, ShieldAlert } from 'lucide-react';
+import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package, ShieldAlert, FileDown, Loader2 } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
+import { exportRankingPdf } from '../utils/exportPdf';
 
 interface RankingPanelProps {
   barberResults: BarberResult[];
@@ -11,6 +12,17 @@ interface RankingPanelProps {
 
 export function RankingPanel({ barberResults, annualResults, activeCycle }: RankingPanelProps) {
   const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      exportRankingPdf(resultsToUse, activeCycle, viewMode);
+    } finally {
+      setIsExporting(false);
+    }
+  };
   
   const resultsToUse = viewMode === 'month' ? barberResults : annualResults;
 
@@ -53,30 +65,52 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
           </h2>
           <p style={{ color: '#a1a1aa', fontSize: 14 }}>O placar operacional da barbearia</p>
         </div>
-        <div style={{ display: 'flex', backgroundColor: '#18181b', padding: 4, borderRadius: 12, border: '1px solid #27272a' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Toggle Mês/Ano */}
+          <div style={{ display: 'flex', backgroundColor: '#18181b', padding: 4, borderRadius: 12, border: '1px solid #27272a' }}>
+            <button
+              onClick={() => setViewMode('month')}
+              style={{
+                padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
+                backgroundColor: viewMode === 'month' ? '#27272a' : 'transparent',
+                color: viewMode === 'month' ? 'white' : '#a1a1aa',
+                transition: 'all 0.2s'
+              }}
+            >
+              <Calendar size={14} /> Mês
+            </button>
+            <button
+              onClick={() => setViewMode('year')}
+              style={{
+                padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
+                backgroundColor: viewMode === 'year' ? '#27272a' : 'transparent',
+                color: viewMode === 'year' ? 'white' : '#a1a1aa',
+                transition: 'all 0.2s'
+              }}
+            >
+              <CalendarDays size={14} /> Acumulado do Ano
+            </button>
+          </div>
+
+          {/* Botão Exportar PDF */}
           <button
-            onClick={() => setViewMode('month')}
+            onClick={handleExportPdf}
+            disabled={isExporting || resultsToUse.length === 0}
             style={{
-              padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
-              backgroundColor: viewMode === 'month' ? '#27272a' : 'transparent',
-              color: viewMode === 'month' ? 'white' : '#a1a1aa',
-              transition: 'all 0.2s'
+              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px',
+              background: isExporting ? '#27272a' : 'linear-gradient(135deg, var(--brand) 0%, #b91c1c 100%)',
+              color: 'white', border: 'none', borderRadius: 10, cursor: isExporting ? 'not-allowed' : 'pointer',
+              fontSize: 13, fontWeight: 700, transition: 'all 0.2s',
+              opacity: (resultsToUse.length === 0) ? 0.4 : 1,
+              boxShadow: isExporting ? 'none' : '0 4px 12px rgba(225,6,0,0.3)'
             }}
           >
-            <Calendar size={14} /> Mês
-          </button>
-          <button
-            onClick={() => setViewMode('year')}
-            style={{
-              padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
-              backgroundColor: viewMode === 'year' ? '#27272a' : 'transparent',
-              color: viewMode === 'year' ? 'white' : '#a1a1aa',
-              transition: 'all 0.2s'
-            }}
-          >
-            <CalendarDays size={14} /> Acumulado do Ano
+            {isExporting
+              ? <><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Gerando...</>
+              : <><FileDown size={14} /> Exportar PDF</>
+            }
           </button>
         </div>
       </div>
