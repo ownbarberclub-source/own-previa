@@ -237,7 +237,7 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Assinaturas (POT)</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.subscriptionMinutes} min de atendimento</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.subscriptionCount} atendimentos • {res.subscriptionMinutes} min</span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.subscriptionCommission)}</span>
@@ -251,7 +251,7 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Serviços Avulsos</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>Faturado {formatCurrency(res.avulsoRevenue)}</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.avulsoCount} atendimentos • Faturado {formatCurrency(res.avulsoRevenue)}</span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.avulsoCommission)}</span>
