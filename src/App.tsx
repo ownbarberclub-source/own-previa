@@ -323,11 +323,13 @@ export default function App() {
         };
 
         barberRecords.forEach(rec => {
-          if (rec.category === 'assinatura') { data.subscriptionMinutes += rec.duration_minutes; data.subscriptionCount++; }
-          else if (rec.category === 'avulso') { data.avulsoRevenue += rec.value; data.avulsoComm += (rec.commission || 0); data.avulsoCount++; }
-          else if (rec.category === 'extra') { data.extraRevenue += rec.value; data.extraComm += (rec.commission || 0); data.extraCount++; }
-          else if (rec.category === 'produto') { data.productRevenue += rec.value; data.productComm += (rec.commission || 0); data.productCount++; }
-          else if (rec.category === 'bebida') { data.bebidaRevenue += rec.value; data.bebidaComm += (rec.commission || 0); data.bebidaCount++; }
+          // Reclassifica: assinatura com comissão > 0 na planilha = atendimento avulso de assinante
+          const effectiveCategory = (rec.category === 'assinatura' && (rec.commission || 0) > 0) ? 'avulso' : rec.category;
+          if (effectiveCategory === 'assinatura') { data.subscriptionMinutes += rec.duration_minutes; data.subscriptionCount++; }
+          else if (effectiveCategory === 'avulso') { data.avulsoRevenue += rec.value; data.avulsoComm += (rec.commission || 0); data.avulsoCount++; }
+          else if (effectiveCategory === 'extra') { data.extraRevenue += rec.value; data.extraComm += (rec.commission || 0); data.extraCount++; }
+          else if (effectiveCategory === 'produto') { data.productRevenue += rec.value; data.productComm += (rec.commission || 0); data.productCount++; }
+          else if (effectiveCategory === 'bebida') { data.bebidaRevenue += rec.value; data.bebidaComm += (rec.commission || 0); data.bebidaCount++; }
         });
 
         const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
