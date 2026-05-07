@@ -700,3 +700,229 @@ export function exportBarberCardPdf(result: BarberResult, cycle: Cycle | null) {
   const nomeSanitizado = result.barber.name.replace(/\s+/g, '_');
   doc.save(`OWN_Barbeiro_${nomeSanitizado}_${periodo || 'relatorio'}.pdf`);
 }
+
+// ─── Exportação geral da prévia (todos os barbeiros, uma página por barbeiro) ──
+export function exportPreviewPdf(results: BarberResult[], cycle: Cycle | null) {
+  if (results.length === 0) return;
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
+
+  const drawBarberPage = (result: BarberResult, isFirst: boolean) => {
+    if (!isFirst) doc.addPage();
+
+    // Fundo branco
+    setFill(doc, BG_WHITE);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+
+    // Faixa superior vermelha
+    setFill(doc, BRAND);
+    doc.rect(0, 0, PAGE_W, 28, 'F');
+
+    // Logo
+    doc.setFont('helvetica', 'bolditalic');
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text('OWN', MARGIN + 2, 13);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(255, 200, 200);
+    doc.text('PRÉVIA', MARGIN + 17, 13);
+
+    // Período
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
+    doc.text(periodo, PAGE_W - MARGIN, 13, { align: 'right' });
+
+    // Nome do barbeiro
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text(result.barber.name, MARGIN + 2, 24);
+
+    // Taxa de comissão
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(255, 200, 200);
+    doc.text(`Taxa de comissão: ${Math.round(result.barber.avulso_rate)}%`, PAGE_W - MARGIN, 24, { align: 'right' });
+
+    let y = 36;
+
+    // Badges de ranking
+    const badges = [
+      { label: 'Ranking Unidade',  value: result.rankUnit    ? `${result.rankUnit}º lugar`    : '-', color: TEXT_DARK },
+      { label: 'Ranking Rede',     value: result.rankNetwork ? `${result.rankNetwork}º lugar`  : '-', color: BRAND    },
+      { label: 'Ranking Anual',    value: result.rankAnnual  ? `${result.rankAnnual}º lugar`   : '-', color: GOLD     },
+    ];
+    const badgeW = (COL_W - 8) / 3;
+    badges.forEach((b, i) => {
+      const bx = MARGIN + i * (badgeW + 4);
+      setFill(doc, BG_SOFT);
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(bx, y, badgeW, 14, 2, 2, 'FD');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(b.label.toUpperCase(), bx + badgeW / 2, y + 5, { align: 'center' });
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      setRgb(doc, b.color);
+      doc.text(b.value, bx + badgeW / 2, y + 11.5, { align: 'center' });
+    });
+    y += 20;
+
+    // Divisor
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, y, PAGE_W - MARGIN, y);
+    y += 7;
+
+    // Destaque financeiro
+    setFill(doc, [255, 245, 245]);
+    setStroke(doc, [220, 180, 180]);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(MARGIN, y, COL_W, 20, 2, 2, 'FD');
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 6, y + 7);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    setRgb(doc, BRAND);
+    doc.text(formatBRL(result.totalCommission), MARGIN + 6, y + 17);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('PROJEÇÃO FINAL DO MÊS', PAGE_W - MARGIN - 2, y + 7, { align: 'right' });
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    setRgb(doc, TEXT_DARK);
+    doc.text(formatBRL(result.projectedCommission), PAGE_W - MARGIN - 2, y + 17, { align: 'right' });
+    y += 26;
+
+    // Tabela de categorias
+    const categorias = [
+      { label: 'Assinaturas (POT)', detalhe: `${result.subscriptionCount} atendimentos  •  ${result.subscriptionMinutes} min`, receita: null,                  comis: result.subscriptionCommission, color: BLUE   },
+      { label: 'Serviços Avulsos',  detalhe: `${result.avulsoCount} atendimentos`,                                              receita: result.avulsoRevenue,  comis: result.avulsoCommission,       color: BRAND  },
+      { label: 'Bebidas',           detalhe: `${result.bebidaCount} itens vendidos`,                                            receita: result.bebidaRevenue,  comis: result.bebidaCommission,       color: GREEN  },
+      { label: 'Produtos',          detalhe: `${result.productCount} itens vendidos`,                                           receita: result.productRevenue, comis: result.productCommission,      color: AMBER  },
+      { label: 'Serviços Extras',   detalhe: `${result.extraCount} serviços realizados`,                                        receita: result.extraRevenue,   comis: result.extraCommission,        color: PURPLE },
+    ];
+
+    // Cabeçalho da tabela
+    setFill(doc, BG_HEADER);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.2);
+    doc.rect(MARGIN, y, COL_W, 8, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('CATEGORIA',  MARGIN + 6,          y + 5.5);
+    doc.text('DETALHES',   MARGIN + 70,          y + 5.5);
+    doc.text('FATURADO',   PAGE_W - MARGIN - 36, y + 5.5, { align: 'right' });
+    doc.text('COMISSÃO',   PAGE_W - MARGIN - 2,  y + 5.5, { align: 'right' });
+    y += 8;
+
+    const ROW_H = 13;
+    categorias.forEach((cat, i) => {
+      setFill(doc, i % 2 === 0 ? BG_WHITE : BG_SOFT);
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.15);
+      doc.rect(MARGIN, y, COL_W, ROW_H, 'FD');
+      setFill(doc, cat.color);
+      doc.rect(MARGIN, y, 3, ROW_H, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      setRgb(doc, TEXT_BLACK);
+      doc.text(cat.label, MARGIN + 6, y + 5.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(cat.detalhe, MARGIN + 6, y + 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      setRgb(doc, TEXT_DARK);
+      doc.text(cat.receita !== null ? formatBRL(cat.receita) : '—', PAGE_W - MARGIN - 36, y + ROW_H / 2 + 2.5, { align: 'right' });
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      setRgb(doc, cat.comis > 0 ? cat.color : TEXT_LIGHT);
+      doc.text(formatBRL(cat.comis), PAGE_W - MARGIN - 2, y + ROW_H / 2 + 2.5, { align: 'right' });
+      y += ROW_H;
+    });
+
+    // Linha de total
+    setFill(doc, [255, 245, 245]);
+    setStroke(doc, [200, 160, 160]);
+    doc.setLineWidth(0.4);
+    doc.rect(MARGIN, y, COL_W, 10, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    setRgb(doc, TEXT_BLACK);
+    doc.text('TOTAL', MARGIN + 6, y + 6.5);
+    doc.setFontSize(10);
+    setRgb(doc, BRAND);
+    doc.text(formatBRL(result.totalCommission), PAGE_W - MARGIN - 2, y + 6.5, { align: 'right' });
+    y += 16;
+
+    // Avaliações (se houver)
+    if ((result.evaluationCount || 0) > 0) {
+      setFill(doc, BG_SOFT);
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.2);
+      doc.roundedRect(MARGIN, y, COL_W, 14, 2, 2, 'FD');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      setRgb(doc, TEXT_GRAY);
+      doc.text('AVALIAÇÃO MÉDIA DE CLIENTES', MARGIN + 6, y + 6);
+      doc.setFontSize(13);
+      setRgb(doc, GOLD);
+      doc.text(`${result.evaluationRating?.toFixed(1)} estrelas`, MARGIN + 6, y + 12);
+      doc.setFontSize(8);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(`(baseado em ${result.evaluationCount} avaliações)`, PAGE_W - MARGIN - 2, y + 12, { align: 'right' });
+      y += 18;
+    }
+
+    // Conversões (se houver)
+    if ((result.referralConversions || 0) > 0) {
+      setFill(doc, BG_SOFT);
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.2);
+      doc.roundedRect(MARGIN, y, COL_W, 14, 2, 2, 'FD');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      setRgb(doc, TEXT_GRAY);
+      doc.text('CONVERSÕES DE INDICAÇÕES', MARGIN + 6, y + 6);
+      doc.setFontSize(13);
+      setRgb(doc, CYAN);
+      doc.text(`${result.referralConversions} vendas realizadas`, MARGIN + 6, y + 12);
+    }
+  };
+
+  results.forEach((res, i) => drawBarberPage(res, i === 0));
+
+  // Rodapé em todas as páginas
+  const total = doc.getNumberOfPages();
+  const dataHora = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  for (let p = 1; p <= total; p++) {
+    doc.setPage(p);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, PAGE_H - 10, PAGE_W - MARGIN, PAGE_H - 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    setRgb(doc, TEXT_GRAY);
+    doc.text(`OWN Prévia  •  Gerado em ${dataHora}`, MARGIN, PAGE_H - 6);
+    doc.text(`Página ${p} de ${total}`, PAGE_W - MARGIN, PAGE_H - 6, { align: 'right' });
+    setFill(doc, BRAND);
+    doc.rect(0, PAGE_H - 2, PAGE_W, 2, 'F');
+  }
+
+  doc.save(`OWN_Previa_${periodo || 'relatorio'}.pdf`);
+}
+
