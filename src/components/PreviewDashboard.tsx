@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2 } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
+import { exportBarberCardPdf } from '../utils/exportPdf';
 
 function GoalSimulator({ result }: { result: BarberResult }) {
   const [target, setTarget] = useState<string>('');
@@ -118,6 +119,17 @@ interface PreviewDashboardProps {
 
 export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
   const [selectedBarberId, setSelectedBarberId] = useState('all');
+  const [exportingCardId, setExportingCardId] = useState<string | null>(null);
+
+  const handleCardExport = async (res: BarberResult) => {
+    setExportingCardId(res.barber.id);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 80));
+      exportBarberCardPdf(res, activeCycle);
+    } finally {
+      setExportingCardId(null);
+    }
+  };
 
   if (!activeCycle) {
     return (
@@ -219,9 +231,28 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                       <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, backgroundColor: 'rgba(234,179,8,0.05)', color: '#eab308', fontWeight: 600, border: '1px solid rgba(234,179,8,0.2)' }}>Anual: {res.rankAnnual || '-'}º</span>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Total Acumulado</p>
-                    <p style={{ fontSize: 24, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>{formatCurrency(res.totalCommission)}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+                    <button
+                      onClick={() => handleCardExport(res)}
+                      disabled={exportingCardId === res.barber.id}
+                      title="Exportar ficha em PDF"
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                        background: exportingCardId === res.barber.id ? '#27272a' : 'linear-gradient(135deg, var(--brand) 0%, #b91c1c 100%)',
+                        color: 'white', border: 'none', borderRadius: 8, cursor: exportingCardId === res.barber.id ? 'not-allowed' : 'pointer',
+                        fontSize: 11, fontWeight: 700, transition: 'all 0.2s',
+                        boxShadow: exportingCardId === res.barber.id ? 'none' : '0 3px 8px rgba(225,6,0,0.3)'
+                      }}
+                    >
+                      {exportingCardId === res.barber.id
+                        ? <><Loader2 size={11} style={{ animation: 'spin 1s linear infinite' }} /> PDF...</>
+                        : <><FileDown size={11} /> Exportar PDF</>
+                      }
+                    </button>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Total Acumulado</p>
+                      <p style={{ fontSize: 24, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>{formatCurrency(res.totalCommission)}</p>
+                    </div>
                   </div>
                 </div>
               </div>
