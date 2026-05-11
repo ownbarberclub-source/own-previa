@@ -324,10 +324,10 @@ function drawGoalSimulator(
   result: BarberResult,
   targetGoal?: number
 ): number {
-  // Usa a projeção como meta padrão quando não há valor explícito
-  const meta = (targetGoal && targetGoal > result.totalCommission)
-    ? targetGoal
-    : result.projectedCommission;
+  // Só desenha se houver meta real digitada pelo barbeiro
+  if (!targetGoal || targetGoal <= 0) return y;
+
+  const meta = targetGoal;
 
   const current = result.totalCommission;
   const missing  = Math.max(0, meta - current);
@@ -381,7 +381,7 @@ function drawGoalSimulator(
   doc.setFontSize(7.5);
   setRgb(doc, TEXT_GRAY);
   doc.text(
-    `Meta: ${formatBRL(meta)}${!targetGoal ? '  (projeção do mês)' : ''}`,
+    `Meta: ${formatBRL(meta)}`,
     PAGE_W - MARGIN - 2, y + 7, { align: 'right' }
   );
   y += 13;
@@ -486,6 +486,189 @@ function drawGoalSimulator(
   }
 
   return y;
+}
+
+// ─── Página compacta: todos os barbeiros + metas em uma só página ─────────────
+function drawMetaSummaryPage(
+  doc: jsPDF,
+  results: BarberResult[],
+  goalMap: Record<string, number>,
+  cycle: Cycle | null
+): void {
+  setFill(doc, BG_WHITE);
+  doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+
+  // Faixa superior
+  setFill(doc, BRAND);
+  doc.rect(0, 0, PAGE_W, 20, 'F');
+  doc.setFont('helvetica', 'bolditalic');
+  doc.setFontSize(12);
+  doc.setTextColor(255, 255, 255);
+  doc.text('OWN', MARGIN + 2, 13);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(255, 200, 200);
+  doc.text('PRÉVIA', MARGIN + 17, 13);
+  const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(255, 255, 255);
+  doc.text(periodo, PAGE_W - MARGIN, 13, { align: 'right' });
+
+  let y = 28;
+
+  // Título
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(17);
+  setRgb(doc, TEXT_BLACK);
+  doc.text('SIMULADOR DE ', MARGIN + 2, y);
+  setRgb(doc, BRAND);
+  doc.text('META', MARGIN + 2 + doc.getTextWidth('SIMULADOR DE '), y);
+  y += 4;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  setRgb(doc, TEXT_GRAY);
+  doc.text('Visão consolidada das metas e planos de ação da equipe', MARGIN + 2, y);
+  y += 4;
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.4);
+  doc.line(MARGIN, y, PAGE_W - MARGIN, y);
+  y += 6;
+
+  // Cabeçalho da tabela
+  // Colunas: [3 acento] [nome 46] [acumulado 28] [meta 28] [falta 26] [barra+% 24] [plano resto]
+  const C = {
+    name  : MARGIN + 5,
+    accum : MARGIN + 54,
+    meta  : MARGIN + 82,
+    falta : MARGIN + 110,
+    bar   : MARGIN + 138,
+    plan  : MARGIN + 162,
+  };
+
+  setFill(doc, BG_HEADER);
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.2);
+  doc.rect(MARGIN, y, COL_W, 7, 'FD');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  setRgb(doc, TEXT_GRAY);
+  doc.text('BARBEIRO',   C.name,  y + 5);
+  doc.text('ACUMULADO',  C.accum, y + 5);
+  doc.text('META',       C.meta,  y + 5);
+  doc.text('FALTA',      C.falta, y + 5);
+  doc.text('PROGRESSO',  C.bar,   y + 5);
+  doc.text('PLANO SUGERIDO', C.plan, y + 5);
+  y += 7;
+
+  const ROW_H = 20;
+
+  for (let i = 0; i < results.length; i++) {
+    const res = results[i];
+    const rawGoal = goalMap[res.barber.id];
+    const hasGoal = rawGoal && rawGoal > 0;
+    const meta = hasGoal ? rawGoal : res.projectedCommission;
+    const current = res.totalCommission;
+    const missing = Math.max(0, meta - current);
+    const pct = meta > 0 ? Math.min(current / meta, 1) : 0;
+
+    setFill(doc, i % 2 === 0 ? BG_WHITE : BG_SOFT);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.15);
+    doc.rect(MARGIN, y, COL_W, ROW_H, 'FD');
+
+    // Acento lateral colorido
+    setFill(doc, BRAND);
+    doc.rect(MARGIN, y, 3, ROW_H, 'F');
+
+    // Nome + taxa
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    setRgb(doc, TEXT_BLACK);
+    doc.text(res.barber.name, C.name, y + 8);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    setRgb(doc, TEXT_GRAY);
+    doc.text(`${Math.round(res.barber.avulso_rate)}% comissão`, C.name, y + 14);
+
+    // Acumulado
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    setRgb(doc, BRAND);
+    doc.text(formatBRL(current), C.accum, y + 9);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('acumulado', C.accum, y + 14);
+
+    // Meta
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    setRgb(doc, TEXT_DARK);
+    doc.text(formatBRL(meta), C.meta, y + 9);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6);
+    setRgb(doc, hasGoal ? TEXT_GRAY : [150, 150, 158]);
+    doc.text(hasGoal ? 'meta definida' : 'projeção', C.meta, y + 14);
+
+    // Falta / OK
+    if (missing > 0) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      setRgb(doc, AMBER);
+      doc.text(formatBRL(missing), C.falta, y + 9);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      setRgb(doc, TEXT_GRAY);
+      doc.text('restante', C.falta, y + 14);
+    } else {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      setRgb(doc, GREEN);
+      doc.text('Meta Atingida!', C.falta, y + 10);
+    }
+
+    // Barra de progresso
+    const barW2 = 20;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    setRgb(doc, pct >= 1 ? GREEN : TEXT_DARK);
+    doc.text(`${Math.round(pct * 100)}%`, C.bar + barW2 / 2, y + 7, { align: 'center' });
+    setFill(doc, BORDER_CLR);
+    doc.roundedRect(C.bar, y + 9, barW2, 3.5, 1, 1, 'F');
+    if (pct > 0) {
+      setFill(doc, pct >= 1 ? GREEN : BRAND);
+      doc.roundedRect(C.bar, y + 9, barW2 * pct, 3.5, 1, 1, 'F');
+    }
+
+    // Plano de ação compacto (texto)
+    if (missing > 0) {
+      const avgSub  = res.subscriptionCount > 0 ? res.subscriptionCommission / res.subscriptionCount : 0;
+      const avgAvul = res.avulsoCount       > 0 ? res.avulsoCommission       / res.avulsoCount       : 0;
+      const avgExt  = res.extraCount        > 0 ? res.extraCommission        / res.extraCount        : 0;
+      const avgProd = res.productCount      > 0 ? res.productCommission      / res.productCount      : 0;
+      const avgBeb  = res.bebidaCount       > 0 ? res.bebidaCommission       / res.bebidaCount       : 0;
+      const wm: Record<string,number> = { S:10, A:4, E:3, P:2, B:1 };
+      const planCats = [
+        { k:'S', avg: avgSub,  lbl:'assin.' },
+        { k:'A', avg: avgAvul, lbl:'avul.'  },
+        { k:'E', avg: avgExt,  lbl:'ext.'   },
+        { k:'P', avg: avgProd, lbl:'prod.'  },
+        { k:'B', avg: avgBeb,  lbl:'beb.'   },
+      ].filter(c => c.avg > 0);
+      const tw2 = planCats.reduce((s,c) => s + wm[c.k], 0);
+      const planTxt = planCats
+        .map(c => `${Math.ceil((missing * (wm[c.k]/tw2)) / c.avg)} ${c.lbl}`)
+        .join(' + ');
+      const maxPlanW = PAGE_W - MARGIN - C.plan - 2;
+      const lines = doc.splitTextToSize(planTxt, maxPlanW);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.5);
+      setRgb(doc, TEXT_DARK);
+      doc.text(lines.slice(0, 2), C.plan, y + 9);
+    }
+
+    y += ROW_H;
+  }
 }
 
 // ─── Rodapé ───────────────────────────────────────────────────────────────────
@@ -875,15 +1058,22 @@ export function exportBarberCardPdf(result: BarberResult, cycle: Cycle | null) {
   doc.save(`OWN_Barbeiro_${nomeSanitizado}_${periodo || 'relatorio'}.pdf`);
 }
 
-// ─── Exportação geral da prévia (todos os barbeiros, uma página por barbeiro) ──
-export function exportPreviewPdf(results: BarberResult[], cycle: Cycle | null) {
+// ─── Exportação geral da prévia (página compacta de metas + uma página por barbeiro) ──
+export function exportPreviewPdf(
+  results: BarberResult[],
+  cycle: Cycle | null,
+  goalMap: Record<string, number> = {}
+) {
   if (results.length === 0) return;
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
 
-  const drawBarberPage = (result: BarberResult, isFirst: boolean) => {
-    if (!isFirst) doc.addPage();
+  // Página 1: tabela compacta com todos os barbeiros + metas
+  drawMetaSummaryPage(doc, results, goalMap, cycle);
+
+  const drawBarberPage = (result: BarberResult) => {
+    doc.addPage();
 
     // Fundo branco
     setFill(doc, BG_WHITE);
@@ -1076,11 +1266,11 @@ export function exportPreviewPdf(results: BarberResult[], cycle: Cycle | null) {
       y += 18;
     }
 
-    // Simulador de Meta
-    y = drawGoalSimulator(doc, y, result);
+    // Simulador de Meta (somente se o barbeiro digitou uma meta)
+    y = drawGoalSimulator(doc, y, result, goalMap[result.barber.id]);
   };
 
-  results.forEach((res, i) => drawBarberPage(res, i === 0));
+  results.forEach(res => drawBarberPage(res));
 
   // Rodapé em todas as páginas
   const total = doc.getNumberOfPages();

@@ -4,8 +4,13 @@ import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 import { exportPreviewPdf } from '../utils/exportPdf';
 
-function GoalSimulator({ result }: { result: BarberResult }) {
-  const [target, setTarget] = useState<string>('');
+function GoalSimulator({
+  result, target, onTargetChange
+}: {
+  result: BarberResult;
+  target: string;
+  onTargetChange: (v: string) => void;
+}) {
   
   const current = result.totalCommission;
   const targetNum = parseFloat(target) || 0;
@@ -56,7 +61,7 @@ function GoalSimulator({ result }: { result: BarberResult }) {
             type="number" 
             placeholder="Qual sua meta total?" 
             value={target}
-            onChange={e => setTarget(e.target.value)}
+            onChange={e => onTargetChange(e.target.value)}
             style={{
               width: '100%', padding: '10px 12px 10px 32px', backgroundColor: '#09090b', border: '1px solid #27272a',
               borderRadius: 10, color: 'white', fontSize: 14, fontWeight: 600, outline: 'none', boxSizing: 'border-box'
@@ -120,6 +125,7 @@ interface PreviewDashboardProps {
 export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
   const [selectedBarberId, setSelectedBarberId] = useState('all');
   const [isExporting, setIsExporting] = useState(false);
+  const [goalMap, setGoalMap] = useState<Record<string, string>>({});
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -128,7 +134,12 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
       const toExport = selectedBarberId === 'all'
         ? barberResults
         : barberResults.filter(r => r.barber.id === selectedBarberId);
-      exportPreviewPdf(toExport, activeCycle);
+      const numericGoalMap: Record<string, number> = {};
+      Object.entries(goalMap).forEach(([id, v]) => {
+        const n = parseFloat(v);
+        if (!isNaN(n) && n > 0) numericGoalMap[id] = n;
+      });
+      exportPreviewPdf(toExport, activeCycle, numericGoalMap);
     } finally {
       setIsExporting(false);
     }
@@ -350,7 +361,11 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                 </div>
 
                 {/* Simulador de Meta */}
-                <GoalSimulator result={res} />
+                <GoalSimulator
+                  result={res}
+                  target={goalMap[res.barber.id] || ''}
+                  onTargetChange={(v) => setGoalMap(prev => ({ ...prev, [res.barber.id]: v }))}
+                />
               </div>
             </div>
           ))
