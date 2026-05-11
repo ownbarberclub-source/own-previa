@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2 } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2, Star } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 import { exportPreviewPdf } from '../utils/exportPdf';
@@ -267,6 +267,25 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Total Acumulado</p>
                     <p style={{ fontSize: 24, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>{formatCurrency(res.totalCommission)}</p>
+                    {/* Avaliação no header */}
+                    {(res.evaluationCount || 0) > 0 && (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginTop: 6 }}>
+                        <div style={{ display: 'flex', gap: 2 }}>
+                          {[1,2,3,4,5].map(s => (
+                            <Star
+                              key={s}
+                              size={11}
+                              fill={s <= Math.round(res.evaluationRating || 0) ? '#eab308' : 'transparent'}
+                              color={s <= Math.round(res.evaluationRating || 0) ? '#eab308' : '#3f3f46'}
+                            />
+                          ))}
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#eab308' }}>
+                          {(res.evaluationRating || 0).toFixed(1)}
+                        </span>
+                        <span style={{ fontSize: 10, color: '#52525b' }}>({res.evaluationCount})</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -343,6 +362,34 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.extraCommission)}</span>
                   </div>
+
+                  {/* Avaliação de Clientes */}
+                  {(res.evaluationCount || 0) > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ padding: 6, backgroundColor: 'rgba(234,179,8,0.1)', color: '#eab308', borderRadius: 8 }}>
+                          <Star size={14} />
+                        </div>
+                        <div>
+                          <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Avaliação de Clientes</span>
+                          <span style={{ fontSize: 11, color: '#52525b' }}>{res.evaluationCount} avaliações recebidas</span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                        <div style={{ display: 'flex', gap: 2 }}>
+                          {[1,2,3,4,5].map(s => (
+                            <Star
+                              key={s}
+                              size={12}
+                              fill={s <= Math.round(res.evaluationRating || 0) ? '#eab308' : 'transparent'}
+                              color={s <= Math.round(res.evaluationRating || 0) ? '#eab308' : '#3f3f46'}
+                            />
+                          ))}
+                        </div>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: '#eab308' }}>{(res.evaluationRating || 0).toFixed(1)} / 5</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Projeção do Mês */}
