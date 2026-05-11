@@ -562,11 +562,12 @@ function drawMetaSummaryPage(
 
   const ROW_H = 20;
 
-  for (let i = 0; i < results.length; i++) {
-    const res = results[i];
-    const rawGoal = goalMap[res.barber.id];
-    const hasGoal = rawGoal && rawGoal > 0;
-    const meta = hasGoal ? rawGoal : res.projectedCommission;
+  // Filtra apenas barbeiros que digitaram meta
+  const resultsWithGoal = results.filter(r => goalMap[r.barber.id] && goalMap[r.barber.id] > 0);
+
+  for (let i = 0; i < resultsWithGoal.length; i++) {
+    const res = resultsWithGoal[i];
+    const meta = goalMap[res.barber.id]; // sempre existe pois filtramos acima
     const current = res.totalCommission;
     const missing = Math.max(0, meta - current);
     const pct = meta > 0 ? Math.min(current / meta, 1) : 0;
@@ -607,8 +608,8 @@ function drawMetaSummaryPage(
     doc.text(formatBRL(meta), C.meta, y + 9);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6);
-    setRgb(doc, hasGoal ? TEXT_GRAY : [150, 150, 158]);
-    doc.text(hasGoal ? 'meta definida' : 'projeção', C.meta, y + 14);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('meta definida', C.meta, y + 14);
 
     // Falta / OK
     if (missing > 0) {
@@ -669,6 +670,15 @@ function drawMetaSummaryPage(
 
     y += ROW_H;
   }
+
+  // Nota de rodapé da tabela
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+  setRgb(doc, TEXT_GRAY);
+  doc.text(
+    `${resultsWithGoal.length} de ${results.length} profissional(is) com meta definida neste período.`,
+    MARGIN, y + 6
+  );
 }
 
 // ─── Rodapé ───────────────────────────────────────────────────────────────────
@@ -1069,8 +1079,11 @@ export function exportPreviewPdf(
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
 
-  // Página 1: tabela compacta com todos os barbeiros + metas
-  drawMetaSummaryPage(doc, results, goalMap, cycle);
+  // Página 1: tabela compacta — só exibe se algum barbeiro digitou meta
+  const hasAnyGoal = Object.keys(goalMap).some(id => goalMap[id] > 0);
+  if (hasAnyGoal) {
+    drawMetaSummaryPage(doc, results, goalMap, cycle);
+  }
 
   const drawBarberPage = (result: BarberResult) => {
     doc.addPage();
