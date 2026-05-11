@@ -1079,14 +1079,8 @@ export function exportPreviewPdf(
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
 
-  // Página 1: tabela compacta — só exibe se algum barbeiro digitou meta
-  const hasAnyGoal = Object.keys(goalMap).some(id => goalMap[id] > 0);
-  if (hasAnyGoal) {
-    drawMetaSummaryPage(doc, results, goalMap, cycle);
-  }
-
-  const drawBarberPage = (result: BarberResult) => {
-    doc.addPage();
+  const drawBarberPage = (result: BarberResult, isFirst: boolean) => {
+    if (!isFirst) doc.addPage();
 
     // Fundo branco
     setFill(doc, BG_WHITE);
@@ -1283,7 +1277,7 @@ export function exportPreviewPdf(
     y = drawGoalSimulator(doc, y, result, goalMap[result.barber.id]);
   };
 
-  results.forEach(res => drawBarberPage(res));
+  results.forEach((res, i) => drawBarberPage(res, i === 0));
 
   // Rodapé em todas as páginas
   const total = doc.getNumberOfPages();
