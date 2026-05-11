@@ -1117,9 +1117,9 @@ export function exportPreviewPdf(
     doc.setTextColor(255, 200, 200);
     doc.text(`Taxa de comissão: ${Math.round(result.barber.avulso_rate)}%`, PAGE_W - MARGIN, 24, { align: 'right' });
 
-    let y = 36;
+    let y = 33;
 
-    // Badges de ranking
+    // Badges de ranking (compactos)
     const badges = [
       { label: 'Ranking Unidade',  value: result.rankUnit    ? `${result.rankUnit}º lugar`    : '-', color: TEXT_DARK },
       { label: 'Ranking Rede',     value: result.rankNetwork ? `${result.rankNetwork}º lugar`  : '-', color: BRAND    },
@@ -1131,48 +1131,48 @@ export function exportPreviewPdf(
       setFill(doc, BG_SOFT);
       setStroke(doc, BORDER_CLR);
       doc.setLineWidth(0.3);
-      doc.roundedRect(bx, y, badgeW, 14, 2, 2, 'FD');
+      doc.roundedRect(bx, y, badgeW, 11, 2, 2, 'FD');
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
+      doc.setFontSize(6.5);
       setRgb(doc, TEXT_GRAY);
-      doc.text(b.label.toUpperCase(), bx + badgeW / 2, y + 5, { align: 'center' });
+      doc.text(b.label.toUpperCase(), bx + badgeW / 2, y + 4.5, { align: 'center' });
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       setRgb(doc, b.color);
-      doc.text(b.value, bx + badgeW / 2, y + 11.5, { align: 'center' });
+      doc.text(b.value, bx + badgeW / 2, y + 9.5, { align: 'center' });
     });
-    y += 20;
+    y += 14;
 
     // Divisor
     setStroke(doc, BORDER_CLR);
     doc.setLineWidth(0.3);
     doc.line(MARGIN, y, PAGE_W - MARGIN, y);
-    y += 7;
+    y += 4;
 
-    // Destaque financeiro
+    // Destaque financeiro (compacto)
     setFill(doc, [255, 245, 245]);
     setStroke(doc, [220, 180, 180]);
     doc.setLineWidth(0.4);
-    doc.roundedRect(MARGIN, y, COL_W, 20, 2, 2, 'FD');
+    doc.roundedRect(MARGIN, y, COL_W, 16, 2, 2, 'FD');
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     setRgb(doc, TEXT_GRAY);
-    doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 6, y + 7);
+    doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 6, y + 5.5);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
+    doc.setFontSize(18);
     setRgb(doc, BRAND);
-    doc.text(formatBRL(result.totalCommission), MARGIN + 6, y + 17);
+    doc.text(formatBRL(result.totalCommission), MARGIN + 6, y + 13.5);
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     setRgb(doc, TEXT_GRAY);
-    doc.text('PROJEÇÃO FINAL DO MÊS', PAGE_W - MARGIN - 2, y + 7, { align: 'right' });
+    doc.text('PROJEÇÃO FINAL DO MÊS', PAGE_W - MARGIN - 2, y + 5.5, { align: 'right' });
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
+    doc.setFontSize(12);
     setRgb(doc, TEXT_DARK);
-    doc.text(formatBRL(result.projectedCommission), PAGE_W - MARGIN - 2, y + 17, { align: 'right' });
-    y += 26;
+    doc.text(formatBRL(result.projectedCommission), PAGE_W - MARGIN - 2, y + 13.5, { align: 'right' });
+    y += 20;
 
     // Tabela de categorias
     const categorias = [
@@ -1187,17 +1187,17 @@ export function exportPreviewPdf(
     setFill(doc, BG_HEADER);
     setStroke(doc, BORDER_CLR);
     doc.setLineWidth(0.2);
-    doc.rect(MARGIN, y, COL_W, 8, 'FD');
+    doc.rect(MARGIN, y, COL_W, 7, 'FD');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(7.5);
+    doc.setFontSize(7);
     setRgb(doc, TEXT_GRAY);
-    doc.text('CATEGORIA',  MARGIN + 6,          y + 5.5);
-    doc.text('DETALHES',   MARGIN + 70,          y + 5.5);
-    doc.text('FATURADO',   PAGE_W - MARGIN - 36, y + 5.5, { align: 'right' });
-    doc.text('COMISSÃO',   PAGE_W - MARGIN - 2,  y + 5.5, { align: 'right' });
-    y += 8;
+    doc.text('CATEGORIA',  MARGIN + 6,          y + 5);
+    doc.text('DETALHES',   MARGIN + 70,          y + 5);
+    doc.text('FATURADO',   PAGE_W - MARGIN - 36, y + 5, { align: 'right' });
+    doc.text('COMISSÃO',   PAGE_W - MARGIN - 2,  y + 5, { align: 'right' });
+    y += 7;
 
-    const ROW_H = 13;
+    const ROW_H = 10;
     categorias.forEach((cat, i) => {
       setFill(doc, i % 2 === 0 ? BG_WHITE : BG_SOFT);
       setStroke(doc, BORDER_CLR);
@@ -1206,21 +1206,21 @@ export function exportPreviewPdf(
       setFill(doc, cat.color);
       doc.rect(MARGIN, y, 3, ROW_H, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      setRgb(doc, TEXT_BLACK);
-      doc.text(cat.label, MARGIN + 6, y + 5.5);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7.5);
-      setRgb(doc, TEXT_GRAY);
-      doc.text(cat.detalhe, MARGIN + 6, y + 10);
-      doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
+      setRgb(doc, TEXT_BLACK);
+      doc.text(cat.label, MARGIN + 6, y + 4.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      setRgb(doc, TEXT_GRAY);
+      doc.text(cat.detalhe, MARGIN + 6, y + 8.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
       setRgb(doc, TEXT_DARK);
-      doc.text(cat.receita !== null ? formatBRL(cat.receita) : '—', PAGE_W - MARGIN - 36, y + ROW_H / 2 + 2.5, { align: 'right' });
+      doc.text(cat.receita !== null ? formatBRL(cat.receita) : '—', PAGE_W - MARGIN - 36, y + ROW_H / 2 + 2, { align: 'right' });
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       setRgb(doc, cat.comis > 0 ? cat.color : TEXT_LIGHT);
-      doc.text(formatBRL(cat.comis), PAGE_W - MARGIN - 2, y + ROW_H / 2 + 2.5, { align: 'right' });
+      doc.text(formatBRL(cat.comis), PAGE_W - MARGIN - 2, y + ROW_H / 2 + 2, { align: 'right' });
       y += ROW_H;
     });
 
@@ -1228,15 +1228,15 @@ export function exportPreviewPdf(
     setFill(doc, [255, 245, 245]);
     setStroke(doc, [200, 160, 160]);
     doc.setLineWidth(0.4);
-    doc.rect(MARGIN, y, COL_W, 10, 'FD');
+    doc.rect(MARGIN, y, COL_W, 9, 'FD');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     setRgb(doc, TEXT_BLACK);
-    doc.text('TOTAL', MARGIN + 6, y + 6.5);
+    doc.text('TOTAL', MARGIN + 6, y + 6);
     doc.setFontSize(10);
     setRgb(doc, BRAND);
-    doc.text(formatBRL(result.totalCommission), PAGE_W - MARGIN - 2, y + 6.5, { align: 'right' });
-    y += 16;
+    doc.text(formatBRL(result.totalCommission), PAGE_W - MARGIN - 2, y + 6, { align: 'right' });
+    y += 12;
 
     // Avaliações (se houver)
     if ((result.evaluationCount || 0) > 0) {
