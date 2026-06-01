@@ -138,5 +138,6 @@ export interface ManualMinutes {
   cycle_id: string;
   barber_id: string;
   minutes: number;
+  attendances?: number;
   created_at?: string;
 }

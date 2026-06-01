@@ -1072,15 +1072,101 @@ export function exportBarberCardPdf(result: BarberResult, cycle: Cycle | null) {
 export function exportPreviewPdf(
   results: BarberResult[],
   cycle: Cycle | null,
-  goalMap: Record<string, number> = {}
+  goalMap: Record<string, number> = {},
+  potMetrics?: {
+    totalSubscriptions: number;
+    potRate: number;
+    potBaseValue: number;
+    totalMinutes: number;
+    valuePerMinute: number;
+  } | null
 ) {
   if (results.length === 0) return;
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const periodo = cycle ? cycle.month_year.split('-').reverse().join('/') : '';
 
+  if (potMetrics) {
+    setFill(doc, BG_WHITE);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+    
+    setFill(doc, BRAND);
+    doc.rect(0, 0, PAGE_W, 28, 'F');
+    
+    doc.setFont('helvetica', 'bolditalic');
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text('OWN', MARGIN + 2, 13);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(255, 200, 200);
+    doc.text('PRÉVIA', MARGIN + 17, 13);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
+    doc.text(periodo, PAGE_W - MARGIN, 13, { align: 'right' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text('MÉTRICAS GLOBAIS (POT)', MARGIN + 2, 24);
+
+    let cy = 40;
+    const boxW = (COL_W - 5) / 2;
+    const boxH = 26;
+    
+    setFill(doc, BG_SOFT);
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(MARGIN, cy, boxW, boxH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('FATURAMENTO REDE', MARGIN + 6, cy + 8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    setRgb(doc, TEXT_BLACK);
+    doc.text(formatBRL(potMetrics.totalSubscriptions), MARGIN + 6, cy + 18);
+
+    setFill(doc, BG_SOFT);
+    doc.roundedRect(MARGIN + boxW + 5, cy, boxW, boxH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_GRAY);
+    doc.text('TAXA REPASSE (POT)', MARGIN + boxW + 5 + 6, cy + 8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    setRgb(doc, BRAND);
+    doc.text(`${(potMetrics.potRate * 100).toFixed(0)}%`, MARGIN + boxW + 5 + 6, cy + 18);
+
+    cy += boxH + 5;
+
+    setFill(doc, [230, 255, 230]);
+    setStroke(doc, [180, 230, 180]);
+    doc.roundedRect(MARGIN, cy, boxW, boxH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, GREEN);
+    doc.text('COMISSÃO BASE POT', MARGIN + 6, cy + 8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text(formatBRL(potMetrics.potBaseValue), MARGIN + 6, cy + 18);
+
+    setFill(doc, BRAND);
+    setStroke(doc, BRAND);
+    doc.roundedRect(MARGIN + boxW + 5, cy, boxW, boxH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(255, 200, 200);
+    doc.text('VALOR DO MINUTO', MARGIN + boxW + 5 + 6, cy + 8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`${potMetrics.valuePerMinute.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 4 })}/min`, MARGIN + boxW + 5 + 6, cy + 18);
+  }
+
   const drawBarberPage = (result: BarberResult, isFirst: boolean) => {
-    if (!isFirst) doc.addPage();
+    if (!isFirst || potMetrics) doc.addPage();
 
     // Fundo branco
     setFill(doc, BG_WHITE);

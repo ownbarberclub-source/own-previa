@@ -332,8 +332,8 @@ export default function App() {
           else if (effectiveCategory === 'bebida') { data.bebidaRevenue += rec.value; data.bebidaComm += (rec.commission || 0); data.bebidaCount++; }
         });
 
-        const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
-        const actualCount = manual ? Math.round(actualMinutes / 30) : data.subscriptionCount;
+        const actualMinutes = manual && manual.minutes > 0 ? manual.minutes : data.subscriptionMinutes;
+        const actualCount = manual && manual.attendances && manual.attendances > 0 ? manual.attendances : data.subscriptionCount;
         const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
         const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
 

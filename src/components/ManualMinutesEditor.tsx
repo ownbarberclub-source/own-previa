@@ -12,6 +12,7 @@ interface ManualMinutesEditorProps {
 
 export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSave }: ManualMinutesEditorProps) {
   const [editingMinutes, setEditingMinutes] = useState<Record<string, number>>({});
+  const [editingAttendances, setEditingAttendances] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
 
@@ -19,23 +20,27 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
     const draftStr = localStorage.getItem(`@own-previa:manual-minutes-${cycle.id}`);
     const draft = draftStr ? JSON.parse(draftStr) : null;
 
-    const initial: Record<string, number> = {};
+    const initialMins: Record<string, number> = {};
+    const initialAtts: Record<string, number> = {};
     barbers.forEach(b => {
-      if (draft && draft[b.id] !== undefined) {
-        initial[b.id] = draft[b.id];
+      if (draft && draft.minutes && draft.minutes[b.id] !== undefined) {
+        initialMins[b.id] = draft.minutes[b.id];
+        initialAtts[b.id] = draft.attendances ? draft.attendances[b.id] || 0 : 0;
       } else {
         const existing = initialManualMinutes.find(m => m.barber_id === b.id && m.cycle_id === cycle.id);
-        initial[b.id] = existing ? existing.minutes : 0;
+        initialMins[b.id] = existing ? existing.minutes : 0;
+        initialAtts[b.id] = existing ? (existing.attendances || 0) : 0;
       }
     });
-    setEditingMinutes(initial);
+    setEditingMinutes(initialMins);
+    setEditingAttendances(initialAtts);
   }, [barbers, initialManualMinutes, cycle.id]);
 
   useEffect(() => {
-    if (Object.keys(editingMinutes).length > 0) {
-      localStorage.setItem(`@own-previa:manual-minutes-${cycle.id}`, JSON.stringify(editingMinutes));
+    if (Object.keys(editingMinutes).length > 0 || Object.keys(editingAttendances).length > 0) {
+      localStorage.setItem(`@own-previa:manual-minutes-${cycle.id}`, JSON.stringify({ minutes: editingMinutes, attendances: editingAttendances }));
     }
-  }, [editingMinutes, cycle.id]);
+  }, [editingMinutes, editingAttendances, cycle.id]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -45,7 +50,8 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
       const upserts = barbers.map(b => ({
         cycle_id: cycle.id,
         barber_id: b.id,
-        minutes: editingMinutes[b.id] || 0
+        minutes: editingMinutes[b.id] || 0,
+        attendances: editingAttendances[b.id] || 0
       }));
 
       const { error } = await supabase
@@ -76,10 +82,10 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h3 style={{ color: '#f4f4f5', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18, margin: 0 }}>
-            <Clock size={20} color="var(--brand)" /> Minutagem Manual de Assinaturas
+            <Clock size={20} color="var(--brand)" /> Lançamento Manual (Minutos e Atendimentos)
           </h3>
           <p style={{ fontSize: 13, color: '#a1a1aa', marginTop: 4, marginBottom: 0 }}>
-            Insira os minutos acumulados dos barbeiros para o ciclo {cycle.month_year}
+            Insira os dados manuais das assinaturas dos barbeiros para o ciclo {cycle.month_year}
           </p>
         </div>
         <button
@@ -111,23 +117,37 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
         {barbers.map(barber => (
           <div key={barber.id} style={{
             backgroundColor: 'rgba(9,9,11,0.5)', padding: 16, borderRadius: 12, border: '1px solid rgba(63,63,70,0.5)'
           }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#f4f4f5', marginBottom: 8 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#f4f4f5', marginBottom: 12 }}>
               {barber.name}
             </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="number"
-                value={editingMinutes[barber.id] || ''}
-                onChange={(e) => setEditingMinutes(prev => ({ ...prev, [barber.id]: parseInt(e.target.value) || 0 }))}
-                style={{ ...inputStyle, paddingRight: 40 }}
-                placeholder="0"
-              />
-              <span style={{ position: 'absolute', right: 12, top: 10, color: '#71717a', fontSize: 13 }}>min</span>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <span style={{ display: 'block', fontSize: 11, color: '#a1a1aa', marginBottom: 4 }}>Minutos Totais</span>
+                <input
+                  type="number"
+                  value={editingMinutes[barber.id] || ''}
+                  onChange={(e) => setEditingMinutes(prev => ({ ...prev, [barber.id]: parseInt(e.target.value) || 0 }))}
+                  style={{ ...inputStyle, paddingRight: 40 }}
+                  placeholder="0"
+                />
+                <span style={{ position: 'absolute', right: 12, top: 29, color: '#71717a', fontSize: 13 }}>min</span>
+              </div>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <span style={{ display: 'block', fontSize: 11, color: '#a1a1aa', marginBottom: 4 }}>Qtd. Atendimentos</span>
+                <input
+                  type="number"
+                  value={editingAttendances[barber.id] || ''}
+                  onChange={(e) => setEditingAttendances(prev => ({ ...prev, [barber.id]: parseInt(e.target.value) || 0 }))}
+                  style={{ ...inputStyle, paddingRight: 40 }}
+                  placeholder="0"
+                />
+                <span style={{ position: 'absolute', right: 12, top: 29, color: '#71717a', fontSize: 13 }}>qtd</span>
+              </div>
             </div>
           </div>
         ))}
@@ -139,7 +159,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
       }}>
         <AlertCircle size={20} color="#60a5fa" style={{ flexShrink: 0, marginTop: 2 }} />
         <p style={{ fontSize: 13, color: 'rgba(191,219,254,0.8)', margin: 0, lineHeight: 1.5 }}>
-          <strong style={{ color: '#60a5fa' }}>Regra de Cálculo:</strong> Se você inserir minutos aqui, o sistema irá ignorar automaticamente o tempo carregado via planilha para este barbeiro no cálculo do POT. Deixe em zero (ou vazio) para continuar usando os dados da planilha.
+          <strong style={{ color: '#60a5fa' }}>Regra de Cálculo:</strong> Se você inserir minutos aqui, o sistema irá ignorar o tempo da planilha no cálculo do repasse financeiro (POT). Se você inserir a <strong style={{ color: '#fff' }}>quantidade</strong> de atendimentos, o sistema substituirá a quantidade que veio da planilha. Deixe em branco (zero) nos campos que você quer usar os dados originais da planilha.
         </p>
       </div>
       

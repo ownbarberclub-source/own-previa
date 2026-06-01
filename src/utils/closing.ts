@@ -85,8 +85,8 @@ export const closeCycle = async (cycle: Cycle) => {
       };
 
       const manual = manualMinutes?.find(m => m.barber_id === barber.id);
-      const actualMinutes = manual ? manual.minutes : data.sMins;
-      const actualSCnt = manual ? Math.round(actualMinutes / 30) : data.sCnt;
+      const actualMinutes = manual && manual.minutes > 0 ? manual.minutes : data.sMins;
+      const actualSCnt = manual && manual.attendances && manual.attendances > 0 ? manual.attendances : data.sCnt;
       
       const sComm = actualMinutes * valuePorMinutoGlobal;
       const totalComm = sComm + data.aComm + data.eComm + data.pComm + data.bComm;
