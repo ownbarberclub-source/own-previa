@@ -1081,7 +1081,8 @@ export function exportPreviewPdf(
     totalMinutes: number;
     totalAttendances: number;
     valuePerMinute: number;
-  } | null
+  } | null,
+  cycles: Cycle[] = []
 ) {
   if (results.length === 0) return;
 
@@ -1180,6 +1181,82 @@ export function exportPreviewPdf(
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text(`${potMetrics.subscriberCount > 0 ? (potMetrics.totalAttendances / potMetrics.subscriberCount).toFixed(2) : '0.00'} vezes/mês`, MARGIN + boxW2 + 5 + 6, cy + 18);
+    
+    cy += boxH + 15;
+
+    // --- GRÁFICO DE HISTÓRICO ---
+    if (cycles && cycles.length > 0) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      setRgb(doc, TEXT_BLACK);
+      doc.text('HISTÓRICO: FATURAMENTO VS ASSINANTES', MARGIN, cy);
+      
+      cy += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      setRgb(doc, TEXT_GRAY);
+      doc.text('Comparativo dos últimos 6 meses', MARGIN, cy);
+      
+      cy += 10;
+      
+      const chartCycles = [...cycles]
+        .sort((a, b) => a.month_year.localeCompare(b.month_year))
+        .slice(-6);
+        
+      const chartH = 45;
+      const chartW = COL_W;
+      
+      setFill(doc, BG_SOFT);
+      doc.rect(MARGIN, cy, chartW, chartH, 'F');
+      
+      setStroke(doc, BORDER_CLR);
+      doc.setLineWidth(0.5);
+      doc.line(MARGIN, cy + chartH, MARGIN + chartW, cy + chartH);
+
+      const maxFaturamento = Math.max(...chartCycles.map(c => c.subscription_total || 0), 1);
+      const maxAssinantes = Math.max(...chartCycles.map(c => c.subscriber_count || 0), 1);
+
+      const N = chartCycles.length;
+      const stepX = chartW / N;
+
+      chartCycles.forEach((c, i) => {
+        const xCenter = MARGIN + (i + 0.5) * stepX;
+        const barW = Math.min(stepX * 0.25, 12);
+        
+        const hFat = ((c.subscription_total || 0) / maxFaturamento) * (chartH - 10);
+        setFill(doc, [56, 189, 248]);
+        doc.rect(xCenter - barW - 1, cy + chartH - hFat, barW, hFat, 'F');
+        
+        doc.setFontSize(6);
+        doc.setTextColor(56, 189, 248);
+        const fatText = (c.subscription_total || 0) >= 1000 ? `${((c.subscription_total || 0) / 1000).toFixed(1)}k` : `${c.subscription_total || 0}`;
+        doc.text(fatText, xCenter - barW - 1 + barW/2, cy + chartH - hFat - 2, { align: 'center' });
+
+        const hAss = ((c.subscriber_count || 0) / maxAssinantes) * (chartH - 10);
+        setFill(doc, BRAND);
+        doc.rect(xCenter + 1, cy + chartH - hAss, barW, hAss, 'F');
+        
+        doc.setTextColor(BRAND);
+        doc.text(`${c.subscriber_count || 0}`, xCenter + 1 + barW/2, cy + chartH - hAss - 2, { align: 'center' });
+
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(7);
+        const mesSplit = c.month_year.split('-');
+        const mesAno = `${mesSplit[1]}/${mesSplit[0].slice(2)}`;
+        doc.text(mesAno, xCenter, cy + chartH + 5, { align: 'center' });
+      });
+
+      cy += chartH + 12;
+      setFill(doc, [56, 189, 248]);
+      doc.rect(MARGIN, cy, 3, 3, 'F');
+      doc.setTextColor(100, 100, 100);
+      doc.setFontSize(7);
+      doc.text('Faturamento (R$)', MARGIN + 5, cy + 2.5);
+
+      setFill(doc, BRAND);
+      doc.rect(MARGIN + 40, cy, 3, 3, 'F');
+      doc.text('Assinantes (Qtd)', MARGIN + 45, cy + 2.5);
+    }
     
     // Rodapé da capa
     setStroke(doc, BORDER_CLR);

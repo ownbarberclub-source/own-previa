@@ -141,7 +141,7 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
         const n = parseFloat(v);
         if (!isNaN(n) && n > 0) numericGoalMap[id] = n;
       });
-      exportPreviewPdf(toExport, activeCycle, numericGoalMap, potMetrics);
+      exportPreviewPdf(toExport, activeCycle, numericGoalMap, potMetrics, cycles);
     } finally {
       setIsExporting(false);
     }
