@@ -1236,7 +1236,7 @@ export function exportPreviewPdf(
         setFill(doc, BRAND);
         doc.rect(xCenter + 1, cy + chartH - hAss, barW, hAss, 'F');
         
-        doc.setTextColor(BRAND);
+        setRgb(doc, BRAND);
         doc.text(`${c.subscriber_count || 0}`, xCenter + 1 + barW/2, cy + chartH - hAss - 2, { align: 'center' });
 
         doc.setTextColor(100, 100, 100);
