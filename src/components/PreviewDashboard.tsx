@@ -112,9 +112,11 @@ interface PreviewDashboardProps {
   barberResults: BarberResult[];
   potMetrics: {
     totalSubscriptions: number;
+    subscriberCount: number;
     potRate: number;
     potBaseValue: number;
     totalMinutes: number;
+    totalAttendances: number;
     valuePerMinute: number;
   } | null;
   activeCycle: Cycle | null;
@@ -221,7 +223,7 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
       </div>
       {/* Métricas Globais do POT */}
       {potMetrics && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16 }}>
           <div style={{ ...cardStyle, padding: '20px', background: 'linear-gradient(145deg, #18181b 0%, #09090b 100%)' }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Faturamento Rede</span>
             <p style={{ fontSize: 20, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk', marginTop: 4 }}>{formatCurrency(potMetrics.totalSubscriptions)}</p>
@@ -238,6 +240,12 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
             <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Valor do Minuto</span>
             <p style={{ fontSize: 20, fontWeight: 900, color: 'white', fontFamily: 'Space Grotesk', marginTop: 4 }}>
               {potMetrics.valuePerMinute.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 4 })}/min
+            </p>
+          </div>
+          <div style={{ ...cardStyle, padding: '20px', background: 'linear-gradient(145deg, #18181b 0%, #09090b 100%)', border: '1px solid #38bdf8' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Taxa de Retorno</span>
+            <p style={{ fontSize: 20, fontWeight: 900, color: '#38bdf8', fontFamily: 'Space Grotesk', marginTop: 4 }}>
+              {potMetrics.subscriberCount > 0 ? (potMetrics.totalAttendances / potMetrics.subscriberCount).toFixed(2) : '0.00'} <span style={{ fontSize: 12, fontWeight: 600 }}>vezes/mês</span>
             </p>
           </div>
         </div>

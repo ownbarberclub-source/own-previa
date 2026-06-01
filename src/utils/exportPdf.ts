@@ -1075,9 +1075,11 @@ export function exportPreviewPdf(
   goalMap: Record<string, number> = {},
   potMetrics?: {
     totalSubscriptions: number;
+    subscriberCount: number;
     potRate: number;
     potBaseValue: number;
     totalMinutes: number;
+    totalAttendances: number;
     valuePerMinute: number;
   } | null
 ) {
@@ -1112,9 +1114,10 @@ export function exportPreviewPdf(
     doc.text('MÉTRICAS GLOBAIS (POT)', MARGIN + 2, 24);
 
     let cy = 40;
-    const boxW = (COL_W - 5) / 2;
+    const boxW = (COL_W - 10) / 3;
     const boxH = 26;
     
+    // LINHA 1 (3 caixas)
     setFill(doc, BG_SOFT);
     setStroke(doc, BORDER_CLR);
     doc.setLineWidth(0.3);
@@ -1124,7 +1127,7 @@ export function exportPreviewPdf(
     setRgb(doc, TEXT_GRAY);
     doc.text('FATURAMENTO REDE', MARGIN + 6, cy + 8);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     setRgb(doc, TEXT_BLACK);
     doc.text(formatBRL(potMetrics.totalSubscriptions), MARGIN + 6, cy + 18);
 
@@ -1135,34 +1138,63 @@ export function exportPreviewPdf(
     setRgb(doc, TEXT_GRAY);
     doc.text('TAXA REPASSE (POT)', MARGIN + boxW + 5 + 6, cy + 8);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     setRgb(doc, BRAND);
     doc.text(`${(potMetrics.potRate * 100).toFixed(0)}%`, MARGIN + boxW + 5 + 6, cy + 18);
 
-    cy += boxH + 5;
-
     setFill(doc, [230, 255, 230]);
     setStroke(doc, [180, 230, 180]);
-    doc.roundedRect(MARGIN, cy, boxW, boxH, 2, 2, 'FD');
+    doc.roundedRect(MARGIN + (boxW + 5) * 2, cy, boxW, boxH, 2, 2, 'FD');
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     setRgb(doc, GREEN);
-    doc.text('COMISSÃO BASE POT', MARGIN + 6, cy + 8);
+    doc.text('COMISSÃO BASE POT', MARGIN + (boxW + 5) * 2 + 6, cy + 8);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.text(formatBRL(potMetrics.potBaseValue), MARGIN + 6, cy + 18);
+    doc.setFontSize(14);
+    doc.text(formatBRL(potMetrics.potBaseValue), MARGIN + (boxW + 5) * 2 + 6, cy + 18);
 
+    cy += boxH + 5;
+
+    // LINHA 2 (2 caixas centrais)
+    const boxW2 = (COL_W - 5) / 2;
+    
     setFill(doc, BRAND);
     setStroke(doc, BRAND);
-    doc.roundedRect(MARGIN + boxW + 5, cy, boxW, boxH, 2, 2, 'FD');
+    doc.roundedRect(MARGIN, cy, boxW2, boxH, 2, 2, 'FD');
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(255, 200, 200);
-    doc.text('VALOR DO MINUTO', MARGIN + boxW + 5 + 6, cy + 8);
+    doc.text('VALOR DO MINUTO', MARGIN + 6, cy + 8);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.setTextColor(255, 255, 255);
-    doc.text(`${potMetrics.valuePerMinute.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 4 })}/min`, MARGIN + boxW + 5 + 6, cy + 18);
+    doc.text(`${potMetrics.valuePerMinute.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 4 })}/min`, MARGIN + 6, cy + 18);
+
+    setFill(doc, [240, 250, 255]);
+    setStroke(doc, [180, 220, 255]);
+    doc.roundedRect(MARGIN + boxW2 + 5, cy, boxW2, boxH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, [6, 148, 162]);
+    doc.text('TAXA DE RETORNO', MARGIN + boxW2 + 5 + 6, cy + 8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text(`${potMetrics.subscriberCount > 0 ? (potMetrics.totalAttendances / potMetrics.subscriberCount).toFixed(2) : '0.00'} vezes/mês`, MARGIN + boxW2 + 5 + 6, cy + 18);
+    
+    // Rodapé da capa
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, PAGE_H - 10, PAGE_W - MARGIN, PAGE_H - 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    setRgb(doc, TEXT_GRAY);
+    const dataHora = new Date().toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    doc.text(`OWN Prévia  •  Gerado em ${dataHora}`, MARGIN, PAGE_H - 6);
+    doc.text(`Métricas Globais`, PAGE_W - MARGIN, PAGE_H - 6, { align: 'right' });
+    setFill(doc, BRAND);
+    doc.rect(0, PAGE_H - 2, PAGE_W, 2, 'F');
   }
 
   const drawBarberPage = (result: BarberResult, isFirst: boolean) => {

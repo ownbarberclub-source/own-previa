@@ -44,6 +44,7 @@ export interface Cycle {
   id: string;
   month_year: string;
   subscription_total: number;
+  subscriber_count?: number;
   status?: 'open' | 'closed';
   created_at?: string;
 }
