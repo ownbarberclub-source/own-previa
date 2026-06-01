@@ -21,6 +21,7 @@ interface CycleManagerProps {
 
 export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, records, manualMinutes, onSelectCycle, onRefresh, unitId }: CycleManagerProps) {
   const [subTotal, setSubTotal] = useState('');
+  const [subCount, setSubCount] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState({ type: '', text: '' });
   const [ignoredRows, setIgnoredRows] = useState<{ row: number; item: string; barber: string; reason: string }[]>([]);
@@ -39,7 +40,8 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
       const { data, error } = await supabase.from('previa_cycles').insert([{
         id: crypto.randomUUID(),
         month_year: monthYear,
-        subscription_total: 0
+        subscription_total: 0,
+        subscriber_count: 0
       }]).select();
 
       if (error) throw error;
@@ -55,13 +57,19 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
   };
 
   const handleUpdateSubTotal = async () => {
-    if (!activeCycleId || !subTotal) return;
+    if (!activeCycleId) return;
     try {
-      const { error } = await supabase.from('previa_cycles').update({
-        subscription_total: parseFloat(subTotal.replace(',', '.'))
-      }).eq('id', activeCycleId);
+      const updates: any = {};
+      if (subTotal !== '') updates.subscription_total = parseFloat(subTotal.replace(',', '.'));
+      if (subCount !== '') updates.subscriber_count = parseInt(subCount, 10) || 0;
+      
+      if (Object.keys(updates).length === 0) return;
+
+      const { error } = await supabase.from('previa_cycles').update(updates).eq('id', activeCycleId);
       if (error) throw error;
+      
       setSubTotal('');
+      setSubCount('');
       onRefresh();
     } catch (err) {
       console.error("Erro ao atualizar faturamento:", err);
@@ -297,34 +305,54 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
                     </h4>
                   </div>
                   <div style={{ padding: 24 }}>
-                    <div style={{ marginBottom: 20 }}>
-                      <p style={{ fontSize: 12, color: '#71717a', marginBottom: 4 }}>Total Acumulado Atual</p>
-                      <p style={{ fontSize: 28, fontWeight: 800, color: 'var(--brand)', fontFamily: 'Space Grotesk' }}>
-                        {formatCurrency(activeCycle.subscription_total)}
-                      </p>
+                    <div style={{ marginBottom: 20, display: 'flex', gap: 24 }}>
+                      <div>
+                        <p style={{ fontSize: 12, color: '#71717a', marginBottom: 4 }}>Total Acumulado Atual</p>
+                        <p style={{ fontSize: 28, fontWeight: 800, color: 'var(--brand)', fontFamily: 'Space Grotesk' }}>
+                          {formatCurrency(activeCycle.subscription_total)}
+                        </p>
+                      </div>
+                      <div style={{ paddingLeft: 24, borderLeft: '1px solid #27272a' }}>
+                        <p style={{ fontSize: 12, color: '#71717a', marginBottom: 4 }}>Total de Assinantes</p>
+                        <p style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>
+                          {activeCycle.subscriber_count || 0}
+                        </p>
+                      </div>
                     </div>
-                    
-                    <div style={{ display: 'flex', gap: 10 }}>
-                      <input
-                        style={{ ...inputStyle, flex: 1 }}
-                        type="text"
-                        placeholder="Novo valor total (ex: 12500,00)"
-                        value={subTotal}
-                        onChange={e => setSubTotal(e.target.value)}
-                      />
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <div style={{ position: 'relative', flex: 1 }}>
+                        <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#71717a', fontSize: 14 }}>R$</span>
+                        <input
+                          type="text"
+                          value={subTotal}
+                          onChange={(e) => setSubTotal(e.target.value)}
+                          placeholder="Faturamento..."
+                          style={{ ...inputStyle, paddingLeft: 32, width: '100%' }}
+                        />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <input
+                          type="number"
+                          value={subCount}
+                          onChange={(e) => setSubCount(e.target.value)}
+                          placeholder="Nº de Assinantes"
+                          style={{ ...inputStyle, width: '100%' }}
+                        />
+                      </div>
                       <button
                         onClick={handleUpdateSubTotal}
+                        disabled={!subTotal && !subCount}
                         style={{
-                          padding: '10px 16px', backgroundColor: '#27272a', color: '#f4f4f5',
-                          border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 13
+                          padding: '10px 16px', backgroundColor: (!subTotal && !subCount) ? '#27272a' : 'var(--brand)',
+                          color: 'white', border: 'none', borderRadius: 8, cursor: (!subTotal && !subCount) ? 'not-allowed' : 'pointer',
+                          fontWeight: 600, fontSize: 13, flexShrink: 0
                         }}
                       >
-                        Atualizar
+                        Salvar
                       </button>
                     </div>
                   </div>
                 </div>
-
                 {/* Upload de Planilha */}
                 <div style={cardStyle}>
                   <div style={{ padding: '20px 24px', borderBottom: '1px solid #27272a' }}>

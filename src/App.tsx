@@ -268,11 +268,14 @@ export default function App() {
     let valuePorMinutoGlobal = 0;
     let potGlobal = 0;
     
+    let totalNetworkCount = 0;
+
     if (activeCycle.status === 'closed') {
       let totalCommissionSigs = 0;
 
       historicalResults.filter(hr => hr.cycle_id === activeCycle.id).forEach(hr => {
         totalNetworkMinutes += hr.subscription_minutes;
+        totalNetworkCount += hr.subscription_count;
         totalCommissionSigs += hr.subscription_commission;
 
         let barber = allBarbers.find(b => b.id === hr.barber_id);
@@ -334,6 +337,8 @@ export default function App() {
 
         const actualMinutes = manual && manual.minutes > 0 ? manual.minutes : data.subscriptionMinutes;
         const actualCount = manual && manual.attendances && manual.attendances > 0 ? manual.attendances : data.subscriptionCount;
+        totalNetworkCount += actualCount;
+
         const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
         const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
 
@@ -476,10 +481,12 @@ export default function App() {
       barberResultsData: { 
         results: finalMonthResults, 
         metrics: { 
-          totalSubscriptions: activeCycle.subscription_total || 0, 
+          totalSubscriptions: activeCycle.subscription_total || 0,
+          subscriberCount: activeCycle.subscriber_count || 0,
           potRate: globalSettings?.pot_rate || 0.42, 
           potBaseValue: potBaseValue, 
-          totalMinutes: totalNetworkMinutes, 
+          totalMinutes: totalNetworkMinutes,
+          totalAttendances: totalNetworkCount,
           valuePerMinute: valuePorMinutoGlobal 
         } 
       }, 
