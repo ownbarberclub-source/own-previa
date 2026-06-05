@@ -411,8 +411,20 @@ export default function App() {
 
 
     // 3. FINAL FILTER AND CONSOLIDATION
-    let finalMonthResults = networkMonthResults;
-    let finalAnnualResults = networkAnnualResults;
+    let finalMonthResults = networkMonthResults.filter(r => 
+      r.barber.is_active !== false ||
+      r.totalCommission > 0 ||
+      r.subscriptionMinutes > 0 ||
+      r.avulsoCount > 0 ||
+      r.extraCount > 0 ||
+      r.productCount > 0 ||
+      r.bebidaCount > 0
+    );
+    let finalAnnualResults = networkAnnualResults.filter(r =>
+      r.barber.is_active !== false ||
+      r.totalCommission > 0 ||
+      r.subscriptionMinutes > 0
+    );
 
     if (isConsolidated) {
       // Group networkMonthResults by name

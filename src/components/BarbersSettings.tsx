@@ -18,6 +18,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const [editRate, setEditRate] = useState('');
 
   const filteredBarbers = barbers.filter(b => 
+    b.is_active !== false &&
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -43,7 +44,7 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const handleDelete = async (id: string) => {
     if (!window.confirm('Remover este barbeiro?')) return;
     try {
-      const { error } = await supabase.from('previa_barbers').delete().eq('id', id);
+      const { error } = await supabase.from('previa_barbers').update({ is_active: false }).eq('id', id);
       if (error) throw error;
       onRefresh();
     } catch (err) {

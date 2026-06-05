@@ -17,6 +17,7 @@ export interface Barber {
   unit_id: string;
   name: string;
   avulso_rate: number;
+  is_active?: boolean;
   created_at?: string;
 }
 
