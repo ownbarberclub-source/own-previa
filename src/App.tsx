@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid, Lock, Database } from 'lucide-react';
+import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Trophy, UserCog, Clock, Building2, ChevronDown, LayoutGrid, Lock, Database, Flag } from 'lucide-react';
 import { supabase } from './supabaseClient';
-import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult } from './types';
+import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult, Campaign } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
 
 import { BarbersSettings } from './components/BarbersSettings';
@@ -38,6 +38,12 @@ export default function App() {
   const [historicalResults, setHistoricalResults] = useState<HistoricalResult[]>([]);
   const [manualMinutes, setManualMinutes] = useState<ManualMinutes[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  
+  // Estados de Campanha e Filtro
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>('all');
+  const [filterType, setFilterType] = useState<'cycle' | 'campaign'>('cycle');
+
   const [crossSiteData, setCrossSiteData] = useState<{ evaluations: any[], referrals: any[] }>({ evaluations: [], referrals: [] });
   const [loading, setLoading] = useState(true);
 
@@ -177,7 +183,8 @@ export default function App() {
         { data: allB },
         { data: hist },
         { data: evals },
-        { data: refs }
+        { data: refs },
+        { data: camps }
       ] = await Promise.all([
         supabase.from('previa_barbers').select('*').in('unit_id', unitIds).eq('is_hidden_crm', false).order('name'),
         supabase.from('previa_settings').select('*').in('unit_id', unitIds),
@@ -216,7 +223,8 @@ export default function App() {
           return { data: allData };
         })(),
         supabase.from('feedback_evaluations').select('*'),
-        supabase.from('referral_records').select('barberId, barberName, contacts, createdAt')
+        supabase.from('referral_records').select('barberId, barberName, contacts, createdAt, campaign_id'),
+        supabase.from('campaigns').select('*').order('created_at', { ascending: false })
       ]);
 
       if (b) setBarbers(b);
@@ -241,6 +249,13 @@ export default function App() {
       }
       
       if (rec) setRecords(rec);
+      if (camps) {
+        setCampaigns(camps);
+        const active = camps.find(c => c.status === 'active');
+        if (active && selectedCampaignId === 'all') {
+          setSelectedCampaignId(active.id);
+        }
+      }
 
       setCrossSiteData({ 
         evaluations: evals || [], 
@@ -474,9 +489,16 @@ export default function App() {
 
         const bRefs = crossSiteData.referrals.filter(ref => {
           const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
-          const refDate = ref.createdAt || ref.date || '';
-          const matchesPeriod = period === 'month' ? refDate.startsWith(currentMonth) : refDate.startsWith(activeYear);
-          return matchesBarber && matchesPeriod;
+          if (!matchesBarber) return false;
+
+          if (filterType === 'campaign') {
+            if (selectedCampaignId === 'all') return true;
+            return ref.campaign_id === selectedCampaignId;
+          } else {
+            const refDate = ref.createdAt || ref.date || '';
+            const matchesPeriod = period === 'month' ? refDate.startsWith(currentMonth) : refDate.startsWith(activeYear);
+            return matchesPeriod;
+          }
         });
         
         r.referralConversions = bRefs.reduce((acc, curr) => {
@@ -607,7 +629,52 @@ export default function App() {
             </nav>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+             {/* Seletor de Tipo de Filtro */}
+             <div style={{ display: 'flex', backgroundColor: '#09090b', borderRadius: 10, padding: 3, border: '1px solid #27272a' }}>
+               <button
+                 onClick={() => setFilterType('cycle')}
+                 style={{
+                   padding: '4px 10px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                   backgroundColor: filterType === 'cycle' ? '#27272a' : 'transparent',
+                   color: filterType === 'cycle' ? 'white' : '#71717a',
+                   transition: 'all 0.15s'
+                 }}
+               >
+                 Mês
+               </button>
+               <button
+                 onClick={() => setFilterType('campaign')}
+                 style={{
+                   padding: '4px 10px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                   backgroundColor: filterType === 'campaign' ? '#27272a' : 'transparent',
+                   color: filterType === 'campaign' ? 'white' : '#71717a',
+                   transition: 'all 0.15s'
+                 }}
+               >
+                 Campanha
+               </button>
+             </div>
+
+             {/* Seletor de Campanha se estiver no modo campanha */}
+             {filterType === 'campaign' && (
+               <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 10px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+                 <Flag size={13} color="var(--brand)" />
+                 <select
+                   value={selectedCampaignId}
+                   onChange={(e) => setSelectedCampaignId(e.target.value)}
+                   style={{ background: 'none', border: 'none', color: '#f4f4f5', fontSize: 12, fontWeight: 600, outline: 'none', cursor: 'pointer' }}
+                 >
+                   <option value="all" style={{ backgroundColor: '#18181b', color: 'white' }}>Todas Campanhas</option>
+                   {campaigns.map(c => (
+                     <option key={c.id} value={c.id} style={{ backgroundColor: '#18181b', color: 'white' }}>
+                       {c.name} {c.status === 'active' ? '(Ativa)' : '(Encerrada)'}
+                     </option>
+                   ))}
+                 </select>
+               </div>
+             )}
+
              <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 8 }} title="Sair">
                <LogOut size={18} />
              </button>

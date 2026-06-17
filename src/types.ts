@@ -143,3 +143,10 @@ export interface ManualMinutes {
   attendances?: number;
   created_at?: string;
 }
+
+export interface Campaign {
+  id: string;
+  name: string;
+  status: 'active' | 'ended';
+  created_at: string;
+}
