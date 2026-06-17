@@ -487,18 +487,12 @@ export default function App() {
           r.adjustmentCount = bEvals.filter(e => !!e.needs_follow_up).length;
         }
 
+        const activeCampaign = campaigns.find(c => c.status === 'active');
         const bRefs = crossSiteData.referrals.filter(ref => {
           const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
           if (!matchesBarber) return false;
 
-          if (filterType === 'campaign') {
-            if (selectedCampaignId === 'all') return true;
-            return ref.campaign_id === selectedCampaignId;
-          } else {
-            const refDate = ref.createdAt || ref.date || '';
-            const matchesPeriod = period === 'month' ? refDate.startsWith(currentMonth) : refDate.startsWith(activeYear);
-            return matchesPeriod;
-          }
+          return activeCampaign ? ref.campaign_id === activeCampaign.id : false;
         });
         
         r.referralConversions = bRefs.reduce((acc, curr) => {
@@ -630,50 +624,25 @@ export default function App() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-             {/* Seletor de Tipo de Filtro */}
-             <div style={{ display: 'flex', backgroundColor: '#09090b', borderRadius: 10, padding: 3, border: '1px solid #27272a' }}>
-               <button
-                 onClick={() => setFilterType('cycle')}
-                 style={{
-                   padding: '4px 10px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                   backgroundColor: filterType === 'cycle' ? '#27272a' : 'transparent',
-                   color: filterType === 'cycle' ? 'white' : '#71717a',
-                   transition: 'all 0.15s'
-                 }}
-               >
-                 Mês
-               </button>
-               <button
-                 onClick={() => setFilterType('campaign')}
-                 style={{
-                   padding: '4px 10px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                   backgroundColor: filterType === 'campaign' ? '#27272a' : 'transparent',
-                   color: filterType === 'campaign' ? 'white' : '#71717a',
-                   transition: 'all 0.15s'
-                 }}
-               >
-                 Campanha
-               </button>
-             </div>
-
-             {/* Seletor de Campanha se estiver no modo campanha */}
-             {filterType === 'campaign' && (
-               <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 10px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
-                 <Flag size={13} color="var(--brand)" />
-                 <select
-                   value={selectedCampaignId}
-                   onChange={(e) => setSelectedCampaignId(e.target.value)}
-                   style={{ background: 'none', border: 'none', color: '#f4f4f5', fontSize: 12, fontWeight: 600, outline: 'none', cursor: 'pointer' }}
-                 >
-                   <option value="all" style={{ backgroundColor: '#18181b', color: 'white' }}>Todas Campanhas</option>
-                   {campaigns.map(c => (
-                     <option key={c.id} value={c.id} style={{ backgroundColor: '#18181b', color: 'white' }}>
-                       {c.name} {c.status === 'active' ? '(Ativa)' : '(Encerrada)'}
-                     </option>
-                   ))}
-                 </select>
-               </div>
-             )}
+             {/* Indicador de Campanha Ativa */}
+             {(() => {
+               const active = campaigns.find(c => c.status === 'active');
+               return active ? (
+                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+                   <Flag size={13} color="var(--brand)" />
+                   <span style={{ fontSize: 12, fontWeight: 600, color: '#e4e4e7', fontFamily: 'Space Grotesk, sans-serif' }}>
+                     Campanha Ativa: <strong style={{ color: 'white' }}>{active.name}</strong>
+                   </span>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', backgroundColor: '#09090b', borderRadius: 10, border: '1px solid #27272a' }}>
+                   <Flag size={13} color="#71717a" />
+                   <span style={{ fontSize: 12, fontWeight: 600, color: '#71717a', fontFamily: 'Space Grotesk, sans-serif' }}>
+                     Nenhuma Campanha Ativa
+                   </span>
+                 </div>
+               );
+             })()}
 
              <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 8 }} title="Sair">
                <LogOut size={18} />
