@@ -318,7 +318,15 @@ export default function App() {
       potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
       potBaseValue = potGlobal;
       
-      totalNetworkMinutes = allBarbers.reduce((sum, barber) => {
+      // Filtra apenas os barbeiros ativos ou os inativos que participaram/têm dados no ciclo aberto
+      const activeOrParticipatingBarbers = allBarbers.filter(barber => {
+        if (barber.is_active !== false) return true;
+        const hasRecords = records.some(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
+        const hasManual = manualMinutes.some(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id && (m.minutes > 0 || (m.attendances || 0) > 0));
+        return hasRecords || hasManual;
+      });
+
+      totalNetworkMinutes = activeOrParticipatingBarbers.reduce((sum, barber) => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         if (manual) return sum + manual.minutes;
         return sum + records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
@@ -328,7 +336,7 @@ export default function App() {
       const { elapsed, total } = getWorkingHours(currentMonth);
       const projectionFactor = elapsed > 0 ? total / elapsed : 1;
 
-      allBarbers.forEach(barber => {
+      activeOrParticipatingBarbers.forEach(barber => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         const barberRecords = records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
         

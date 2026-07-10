@@ -11,6 +11,11 @@ interface ManualMinutesEditorProps {
 }
 
 export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSave }: ManualMinutesEditorProps) {
+  const activeBarbers = barbers.filter(b => 
+    b.is_active !== false ||
+    initialManualMinutes.some(m => m.barber_id === b.id && m.cycle_id === cycle.id && (m.minutes > 0 || (m.attendances || 0) > 0))
+  );
+
   const [editingMinutes, setEditingMinutes] = useState<Record<string, number>>({});
   const [editingAttendances, setEditingAttendances] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
@@ -22,7 +27,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
 
     const initialMins: Record<string, number> = {};
     const initialAtts: Record<string, number> = {};
-    barbers.forEach(b => {
+    activeBarbers.forEach(b => {
       if (draft && draft.minutes && draft.minutes[b.id] !== undefined) {
         initialMins[b.id] = draft.minutes[b.id];
         initialAtts[b.id] = draft.attendances ? draft.attendances[b.id] || 0 : 0;
@@ -34,7 +39,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
     });
     setEditingMinutes(initialMins);
     setEditingAttendances(initialAtts);
-  }, [barbers, initialManualMinutes, cycle.id]);
+  }, [activeBarbers, initialManualMinutes, cycle.id]);
 
   useEffect(() => {
     if (Object.keys(editingMinutes).length > 0 || Object.keys(editingAttendances).length > 0) {
@@ -47,7 +52,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
     setFeedback(null);
     
     try {
-      const upserts = barbers.map(b => ({
+      const upserts = activeBarbers.map(b => ({
         cycle_id: cycle.id,
         barber_id: b.id,
         minutes: editingMinutes[b.id] || 0,
@@ -118,7 +123,7 @@ export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSa
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
-        {barbers.map(barber => (
+        {activeBarbers.map(barber => (
           <div key={barber.id} style={{
             backgroundColor: 'rgba(9,9,11,0.5)', padding: 16, borderRadius: 12, border: '1px solid rgba(63,63,70,0.5)'
           }}>
