@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Save, Clock, History, AlertCircle } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { Barber, ManualMinutes, Cycle } from '../types';
@@ -11,10 +11,12 @@ interface ManualMinutesEditorProps {
 }
 
 export function ManualMinutesEditor({ cycle, barbers, initialManualMinutes, onSave }: ManualMinutesEditorProps) {
-  const activeBarbers = barbers.filter(b => 
-    b.is_active !== false ||
-    initialManualMinutes.some(m => m.barber_id === b.id && m.cycle_id === cycle.id && (m.minutes > 0 || (m.attendances || 0) > 0))
-  );
+  const activeBarbers = useMemo(() => {
+    return barbers.filter(b => 
+      b.is_active !== false ||
+      initialManualMinutes.some(m => m.barber_id === b.id && m.cycle_id === cycle.id && (m.minutes > 0 || (m.attendances || 0) > 0))
+    );
+  }, [barbers, initialManualMinutes, cycle.id]);
 
   const [editingMinutes, setEditingMinutes] = useState<Record<string, number>>({});
   const [editingAttendances, setEditingAttendances] = useState<Record<string, number>>({});
