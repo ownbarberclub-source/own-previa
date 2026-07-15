@@ -43,6 +43,7 @@ export default function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>('all');
   const [filterType, setFilterType] = useState<'cycle' | 'campaign'>('cycle');
+  const [sellers, setSellers] = useState<any[]>([]);
 
   const [crossSiteData, setCrossSiteData] = useState<{ evaluations: any[], referrals: any[] }>({ evaluations: [], referrals: [] });
   const [loading, setLoading] = useState(true);
@@ -135,6 +136,7 @@ export default function App() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_settings' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_manual_minutes' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'previa_historical_results' }, () => loadAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sellers' }, () => loadAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'feedback_evaluations' }, (payload) => {
         setCrossSiteData(prev => {
           const { evaluations, referrals } = prev;
@@ -184,7 +186,8 @@ export default function App() {
         { data: hist },
         { data: evals },
         { data: refs },
-        { data: camps }
+        { data: camps },
+        { data: sel }
       ] = await Promise.all([
         supabase.from('previa_barbers').select('*').in('unit_id', unitIds).eq('is_hidden_crm', false).order('name'),
         supabase.from('previa_settings').select('*').in('unit_id', unitIds),
@@ -224,7 +227,8 @@ export default function App() {
         })(),
         supabase.from('feedback_evaluations').select('*'),
         supabase.from('referral_records').select('barberId, barberName, contacts, createdAt, campaign_id'),
-        supabase.from('campaigns').select('*').order('created_at', { ascending: false })
+        supabase.from('campaigns').select('*').order('created_at', { ascending: false }),
+        supabase.from('sellers').select('*')
       ]);
 
       if (b) setBarbers(b);
@@ -249,6 +253,7 @@ export default function App() {
       }
       
       if (rec) setRecords(rec);
+      if (sel) setSellers(sel);
       if (camps) {
         setCampaigns(camps);
         const active = camps.find(c => c.status === 'active');
@@ -377,6 +382,55 @@ export default function App() {
       });
     }
 
+    // Inserção dos vendedores que possuem vendas diretas no ciclo/período ativo
+    const activeCampaign = campaigns.find(c => c.status === 'active');
+    (sellers || []).forEach(seller => {
+      let hasDirectSales = false;
+      crossSiteData.referrals.forEach(ref => {
+        if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
+        const contacts = ref.contacts || [];
+        contacts.forEach((c: any) => {
+          const hasBarber = !!(c.barberId || c.barberName || ref.barberId || ref.barberName);
+          if (!hasBarber && c.sellerId === seller.id) {
+            hasDirectSales = true;
+          }
+        });
+      });
+
+      if (hasDirectSales) {
+        networkMonthResults.push({
+          barber: {
+            id: seller.id,
+            name: `${seller.name} (Venda Direta)`,
+            unit_id: 'venda_direta',
+            is_active: true,
+            avulso_rate: 0
+          } as Barber,
+          unit_name: 'Venda Direta',
+          subscriptionMinutes: 0,
+          subscriptionCount: 0,
+          avulsoRevenue: 0,
+          extraRevenue: 0,
+          productRevenue: 0,
+          bebidaRevenue: 0,
+          subscriptionCommission: 0,
+          avulsoCommission: 0,
+          extraCommission: 0,
+          productCommission: 0,
+          bebidaCommission: 0,
+          avulsoCount: 0,
+          extraCount: 0,
+          productCount: 0,
+          bebidaCount: 0,
+          totalCommission: 0,
+          projectedCommission: 0,
+          rankNetwork: 0,
+          rankUnit: 0,
+          rankAnnual: 0
+        });
+      }
+    });
+
     // Sort to apply Rank Network
     networkMonthResults.sort((a, b) => b.totalCommission - a.totalCommission);
     networkMonthResults.forEach((r, i) => r.rankNetwork = i + 1);
@@ -469,9 +523,9 @@ export default function App() {
       // annual results are already grouped by name
     } else {
       // Individual unit filter
-      finalMonthResults = networkMonthResults.filter(r => r.barber.unit_id === activeUnitId);
+      finalMonthResults = networkMonthResults.filter(r => r.barber.unit_id === activeUnitId || r.barber.unit_id === 'venda_direta');
       finalAnnualResults = networkAnnualResults.filter(r => 
-        allBarbers.filter(b => b.unit_id === activeUnitId).some(b => b.name === r.barber.name)
+        r.barber.unit_id === 'venda_direta' || allBarbers.filter(b => b.unit_id === activeUnitId).some(b => b.name === r.barber.name)
       );
     }
     
@@ -496,17 +550,35 @@ export default function App() {
         }
 
         const activeCampaign = campaigns.find(c => c.status === 'active');
-        const bRefs = crossSiteData.referrals.filter(ref => {
-          const matchesBarber = ref.barberId === r.barber.id || (ref.barberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
-          if (!matchesBarber) return false;
-
-          return activeCampaign ? ref.campaign_id === activeCampaign.id : false;
+        
+        let conversionsCount = 0;
+        crossSiteData.referrals.forEach(ref => {
+          if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
+          
+          const contacts = ref.contacts || [];
+          contacts.forEach((c: any) => {
+            const isConverted = c.subscriptionClosed || c.status === 'converted';
+            if (!isConverted) return;
+            
+            const contactBarberId = c.barberId || ref.barberId;
+            const contactBarberName = c.barberName || ref.barberName;
+            const hasBarber = !!(contactBarberId || contactBarberName);
+            
+            if (r.barber.unit_id === 'venda_direta') {
+              if (!hasBarber && c.sellerId === r.barber.id) {
+                conversionsCount++;
+              }
+            } else {
+              const matchesBarber = contactBarberId === r.barber.id || 
+                (contactBarberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
+              if (matchesBarber) {
+                conversionsCount++;
+              }
+            }
+          });
         });
         
-        r.referralConversions = bRefs.reduce((acc, curr) => {
-          const closed = (curr.contacts || []).filter((c: any) => c.subscriptionClosed || c.status === 'converted').length;
-          return acc + closed;
-        }, 0);
+        r.referralConversions = conversionsCount;
       });
     };
 
