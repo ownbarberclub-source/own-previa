@@ -390,7 +390,10 @@ export default function App() {
         if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
         const contacts = ref.contacts || [];
         contacts.forEach((c: any) => {
-          const hasBarber = !!(c.barberId || c.barberName || ref.barberId || ref.barberName);
+          const isNone = c.barberId === 'none';
+          const cBarberId = isNone ? null : (c.barberId || ref.barberId);
+          const cBarberName = isNone ? null : (c.barberName || ref.barberName);
+          const hasBarber = cBarberId !== null || cBarberName !== null;
           if (!hasBarber && c.sellerId === seller.id) {
             hasDirectSales = true;
           }
