@@ -42,8 +42,13 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
     .sort((a, b) => (b.evaluationRating || 0) - (a.evaluationRating || 0));
     
   const sortedByConversions = [...resultsToUse]
-    .filter(res => (res.referralConversions || 0) > 0)
-    .sort((a, b) => (b.referralConversions || 0) - (a.referralConversions || 0));
+    .filter(res => (res.referralLeads || 0) > 0 || (res.referralConversions || 0) > 0)
+    .sort((a, b) => {
+      if (b.referralConversions === a.referralConversions) {
+        return (b.referralLeads || 0) - (a.referralLeads || 0);
+      }
+      return (b.referralConversions || 0) - (a.referralConversions || 0);
+    });
 
   const sortedByAdjustments = [...resultsToUse]
     .filter(res => (res.adjustmentCount || 0) > 0)
@@ -165,6 +170,74 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
           </div>
         </div>
 
+        {/* Ranking de Indicações e Conversões (ROI) */}
+        <div style={cardStyle}>
+          <div style={{ padding: '24px 28px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Trophy size={20} color="var(--brand)" />
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f4f4f5' }}>Ranking de Indicações & Conversões (ROI)</h3>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ minWidth: '100%', borderCollapse: 'collapse', color: '#e4e4e7', fontSize: 14 }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #27272a', backgroundColor: 'rgba(9,9,11,0.5)' }}>
+                  <th style={{ padding: '16px 28px', textAlign: 'center', fontWeight: 600, color: '#a1a1aa', width: 80 }}>Posição</th>
+                  <th style={{ padding: '16px 28px', textAlign: 'left', fontWeight: 600, color: '#a1a1aa' }}>Profissional</th>
+                  <th style={{ padding: '16px 28px', textAlign: 'left', fontWeight: 600, color: '#a1a1aa' }}>Unidade</th>
+                  <th style={{ padding: '16px 28px', textAlign: 'center', fontWeight: 600, color: '#a1a1aa', width: 140 }}>Total Leads</th>
+                  <th style={{ padding: '16px 28px', textAlign: 'center', fontWeight: 600, color: '#a1a1aa', width: 180 }}>Assinaturas Fechadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedByConversions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: '32px 0', textAlign: 'center', color: '#71717a' }}>
+                      Nenhuma conversão registrada.
+                    </td>
+                  </tr>
+                ) : (
+                  sortedByConversions.map((res, idx) => (
+                    <tr 
+                      key={res.barber.id} 
+                      style={{ 
+                        borderBottom: idx === sortedByConversions.length - 1 ? 'none' : '1px solid #27272a',
+                        backgroundColor: idx === 0 ? 'rgba(225,6,0,0.02)' : 'transparent'
+                      }}
+                    >
+                      <td style={{ padding: '16px 28px', textAlign: 'center' }}>
+                        {idx === 0 ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: '50%', backgroundColor: 'rgba(234,179,8,0.15)', color: '#eab308', border: '1px solid #eab308', fontWeight: 700, fontSize: 12 }}>1</span>
+                        ) : idx === 1 ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: '50%', backgroundColor: 'rgba(161,161,170,0.15)', color: '#a1a1aa', border: '1px solid #a1a1aa', fontWeight: 700, fontSize: 12 }}>2</span>
+                        ) : idx === 2 ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: '50%', backgroundColor: 'rgba(180,83,9,0.15)', color: '#b45309', border: '1px solid #b45309', fontWeight: 700, fontSize: 12 }}>3</span>
+                        ) : (
+                          <span style={{ color: '#71717a', fontWeight: 700 }}>{idx + 1}</span>
+                        )}
+                      </td>
+                      <td style={{ padding: '16px 28px', textAlign: 'left', fontWeight: 700, color: '#f4f4f5' }}>
+                        {res.barber.name}
+                      </td>
+                      <td style={{ padding: '16px 28px', textAlign: 'left' }}>
+                        <span style={{ fontSize: 11, fontWeight: 650, color: res.unit_name === 'Venda Direta' ? 'var(--brand)' : '#a1a1aa', backgroundColor: '#09090b', border: '1px solid #27272a', padding: '4px 8px', borderRadius: 6 }}>
+                          {res.unit_name || 'Desconhecida'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px 28px', textAlign: 'center', color: '#a1a1aa' }}>
+                        {res.referralLeads || 0}
+                      </td>
+                      <td style={{ padding: '16px 28px', textAlign: 'center' }}>
+                        <span style={{ display: 'inline-flex', padding: '4px 12px', borderRadius: 20, fontSize: 13, fontWeight: 800, backgroundColor: (res.referralConversions || 0) > 0 ? 'rgba(225,6,0,0.1)' : '#27272a', color: (res.referralConversions || 0) > 0 ? 'var(--brand)' : '#71717a', border: (res.referralConversions || 0) > 0 ? '1px solid rgba(225,6,0,0.2)' : '1px solid transparent' }}>
+                          {res.referralConversions || 0}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Grid de Sub-Rankings */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
           {/* Feedback */}
@@ -183,24 +256,6 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
                 </div>
               )) : (
                 <p style={{ padding: '20px', fontSize: 12, color: '#52525b', textAlign: 'center' }}>Sem avaliações registradas</p>
-              )}
-            </div>
-          </div>
-
-          {/* Conversões */}
-          <div style={cardStyle}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <ArrowUpRight size={16} color="var(--brand)" />
-              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Mestre de Conversões</h4>
-            </div>
-            <div style={{ padding: '8px 0' }}>
-              {sortedByConversions.length > 0 ? sortedByConversions.map((res: BarberResult, idx: number) => (
-                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByConversions.length - 1 ? 'none' : '1px solid #27272a' }}>
-                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
-                  <span style={{ fontSize: 13, color: 'var(--brand)', fontWeight: 700 }}>{res.referralConversions} vendas</span>
-                </div>
-              )) : (
-                <p style={{ padding: '20px', fontSize: 12, color: '#52525b', textAlign: 'center' }}>Sem conversões registradas</p>
               )}
             </div>
           </div>

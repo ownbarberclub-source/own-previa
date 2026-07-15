@@ -555,33 +555,39 @@ export default function App() {
         const activeCampaign = campaigns.find(c => c.status === 'active');
         
         let conversionsCount = 0;
+        let leadsCount = 0;
         crossSiteData.referrals.forEach(ref => {
           if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
           
           const contacts = ref.contacts || [];
           contacts.forEach((c: any) => {
-            const isConverted = c.subscriptionClosed || c.status === 'converted';
-            if (!isConverted) return;
-            
-            const contactBarberId = c.barberId || ref.barberId;
-            const contactBarberName = c.barberName || ref.barberName;
-            const hasBarber = !!(contactBarberId || contactBarberName);
+            const isNone = c.barberId === 'none';
+            const contactBarberId = isNone ? null : (c.barberId || ref.barberId);
+            const contactBarberName = isNone ? null : (c.barberName || ref.barberName);
+            const hasBarber = contactBarberId !== null || contactBarberName !== null;
             
             if (r.barber.unit_id === 'venda_direta') {
               if (!hasBarber && c.sellerId === r.barber.id) {
-                conversionsCount++;
+                leadsCount++;
+                if (c.subscriptionClosed || c.status === 'converted') {
+                  conversionsCount++;
+                }
               }
             } else {
               const matchesBarber = contactBarberId === r.barber.id || 
-                (contactBarberName || '').toLowerCase() === (r.barber.name || '').toLowerCase();
+                (!isNone && (contactBarberName || '').toLowerCase() === (r.barber.name || '').toLowerCase());
               if (matchesBarber) {
-                conversionsCount++;
+                leadsCount++;
+                if (c.subscriptionClosed || c.status === 'converted') {
+                  conversionsCount++;
+                }
               }
             }
           });
         });
         
         r.referralConversions = conversionsCount;
+        r.referralLeads = leadsCount;
       });
     };
 

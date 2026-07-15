@@ -123,6 +123,7 @@ export interface BarberResult {
   evaluationRating?: number;
   evaluationCount?: number;
   referralConversions?: number;
+  referralLeads?: number;
   adjustmentCount?: number;
 }
 
