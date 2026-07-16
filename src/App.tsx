@@ -755,6 +755,7 @@ export default function App() {
             activeCycle={activeCycle}
             cycles={cycles}
             onSelectCycle={setActiveCycleId}
+            historicalResults={historicalResults}
           />
         )}
         {activeTab === 'ranking' && (

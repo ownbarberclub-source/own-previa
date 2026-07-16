@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2, Star } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
-import { exportPreviewPdf } from '../utils/exportPdf';
+import { exportPreviewPdf, exportBarberCardPdf } from '../utils/exportPdf';
 
 function GoalSimulator({
   result, target, onTargetChange
@@ -122,12 +122,20 @@ interface PreviewDashboardProps {
   activeCycle: Cycle | null;
   cycles: Cycle[];
   onSelectCycle: (id: string) => void;
+  historicalResults: any[];
 }
 
-export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycles, onSelectCycle }: PreviewDashboardProps) {
+export function PreviewDashboard({ 
+  barberResults, potMetrics, activeCycle, cycles, onSelectCycle, historicalResults 
+}: PreviewDashboardProps) {
   const [selectedBarberId, setSelectedBarberId] = useState('all');
   const [isExporting, setIsExporting] = useState(false);
   const [goalMap, setGoalMap] = useState<Record<string, string>>({});
+
+  const handleExportSingle = (res: BarberResult) => {
+    const numericGoal = parseFloat(goalMap[res.barber.id] || '0') || undefined;
+    exportBarberCardPdf(res, activeCycle, historicalResults, cycles, numericGoal);
+  };
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -262,7 +270,29 @@ export function PreviewDashboard({ barberResults, potMetrics, activeCycle, cycle
               <div style={{ padding: '24px 28px', borderBottom: '1px solid #27272a', backgroundColor: 'rgba(9,9,11,0.3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <h3 style={{ fontSize: 20, fontWeight: 800, color: '#f4f4f5', marginBottom: 2 }}>{res.barber.name}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                      <h3 style={{ fontSize: 20, fontWeight: 800, color: '#f4f4f5' }}>{res.barber.name}</h3>
+                      <button
+                        onClick={() => handleExportSingle(res)}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          padding: '3px 8px', backgroundColor: 'rgba(225,6,0,0.1)',
+                          border: '1px solid rgba(225,6,0,0.2)', borderRadius: 6,
+                          color: 'var(--brand)', cursor: 'pointer', transition: 'all 0.2s',
+                          fontSize: 10, fontWeight: 700, gap: 4
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--brand)';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(225,6,0,0.1)';
+                          e.currentTarget.style.color = 'var(--brand)';
+                        }}
+                      >
+                        <FileDown size={10} /> PDF
+                      </button>
+                    </div>
                     <span style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 8 }}>
                       Comissão {Math.round(res.barber.avulso_rate)}%
                     </span>

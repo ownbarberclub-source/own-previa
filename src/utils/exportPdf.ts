@@ -800,7 +800,13 @@ export function exportRankingPdf(
 }
 
 // ─── Exportação individual do card do barbeiro ────────────────────────────────
-export function exportBarberCardPdf(result: BarberResult, cycle: Cycle | null) {
+export function exportBarberCardPdf(
+  result: BarberResult,
+  cycle: Cycle | null,
+  historicalResults: any[],
+  cycles: Cycle[],
+  targetGoal?: number
+) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   // ── Fundo branco ──
@@ -1046,23 +1052,171 @@ export function exportBarberCardPdf(result: BarberResult, cycle: Cycle | null) {
   }
 
   // ── Simulador de Meta ──
-  y = drawGoalSimulator(doc, y, result);
+  y = drawGoalSimulator(doc, y, result, targetGoal);
 
-  // ── Rodapé ──
-  const dataHora = new Date().toLocaleDateString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
-  setStroke(doc, BORDER_CLR);
-  doc.setLineWidth(0.3);
-  doc.line(MARGIN, PAGE_H - 10, PAGE_W - MARGIN, PAGE_H - 10);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  setRgb(doc, TEXT_GRAY);
-  doc.text(`OWN Prévia  •  Gerado em ${dataHora}`, MARGIN, PAGE_H - 6);
-  doc.text('Página 1 de 1', PAGE_W - MARGIN, PAGE_H - 6, { align: 'right' });
+  // ── PÁGINA 2: HISTÓRICO COMPARATIVO ──────────────────────────────────────────
+  doc.addPage();
+  initPage(doc);
+
+  // Faixa superior da página 2
   setFill(doc, BRAND);
-  doc.rect(0, PAGE_H - 2, PAGE_W, 2, 'F');
+  doc.rect(0, 0, PAGE_W, 20, 'F');
+  
+  doc.setFont('helvetica', 'bolditalic');
+  doc.setFontSize(12);
+  doc.setTextColor(255, 255, 255);
+  doc.text('OWN', MARGIN + 2, 13);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(255, 200, 200);
+  doc.text('PRÉVIA', MARGIN + 17, 13);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(255, 255, 255);
+  doc.text('RELATÓRIO HISTÓRICO', PAGE_W - MARGIN, 13, { align: 'right' });
+
+  let y2 = 28;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  setRgb(doc, TEXT_BLACK);
+  doc.text('HISTÓRICO DE ', MARGIN + 2, y2);
+  const offset = doc.getTextWidth('HISTÓRICO DE ');
+  setRgb(doc, BRAND);
+  doc.text('DESEMPENHO', MARGIN + 2 + offset, y2);
+
+  y2 += 4;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8.5);
+  setRgb(doc, TEXT_GRAY);
+  doc.text(`Evolução dos últimos 6 meses de ${result.barber.name}`, MARGIN + 2, y2);
+  
+  y2 += 5;
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.4);
+  doc.line(MARGIN, y2, PAGE_W - MARGIN, y2);
+  y2 += 8;
+
+  // Obter últimos 6 meses
+  const sortedCycles = [...cycles].sort((a, b) => b.month_year.localeCompare(a.month_year));
+  const currentIdx = sortedCycles.findIndex(c => c.id === cycle?.id);
+  const last6Cycles = currentIdx !== -1 
+    ? sortedCycles.slice(currentIdx, currentIdx + 6) 
+    : sortedCycles.slice(0, 6);
+  last6Cycles.reverse(); // Ordem cronológica
+
+  // Mapear dados para tabela e gráfico
+  const histData = last6Cycles.map(c => {
+    const isCurrent = c.id === cycle?.id;
+    if (isCurrent) {
+      return {
+        monthLabel: c.month_year.split('-').reverse().join('/'),
+        commission: result.totalCommission,
+        minutes: result.subscriptionMinutes,
+        avulsos: result.avulsoCount,
+        vendas: result.bebidaCount + result.productCount,
+        extras: result.extraCount
+      };
+    } else {
+      const hist = historicalResults.find(h => h.cycle_id === c.id && h.barber_id === result.barber.id);
+      return {
+        monthLabel: c.month_year.split('-').reverse().join('/'),
+        commission: hist?.total_commission || 0,
+        minutes: hist?.subscription_minutes || 0,
+        avulsos: hist?.avulso_count || 0,
+        vendas: (hist?.bebida_count || 0) + (hist?.product_count || 0),
+        extras: hist?.extra_count || 0
+      };
+    }
+  });
+
+  // ── Tabela Histórica ──
+  y2 = drawSectionTitle(doc, y2, 'TABELA DE EVOLUÇÃO MENSAL', BRAND);
+  
+  // Cabeçalho da tabela
+  setFill(doc, BG_HEADER);
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.2);
+  doc.rect(MARGIN, y2, COL_W, 7, 'FD');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  setRgb(doc, TEXT_GRAY);
+  doc.text('PERÍODO',     MARGIN + 6,           y2 + 5);
+  doc.text('COMISSÃO',    MARGIN + 45,          y2 + 5);
+  doc.text('ASSINATURAS', MARGIN + 85,          y2 + 5);
+  doc.text('AVULSOS',     MARGIN + 120,         y2 + 5);
+  doc.text('VENDAS (ITENS)', MARGIN + 145,      y2 + 5);
+  doc.text('EXTRAS',      PAGE_W - MARGIN - 2,  y2 + 5, { align: 'right' });
+  y2 += 7;
+
+  const ROW_H2 = 9;
+  histData.forEach((row, i) => {
+    const isThisMonth = row.monthLabel === (cycle?.month_year.split('-').reverse().join('/') || '');
+    setFill(doc, isThisMonth ? [255, 245, 245] : (i % 2 === 0 ? BG_WHITE : BG_SOFT));
+    setStroke(doc, BORDER_CLR);
+    doc.setLineWidth(0.15);
+    doc.rect(MARGIN, y2, COL_W, ROW_H2, 'FD');
+
+    if (isThisMonth) {
+      setFill(doc, BRAND);
+      doc.rect(MARGIN, y2, 3, ROW_H2, 'F');
+    }
+
+    doc.setFont('helvetica', isThisMonth ? 'bold' : 'normal');
+    doc.setFontSize(8.5);
+    setRgb(doc, isThisMonth ? BRAND : TEXT_BLACK);
+    doc.text(row.monthLabel, MARGIN + 6, y2 + 5.5);
+    doc.text(formatBRL(row.commission), MARGIN + 45, y2 + 5.5);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_DARK);
+    doc.text(`${row.minutes} min`, MARGIN + 85, y2 + 5.5);
+    doc.text(`${row.avulsos} atend.`, MARGIN + 120, y2 + 5.5);
+    doc.text(`${row.vendas} itens`, MARGIN + 145, y2 + 5.5);
+    doc.text(`${row.extras} serv.`, PAGE_W - MARGIN - 2, y2 + 5.5, { align: 'right' });
+
+    y2 += ROW_H2;
+  });
+
+  y2 += 12;
+
+  // ── Gráfico de Comissão ──
+  y2 = drawSectionTitle(doc, y2, 'GRÁFICO: EVOLUÇÃO DE COMISSÃO (R$)', BLUE);
+
+  const chartH2 = 45;
+  const chartW2 = COL_W;
+  
+  setFill(doc, BG_SOFT);
+  doc.rect(MARGIN, y2, chartW2, chartH2, 'F');
+  
+  setStroke(doc, BORDER_CLR);
+  doc.setLineWidth(0.5);
+  doc.line(MARGIN, y2 + chartH2, MARGIN + chartW2, y2 + chartH2);
+
+  const maxComm = Math.max(...histData.map(d => d.commission), 1);
+  const stepX2 = chartW2 / histData.length;
+
+  histData.forEach((row, i) => {
+    const xCenter = MARGIN + (i + 0.5) * stepX2;
+    const barW = Math.min(stepX2 * 0.4, 18);
+    const hComm = (row.commission / maxComm) * (chartH2 - 12);
+    
+    const isThisMonth = row.monthLabel === (cycle?.month_year.split('-').reverse().join('/') || '');
+    setFill(doc, isThisMonth ? BRAND : [56, 189, 248]);
+    doc.rect(xCenter - barW/2, y2 + chartH2 - hComm, barW, hComm, 'F');
+    
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'bold');
+    setRgb(doc, isThisMonth ? BRAND : [37, 99, 235]);
+    doc.text(formatBRL(row.commission), xCenter, y2 + chartH2 - hComm - 2, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, TEXT_GRAY);
+    doc.text(row.monthLabel, xCenter, y2 + chartH2 + 5, { align: 'center' });
+  });
+
+  drawFooters(doc);
 
   const nomeSanitizado = result.barber.name.replace(/\s+/g, '_');
   doc.save(`OWN_Barbeiro_${nomeSanitizado}_${periodo || 'relatorio'}.pdf`);
