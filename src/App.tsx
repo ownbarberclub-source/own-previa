@@ -388,6 +388,9 @@ export default function App() {
       let hasDirectSales = false;
       crossSiteData.referrals.forEach(ref => {
         if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
+        // Filtra pelo ciclo ativo (mês)
+        const refDate = ref.createdAt || '';
+        if (!refDate.startsWith(currentMonth)) return;
         const contacts = ref.contacts || [];
         contacts.forEach((c: any) => {
           const isNone = c.barberId === 'none';
@@ -559,6 +562,13 @@ export default function App() {
         crossSiteData.referrals.forEach(ref => {
           if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
           
+          // Filtra pelo período correspondente (mês do ciclo ou ano acumulado)
+          const refDate = ref.createdAt || '';
+          const matchesPeriod = period === 'month'
+            ? refDate.startsWith(currentMonth)
+            : refDate.startsWith(activeYear);
+          if (!matchesPeriod) return;
+
           const contacts = ref.contacts || [];
           contacts.forEach((c: any) => {
             const isNone = c.barberId === 'none';
