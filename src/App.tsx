@@ -369,8 +369,15 @@ export default function App() {
         }
       });
 
+      const findManual = (b: Barber) => {
+        return manualMinutes.find(m => 
+          m.cycle_id === activeCycle.id && 
+          (m.barber_id === b.id || allBarbers.some(ab => ab.id === m.barber_id && ab.unit_id === b.unit_id && ab.name.trim().toLowerCase() === b.name.trim().toLowerCase()))
+        );
+      };
+
       totalNetworkMinutes = uniqueActiveOrParticipatingBarbers.reduce((sum, barber) => {
-        const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
+        const manual = findManual(barber);
         if (manual) return sum + manual.minutes;
         return sum + records.filter(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
       }, 0);
@@ -380,7 +387,7 @@ export default function App() {
       const projectionFactor = elapsed > 0 ? total / elapsed : 1;
 
       uniqueActiveOrParticipatingBarbers.forEach(barber => {
-        const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
+        const manual = findManual(barber);
         const barberRecords = records.filter(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
         
         const data = {
@@ -401,8 +408,8 @@ export default function App() {
           else if (effectiveCategory === 'bebida') { data.bebidaRevenue += rec.value; data.bebidaComm += (rec.commission || 0); data.bebidaCount++; }
         });
 
-        const actualMinutes = manual && manual.minutes > 0 ? manual.minutes : data.subscriptionMinutes;
-        const actualCount = manual && manual.attendances && manual.attendances > 0 ? manual.attendances : data.subscriptionCount;
+        const actualMinutes = manual ? manual.minutes : data.subscriptionMinutes;
+        const actualCount = manual ? (manual.attendances || 0) : data.subscriptionCount;
         totalNetworkCount += actualCount;
 
         const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
