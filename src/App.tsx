@@ -292,6 +292,7 @@ export default function App() {
 
     if (activeCycle.status === 'closed') {
       let totalCommissionSigs = 0;
+      const groupedClosedResults: Record<string, BarberResult> = {};
 
       historicalResults.filter(hr => hr.cycle_id === activeCycle.id).forEach(hr => {
         totalNetworkMinutes += hr.subscription_minutes;
@@ -306,16 +307,29 @@ export default function App() {
           barber = { id: hr.barber_id || 'deleted', name: nameToUse, unit_id: hr.unit_id, avulso_rate: 0 } as Barber;
         }
 
-        networkMonthResults.push({
-          barber: { ...barber }, unit_name: units.find(u => u.id === hr.unit_id)?.name || 'Unidade',
-          subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
-          avulsoRevenue: hr.avulso_revenue, extraRevenue: hr.extra_revenue, productRevenue: hr.product_revenue, bebidaRevenue: hr.bebida_revenue,
-          subscriptionCommission: hr.subscription_commission, avulsoCommission: hr.avulso_commission, extraCommission: hr.extra_commission, productCommission: hr.product_commission, bebidaCommission: hr.bebida_commission,
-          avulsoCount: hr.avulso_count, extraCount: hr.extra_count, productCount: hr.product_count, bebidaCount: hr.bebida_count,
-          totalCommission: hr.total_commission, projectedCommission: hr.total_commission
-        } as BarberResult);
+        const key = `${hr.unit_id}_${nameToUse.trim().toLowerCase()}`;
+        if (!groupedClosedResults[key]) {
+          groupedClosedResults[key] = {
+            barber: { ...barber, name: nameToUse }, unit_name: units.find(u => u.id === hr.unit_id)?.name || 'Unidade',
+            subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
+            avulsoRevenue: hr.avulso_revenue, avulsoCommission: hr.avulso_commission, avulsoCount: hr.avulso_count,
+            extraRevenue: hr.extra_revenue, extraCommission: hr.extra_commission, extraCount: hr.extra_count,
+            productRevenue: hr.product_revenue, productCommission: hr.product_commission, productCount: hr.product_count,
+            bebidaRevenue: hr.bebida_revenue, bebidaCommission: hr.bebida_commission, bebidaCount: hr.bebida_count,
+            subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission
+          } as BarberResult;
+        } else {
+          const g = groupedClosedResults[key];
+          g.subscriptionMinutes += hr.subscription_minutes; g.subscriptionCount += hr.subscription_count;
+          g.avulsoRevenue += hr.avulso_revenue; g.avulsoCommission += hr.avulso_commission; g.avulsoCount += hr.avulso_count;
+          g.extraRevenue += hr.extra_revenue; g.extraCommission += hr.extra_commission; g.extraCount += hr.extra_count;
+          g.productRevenue += hr.product_revenue; g.productCommission += hr.product_commission; g.productCount += hr.product_count;
+          g.bebidaRevenue += hr.bebida_revenue; g.bebidaCommission += hr.bebida_commission; g.bebidaCount += hr.bebida_count;
+          g.subscriptionCommission += hr.subscription_commission; g.totalCommission += hr.total_commission; g.projectedCommission += hr.total_commission;
+        }
       });
       
+      networkMonthResults = Object.values(groupedClosedResults);
       potBaseValue = totalCommissionSigs;
       valuePorMinutoGlobal = totalNetworkMinutes > 0 ? totalCommissionSigs / totalNetworkMinutes : 0;
     } else {
@@ -323,27 +337,51 @@ export default function App() {
       potGlobal = (activeCycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
       potBaseValue = potGlobal;
       
-      // Filtra apenas os barbeiros ativos ou os inativos que participaram/têm dados no ciclo aberto
-      const activeOrParticipatingBarbers = allBarbers.filter(barber => {
-        if (barber.is_active !== false) return true;
-        const hasRecords = records.some(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
-        const hasManual = manualMinutes.some(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id && (m.minutes > 0 || (m.attendances || 0) > 0));
-        return hasRecords || hasManual;
+      // Filtra e deduplica barbeiros ativos ou inativos sem duplicação por (unidade + nome)
+      const uniqueActiveOrParticipatingBarbers: Barber[] = [];
+      const seenBarberKeys = new Set<string>();
+
+      // Ordena para que barbeiros ativos venham antes dos inativos
+      const sortedAllBarbers = [...allBarbers].sort((a, b) => {
+        if (a.is_active !== false && b.is_active === false) return -1;
+        if (a.is_active === false && b.is_active !== false) return 1;
+        return 0;
       });
 
-      totalNetworkMinutes = activeOrParticipatingBarbers.reduce((sum, barber) => {
+      sortedAllBarbers.forEach(barber => {
+        const key = `${barber.unit_id}_${barber.name.trim().toLowerCase()}`;
+        if (seenBarberKeys.has(key)) return;
+
+        if (barber.is_active !== false) {
+          seenBarberKeys.add(key);
+          uniqueActiveOrParticipatingBarbers.push(barber);
+        } else {
+          // Inativo: só adiciona se NÃO existir nenhum ativo com o mesmo nome na mesma unidade
+          const hasActiveSameName = allBarbers.some(b => b.is_active !== false && b.unit_id === barber.unit_id && b.name.trim().toLowerCase() === barber.name.trim().toLowerCase());
+          if (!hasActiveSameName) {
+            const hasRecords = records.some(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
+            const hasManual = manualMinutes.some(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id && (m.minutes > 0 || (m.attendances || 0) > 0));
+            if (hasRecords || hasManual) {
+              seenBarberKeys.add(key);
+              uniqueActiveOrParticipatingBarbers.push(barber);
+            }
+          }
+        }
+      });
+
+      totalNetworkMinutes = uniqueActiveOrParticipatingBarbers.reduce((sum, barber) => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
         if (manual) return sum + manual.minutes;
-        return sum + records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
+        return sum + records.filter(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id)).reduce((s, r) => s + r.duration_minutes, 0);
       }, 0);
         
       valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
       const { elapsed, total } = getWorkingHours(currentMonth);
       const projectionFactor = elapsed > 0 ? total / elapsed : 1;
 
-      activeOrParticipatingBarbers.forEach(barber => {
+      uniqueActiveOrParticipatingBarbers.forEach(barber => {
         const manual = manualMinutes.find(m => m.barber_id === barber.id && m.cycle_id === activeCycle.id);
-        const barberRecords = records.filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
+        const barberRecords = records.filter(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && (r.service_date?.startsWith(currentMonth) || r.cycle_id === activeCycle.id));
         
         const data = {
           subscriptionMinutes: 0, subscriptionCount: 0,

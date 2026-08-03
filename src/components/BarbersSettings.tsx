@@ -25,6 +25,13 @@ export function BarbersSettings({ barbers, onRefresh, unitId }: BarbersSettingsP
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !rate || !unitId) return;
+
+    const existing = barbers.find(b => b.is_active !== false && b.name.trim().toLowerCase() === name.trim().toLowerCase());
+    if (existing) {
+      alert(`Já existe um barbeiro ativo cadastrado como "${existing.name}" nesta unidade.`);
+      return;
+    }
+
     try {
       const { error } = await supabase.from('previa_barbers').insert([{
         id: crypto.randomUUID(),
