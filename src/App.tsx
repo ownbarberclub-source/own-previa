@@ -425,10 +425,14 @@ export default function App() {
     (sellers || []).forEach(seller => {
       let hasDirectSales = false;
       crossSiteData.referrals.forEach(ref => {
-        if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
-        // Filtra pelo ciclo ativo (mês)
-        const refDate = ref.createdAt || '';
-        if (!refDate.startsWith(currentMonth)) return;
+        if (activeCampaign) {
+          // Se existe campanha ativa, consideramos todas as indicações pertencentes a ela sem zerar no mês
+          if (ref.campaign_id !== activeCampaign.id) return;
+        } else {
+          // Filtra pelo ciclo ativo (mês) se não houver campanha ativa
+          const refDate = ref.createdAt || '';
+          if (!refDate.startsWith(currentMonth)) return;
+        }
         const contacts = ref.contacts || [];
         contacts.forEach((c: any) => {
           const isNone = c.barberId === 'none';
@@ -598,14 +602,17 @@ export default function App() {
         let conversionsCount = 0;
         let leadsCount = 0;
         crossSiteData.referrals.forEach(ref => {
-          if (activeCampaign && ref.campaign_id !== activeCampaign.id) return;
-          
-          // Filtra pelo período correspondente (mês do ciclo ou ano acumulado)
-          const refDate = ref.createdAt || '';
-          const matchesPeriod = period === 'month'
-            ? refDate.startsWith(currentMonth)
-            : refDate.startsWith(activeYear);
-          if (!matchesPeriod) return;
+          if (activeCampaign) {
+            // Durante a campanha ativa, o ranking de indicações se mantém acumulado durante toda a campanha
+            if (ref.campaign_id !== activeCampaign.id) return;
+          } else {
+            // Filtra pelo período correspondente (mês do ciclo ou ano acumulado) apenas se não houver campanha ativa
+            const refDate = ref.createdAt || '';
+            const matchesPeriod = period === 'month'
+              ? refDate.startsWith(currentMonth)
+              : refDate.startsWith(activeYear);
+            if (!matchesPeriod) return;
+          }
 
           const contacts = ref.contacts || [];
           contacts.forEach((c: any) => {
