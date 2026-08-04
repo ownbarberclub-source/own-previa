@@ -39,27 +39,53 @@ export const closeCycle = async (cycle: Cycle) => {
 
     if (!records || !barbers || !settings) throw new Error('Data fetch failed');
 
+    // Deduplica barbeiros por (unidade + nome normalizado)
+    const uniqueBarbers: typeof barbers = [];
+    const seenKeys = new Set<string>();
+    
+    // Ordena barbeiros ativos primeiro
+    const sortedBarbers = [...barbers].sort((a, b) => {
+      if (a.is_active !== false && b.is_active === false) return -1;
+      if (a.is_active === false && b.is_active !== false) return 1;
+      return 0;
+    });
+
+    sortedBarbers.forEach(b => {
+      const key = `${b.unit_id}_${b.name.trim().toLowerCase()}`;
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key);
+        uniqueBarbers.push(b);
+      }
+    });
+
     // 2. Calculate POT Global
     const globalSettings = settings.find(s => s.unit_id === 'd1af48cb-14e6-4ae7-a6d2-e28207deeafa') || settings[0];
     const potGlobal = (cycle.subscription_total || 0) * (globalSettings?.pot_rate || 0.42);
 
-    const totalNetworkMinutes = barbers.reduce((sum, barber) => {
-      const manual = manualMinutes?.find(m => m.barber_id === barber.id);
+    const findManual = (b: any) => {
+      return manualMinutes?.find(m => 
+        m.barber_id === b.id || barbers.some(ab => ab.id === m.barber_id && ab.unit_id === b.unit_id && ab.name.trim().toLowerCase() === b.name.trim().toLowerCase())
+      );
+    };
+
+    const totalNetworkMinutes = uniqueBarbers.reduce((sum, barber) => {
+      const manual = findManual(barber);
       if (manual) return sum + manual.minutes;
       
       const sheetMinutes = records
-        .filter(r => r.barber_name === barber.name && r.unit_id === barber.unit_id && r.category === 'assinatura')
+        .filter(r => r.barber_name.trim().toLowerCase() === barber.name.trim().toLowerCase() && r.unit_id === barber.unit_id && r.category === 'assinatura' && (r.commission || 0) === 0)
         .reduce((s, r) => s + r.duration_minutes, 0);
       return sum + sheetMinutes;
     }, 0);
 
     const valuePorMinutoGlobal = totalNetworkMinutes > 0 ? potGlobal / totalNetworkMinutes : 0;
 
-    // 3. Group metrics per barber
+    // 3. Group metrics per barber (chave normalizada: unit_id + nome)
     const resultsMap: Record<string, any> = {};
 
     records.forEach(rec => {
-      const key = `${rec.barber_name}-${rec.unit_id}`;
+      const effectiveCategory = (rec.category === 'assinatura' && (rec.commission || 0) > 0) ? 'avulso' : rec.category;
+      const key = `${rec.unit_id}_${rec.barber_name.trim().toLowerCase()}`;
       if (!resultsMap[key]) {
         resultsMap[key] = { 
           sMins: 0, sCnt: 0, aRev: 0, aComm: 0, aCnt: 0,
@@ -68,31 +94,30 @@ export const closeCycle = async (cycle: Cycle) => {
         };
       }
       const bd = resultsMap[key];
-      if (rec.category === 'assinatura') { bd.sMins += rec.duration_minutes; bd.sCnt++; }
-      else if (rec.category === 'avulso') { bd.aRev += rec.value; bd.aComm += (rec.commission || 0); bd.aCnt++; }
-      else if (rec.category === 'extra') { bd.eRev += rec.value; bd.eComm += (rec.commission || 0); bd.eCnt++; }
-      else if (rec.category === 'produto') { bd.pRev += rec.value; bd.pComm += (rec.commission || 0); bd.pCnt++; }
-      else if (rec.category === 'bebida') { bd.bRev += rec.value; bd.bComm += (rec.commission || 0); bd.bCnt++; }
+      if (effectiveCategory === 'assinatura') { bd.sMins += rec.duration_minutes; bd.sCnt++; }
+      else if (effectiveCategory === 'avulso') { bd.aRev += rec.value; bd.aComm += (rec.commission || 0); bd.aCnt++; }
+      else if (effectiveCategory === 'extra') { bd.eRev += rec.value; bd.eComm += (rec.commission || 0); bd.eCnt++; }
+      else if (effectiveCategory === 'produto') { bd.pRev += rec.value; bd.pComm += (rec.commission || 0); bd.pCnt++; }
+      else if (effectiveCategory === 'bebida') { bd.bRev += rec.value; bd.bComm += (rec.commission || 0); bd.bCnt++; }
     });
 
-    // 4. Generate final insert objects
-    const insertPayload = barbers.map(barber => {
-      const key = `${barber.name}-${barber.unit_id}`;
+    // 4. Generate final insert objects usando uniqueBarbers
+    const insertPayload = uniqueBarbers.map(barber => {
+      const key = `${barber.unit_id}_${barber.name.trim().toLowerCase()}`;
       const data = resultsMap[key] || { 
         sMins: 0, sCnt: 0, aRev: 0, aComm: 0, aCnt: 0,
         eRev: 0, eComm: 0, eCnt: 0, pRev: 0, pComm: 0, pCnt: 0,
         bRev: 0, bComm: 0, bCnt: 0 
       };
 
-      const manual = manualMinutes?.find(m => m.barber_id === barber.id);
-      const actualMinutes = manual && manual.minutes > 0 ? manual.minutes : data.sMins;
-      const actualSCnt = manual && manual.attendances && manual.attendances > 0 ? manual.attendances : data.sCnt;
+      const manual = findManual(barber);
+      const actualMinutes = manual ? manual.minutes : data.sMins;
+      const actualSCnt = manual ? (manual.attendances || 0) : data.sCnt;
       
       const sComm = actualMinutes * valuePorMinutoGlobal;
       const totalComm = sComm + data.aComm + data.eComm + data.pComm + data.bComm;
 
       return {
-        // Required payload for historical
         cycle_id: cycle.id,
         barber_id: barber.id,
         barber_name: barber.name,
@@ -116,7 +141,7 @@ export const closeCycle = async (cycle: Cycle) => {
       };
     });
 
-    // Filtra barbeiros que não venderam nem trabalharam para n poluir (opcional, mas bom pra evitar 0s)
+    // Filtra apenas barbeiros que tiveram produção na unidade
     const validPayload = insertPayload.filter(p => p.total_commission > 0 || p.subscription_minutes > 0 || p.avulso_count > 0 || p.extra_count > 0 || p.product_count > 0 || p.bebida_count > 0 || p.avulso_revenue > 0 || p.extra_revenue > 0 || p.product_revenue > 0 || p.bebida_revenue > 0);
 
     // 5. Insert into Supabase
