@@ -28,6 +28,7 @@ export interface ServiceType {
   item_name: string;
   category: 'assinatura' | 'avulso' | 'extra' | 'produto' | 'bebida' | 'ignorar';
   duration_minutes: number;
+  unit_price?: number;
   created_at?: string;
 }
 

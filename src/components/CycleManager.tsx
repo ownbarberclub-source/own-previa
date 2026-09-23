@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Upload, Calendar, Hash, FileSpreadsheet, Trash2, Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Upload, Calendar, Hash, FileSpreadsheet, Trash2, Plus, AlertCircle, CheckCircle2, Layers } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
 import { Cycle, ServiceType, CommissionRecord, Barber, ManualMinutes } from '../types';
 import { currentMonthYear, formatCurrency } from '../utils';
 import { ManualMinutesEditor } from './ManualMinutesEditor';
 import { closeCycle, reopenCycle } from '../utils/closing';
+import { getUnitPriceForItem } from '../utils/itemPrices';
 
 interface CycleManagerProps {
   cycles: Cycle[];
@@ -93,10 +94,42 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws) as any[];
 
+        // Função auxiliar para converter valores monetários da planilha
+        const parseCurrency = (val: any) => {
+          if (val === null || val === undefined) return 0;
+          if (typeof val === 'string') {
+            let clean = val.replace(/R\$\s*/g, '').trim();
+            if (clean.includes('.') && clean.includes(',')) {
+              if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                clean = clean.replace(/\./g, '').replace(',', '.');
+              } else {
+                clean = clean.replace(/,/g, '');
+              }
+            } else if (clean.includes(',')) {
+              clean = clean.replace(',', '.');
+            }
+            return parseFloat(clean) || 0;
+          }
+          return parseFloat(val) || 0;
+        };
+
+        // 1. Pré-analisa a planilha para detectar o menor valor positivo de cada item (Detecção Automática)
+        const detectedMinPrices: Record<string, number> = {};
+        for (let i = 0; i < data.length; i++) {
+          const it = String(data[i]['Item'] || '').trim().toLowerCase();
+          const v = parseCurrency(data[i]['Valor']);
+          if (it && v > 0) {
+            if (!detectedMinPrices[it] || v < detectedMinPrices[it]) {
+              detectedMinPrices[it] = v;
+            }
+          }
+        }
+
         // Processamento dos dados da planilha
         // Colunas esperadas: Data, Valor, Tipo, Item, Profissional, Cliente
         const newRecords: Omit<CommissionRecord, 'id' | 'created_at'>[] = [];
         const newIgnoredRows: { row: number; item: string; barber: string; reason: string }[] = [];
+        let totalItemsSplitted = 0;
 
         for (let i = 0; i < data.length; i++) {
           const row = data[i];
@@ -124,25 +157,6 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
             continue;
           }
 
-          // Função auxiliar para converter valores monetários da planilha
-          const parseCurrency = (val: any) => {
-            if (val === null || val === undefined) return 0;
-            if (typeof val === 'string') {
-              let clean = val.replace(/R\$\s*/g, '').trim();
-              if (clean.includes('.') && clean.includes(',')) {
-                if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
-                  clean = clean.replace(/\./g, '').replace(',', '.');
-                } else {
-                  clean = clean.replace(/,/g, '');
-                }
-              } else if (clean.includes(',')) {
-                clean = clean.replace(',', '.');
-              }
-              return parseFloat(clean) || 0;
-            }
-            return parseFloat(val) || 0;
-          };
-
           const val = parseCurrency(rawValue);
           const comm = parseCurrency(rawComm);
 
@@ -168,17 +182,47 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
             }
           };
 
-          newRecords.push({
-            cycle_id: activeCycleId,
-            unit_id: unitId,
-            barber_name: barberName,
-            item_name: itemName,
-            category: finalCategory,
-            value: val,
-            commission: comm,
-            duration_minutes: mapping.duration_minutes || 0,
-            service_date: parseDate(dateStr)
-          });
+          // 3. Detecção Híbrida de Quantidade (Opção 3)
+          // Aplica para bebidas, produtos ou itens com preço unitário cadastrado
+          let qty = 1;
+          const normItem = itemName.toLowerCase();
+          const registeredPrice = (mapping.unit_price && mapping.unit_price > 0)
+            ? mapping.unit_price
+            : getUnitPriceForItem(itemName, serviceTypes);
+
+          const effectiveUnitPrice = registeredPrice > 0 
+            ? registeredPrice 
+            : (detectedMinPrices[normItem] || 0);
+
+          if ((finalCategory === 'bebida' || finalCategory === 'produto' || registeredPrice > 0) && effectiveUnitPrice > 0 && val > effectiveUnitPrice) {
+            const ratio = val / effectiveUnitPrice;
+            const rounded = Math.round(ratio);
+            if (Math.abs(ratio - rounded) < 0.05 && rounded > 1) {
+              qty = rounded;
+              totalItemsSplitted += (rounded - 1);
+            }
+          }
+
+          // Desmembra em qty registros unitários (distribuindo valor e comissão com precisão de centavos)
+          const unitVal = qty > 1 ? Number((val / qty).toFixed(2)) : val;
+          const unitComm = qty > 1 ? Number((comm / qty).toFixed(2)) : comm;
+
+          for (let q = 0; q < qty; q++) {
+            const thisVal = (q === qty - 1) ? Number((val - unitVal * (qty - 1)).toFixed(2)) : unitVal;
+            const thisComm = (q === qty - 1) ? Number((comm - unitComm * (qty - 1)).toFixed(2)) : unitComm;
+
+            newRecords.push({
+              cycle_id: activeCycleId,
+              unit_id: unitId,
+              barber_name: barberName,
+              item_name: itemName,
+              category: finalCategory,
+              value: thisVal,
+              commission: thisComm,
+              duration_minutes: mapping.duration_minutes || 0,
+              service_date: parseDate(dateStr)
+            });
+          }
         }
 
         if (newRecords.length > 0 || newIgnoredRows.length > 0) {
@@ -188,7 +232,11 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
           }
           
           setIgnoredRows(newIgnoredRows);
-          setUploadStatus({ type: 'success', text: `O arquivo tinha ${data.length} linhas. ${newRecords.length} foram importadas e ${newIgnoredRows.length} ignoradas.` });
+          const splitMsg = totalItemsSplitted > 0 ? ` (${totalItemsSplitted} itens múltiplos foram desmembrados em unidades individuais)` : '';
+          setUploadStatus({ 
+            type: 'success', 
+            text: `O arquivo tinha ${data.length} linhas. Foram gerados ${newRecords.length} lançamentos${splitMsg} e ${newIgnoredRows.length} ignorados.` 
+          });
           onRefresh();
         } else {
           setUploadStatus({ type: 'error', text: 'Nenhum registro compatível encontrado na planilha.' });
@@ -201,6 +249,103 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
       }
     };
     reader.readAsBinaryString(file);
+  };
+
+  const [isAdjusting, setIsAdjusting] = useState(false);
+
+  // Função para ajustar registros já importados no ciclo atual (desmembrando itens múltiplos existentes)
+  const handleAdjustCurrentQuantities = async () => {
+    if (!activeCycleId || !unitId) return;
+    if (!window.confirm('Deseja analisar os lançamentos desta unidade neste ciclo e desmembrar itens com quantidade > 1 (ex: 2 Heinekens de R$ 24)?')) return;
+
+    setIsAdjusting(true);
+    try {
+      let currentRecords: any[] = [];
+      let from = 0;
+      let safetyCount = 0;
+      while (safetyCount < 100) {
+        safetyCount++;
+        const { data, error: fetchErr } = await supabase
+          .from('previa_records')
+          .select('*')
+          .eq('cycle_id', activeCycleId)
+          .eq('unit_id', unitId)
+          .range(from, from + 999);
+        if (fetchErr) throw fetchErr;
+        if (!data || data.length === 0) break;
+        currentRecords = currentRecords.concat(data);
+        if (data.length < 1000) break;
+        from += 1000;
+      }
+
+      if (currentRecords.length === 0) {
+        alert('Nenhum registro encontrado para esta unidade neste ciclo.');
+        return;
+      }
+
+      // 1. Mapeia menor valor de cada item
+      const minPrices: Record<string, number> = {};
+      currentRecords.forEach(r => {
+        const norm = (r.item_name || '').trim().toLowerCase();
+        if (r.value > 0) {
+          if (!minPrices[norm] || r.value < minPrices[norm]) minPrices[norm] = r.value;
+        }
+      });
+
+      const recordsToDelete: string[] = [];
+      const recordsToInsert: any[] = [];
+
+      currentRecords.forEach(r => {
+        const cat = r.category;
+        if (cat !== 'bebida' && cat !== 'produto') return;
+        const norm = (r.item_name || '').trim().toLowerCase();
+        const regPrice = getUnitPriceForItem(r.item_name, serviceTypes);
+        const unitPrice = regPrice > 0 ? regPrice : (minPrices[norm] || 0);
+
+        if (unitPrice > 0 && r.value > unitPrice) {
+          const ratio = r.value / unitPrice;
+          const rounded = Math.round(ratio);
+          if (Math.abs(ratio - rounded) < 0.05 && rounded > 1) {
+            recordsToDelete.push(r.id);
+            const unitVal = Number((r.value / rounded).toFixed(2));
+            const unitComm = Number(((r.commission || 0) / rounded).toFixed(2));
+            for (let q = 0; q < rounded; q++) {
+              const thisVal = (q === rounded - 1) ? Number((r.value - unitVal * (rounded - 1)).toFixed(2)) : unitVal;
+              const thisComm = (q === rounded - 1) ? Number(((r.commission || 0) - unitComm * (rounded - 1)).toFixed(2)) : unitComm;
+              recordsToInsert.push({
+                cycle_id: r.cycle_id,
+                unit_id: r.unit_id,
+                barber_name: r.barber_name,
+                item_name: r.item_name,
+                category: r.category,
+                value: thisVal,
+                commission: thisComm,
+                duration_minutes: r.duration_minutes || 0,
+                service_date: r.service_date
+              });
+            }
+          }
+        }
+      });
+
+      if (recordsToDelete.length === 0) {
+        alert('Todos os lançamentos de bebidas e produtos deste ciclo já estão com quantidades unitárias corretas!');
+      } else {
+        const { error: delErr } = await supabase.from('previa_records').delete().in('id', recordsToDelete);
+        if (delErr) throw delErr;
+
+        const { error: insErr } = await supabase.from('previa_records').insert(recordsToInsert);
+        if (insErr) throw insErr;
+
+        alert(`Sucesso! ${recordsToDelete.length} lançamentos múltiplos foram ajustados para ${recordsToInsert.length} unidades individuais.`);
+        onRefresh();
+      }
+    } catch (err: any) {
+      console.error("Erro ao ajustar quantidades:", err);
+      alert("Falha ao ajustar quantidades: " + (err.message || String(err)));
+    } finally {
+      setIsAdjusting(false);
+    }
   };
 
   const handleClearRecords = async () => {
@@ -429,16 +574,31 @@ export function CycleManager({ cycles, activeCycleId, serviceTypes, barbers, rec
                       {records.filter(r => r.cycle_id === activeCycle.id && r.unit_id === unitId).length} lançamentos desta unidade neste ciclo
                     </p>
                   </div>
-                  <button
-                    onClick={handleClearRecords}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px',
-                      backgroundColor: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)',
-                      borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
-                    }}
-                  >
-                    <Trash2 size={14} /> Limpar Dados
-                  </button>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <button
+                      onClick={handleAdjustCurrentQuantities}
+                      disabled={isAdjusting}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px',
+                        backgroundColor: 'rgba(59,130,246,0.1)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.25)',
+                        borderRadius: 8, cursor: isAdjusting ? 'not-allowed' : 'pointer', fontSize: 12, fontWeight: 600,
+                        opacity: isAdjusting ? 0.6 : 1
+                      }}
+                      title="Analisa vendas de bebidas e produtos deste ciclo e desmembra valores múltiplos (ex: 2 Heinekens de R$ 24 em 2 unidades)"
+                    >
+                      <Layers size={14} /> {isAdjusting ? 'Ajustando...' : 'Ajustar Quantidades Múltiplas'}
+                    </button>
+                    <button
+                      onClick={handleClearRecords}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px',
+                        backgroundColor: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)',
+                        borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600
+                      }}
+                    >
+                      <Trash2 size={14} /> Limpar Dados
+                    </button>
+                  </div>
                 </div>
                 <div style={{ padding: 24 }}>
                   <p style={{ color: '#52525b', fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Edit2, Check, X, Scissors, Search } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { ServiceType } from '../types';
+import { getUnitPriceForItem, saveStoredUnitPrice } from '../utils/itemPrices';
+import { formatCurrency } from '../utils';
 
 interface ServicesSettingsProps {
   serviceTypes: ServiceType[];
@@ -23,6 +25,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
   avulso:     { bg: 'rgba(225,6,0,0.1)',    text: 'var(--brand)' },
   extra:      { bg: 'rgba(168,85,247,0.1)', text: '#c084fc' },
   produto:    { bg: 'rgba(34,197,94,0.1)',  text: '#4ade80' },
+  bebida:     { bg: 'rgba(16,185,129,0.1)', text: '#34d399' },
   ignorar:    { bg: 'rgba(113,113,122,0.1)', text: '#71717a' },
 };
 
@@ -30,11 +33,13 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   const [itemName, setItemName] = useState('');
   const [category, setCategory] = useState<ServiceType['category']>('assinatura');
   const [duration, setDuration] = useState('');
+  const [unitPrice, setUnitPrice] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editItem, setEditItem] = useState('');
   const [editCategory, setEditCategory] = useState<ServiceType['category']>('assinatura');
   const [editDuration, setEditDuration] = useState('');
+  const [editUnitPrice, setEditUnitPrice] = useState('');
 
   const filteredServices = serviceTypes.filter(s => 
     s.item_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -43,16 +48,30 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemName.trim() || !unitId) return;
+    const priceNum = parseFloat(unitPrice.replace(',', '.')) || 0;
     try {
-      const { error } = await supabase.from('previa_service_types').insert([{
+      const payload: any = {
         id: crypto.randomUUID(),
         unit_id: unitId,
         item_name: itemName.trim(),
         category,
         duration_minutes: parseInt(duration) || 0,
-      }]);
+      };
+
+      // Tenta inserir com unit_price se suportado pelo banco
+      let { error } = await supabase.from('previa_service_types').insert([{ ...payload, unit_price: priceNum }]);
+      if (error && error.message.includes('unit_price')) {
+        // Fallback para caso a coluna ainda não exista no banco
+        const res = await supabase.from('previa_service_types').insert([payload]);
+        error = res.error;
+      }
       if (error) throw error;
-      setItemName(''); setCategory('assinatura'); setDuration('');
+
+      if (priceNum > 0) {
+        saveStoredUnitPrice(itemName, priceNum);
+      }
+
+      setItemName(''); setCategory('assinatura'); setDuration(''); setUnitPrice('');
       onRefresh();
     } catch (err) {
       console.error("Erro ao adicionar serviço:", err);
@@ -77,16 +96,28 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
     setEditItem(s.item_name);
     setEditCategory(s.category);
     setEditDuration(String(s.duration_minutes));
+    const currentPrice = getUnitPriceForItem(s.item_name, serviceTypes);
+    setEditUnitPrice(currentPrice > 0 ? String(currentPrice) : '');
   };
 
   const handleSaveEdit = async (id: string) => {
+    const priceNum = parseFloat(editUnitPrice.replace(',', '.')) || 0;
     try {
-      const { error } = await supabase.from('previa_service_types').update({
+      const updates: any = {
         item_name: editItem.trim(),
         category: editCategory,
         duration_minutes: parseInt(editDuration) || 0,
-      }).eq('id', id);
+      };
+
+      let { error } = await supabase.from('previa_service_types').update({ ...updates, unit_price: priceNum }).eq('id', id);
+      if (error && error.message.includes('unit_price')) {
+        const res = await supabase.from('previa_service_types').update(updates).eq('id', id);
+        error = res.error;
+      }
       if (error) throw error;
+
+      saveStoredUnitPrice(editItem, priceNum);
+
       setEditingId(null);
       onRefresh();
     } catch (err) {
@@ -118,7 +149,7 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
           </h3>
         </div>
         <div style={{ padding: 24 }}>
-          <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 220px 160px auto', gap: 12, alignItems: 'end' }}>
+          <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 180px 130px 130px auto', gap: 12, alignItems: 'end' }}>
             <div>
               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>Nome do Item (exato da planilha)</label>
               <input style={input} value={itemName} onChange={e => setItemName(e.target.value)} placeholder='Ex: Corte, Cerveja Heineken, Pomada...' required />
@@ -128,6 +159,10 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
               <select style={{ ...input }} value={category} onChange={e => setCategory(e.target.value as ServiceType['category'])}>
                 {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>Preço Unit. (R$)</label>
+              <input style={input} type="text" value={unitPrice} onChange={e => setUnitPrice(e.target.value)} placeholder="Ex: 12,00" />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 6 }}>Duração (min)</label>
@@ -169,13 +204,15 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ backgroundColor: 'rgba(9,9,11,0.5)' }}>
-                  {['Nome do Item', 'Categoria', 'Duração', ''].map(h => (
+                  {['Nome do Item', 'Categoria', 'Preço Unit.', 'Duração', ''].map(h => (
                     <th key={h} style={{ padding: '12px 24px', textAlign: 'left', fontSize: 12, color: '#52525b', fontWeight: 600, textTransform: 'uppercase' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                 {filteredServices.map(s => (
+                 {filteredServices.map(s => {
+                  const currentPrice = getUnitPriceForItem(s.item_name, serviceTypes);
+                  return (
                   <React.Fragment key={s.id}>
                     <tr style={{ borderTop: '1px solid #27272a' }}>
                       <td style={{ padding: '14px 24px', color: '#e4e4e7', fontWeight: 500, fontSize: 13 }}>{s.item_name}</td>
@@ -187,6 +224,9 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
                         }}>
                           {CATEGORIES.find(c => c.value === s.category)?.label || s.category}
                         </span>
+                      </td>
+                      <td style={{ padding: '14px 24px', color: currentPrice > 0 ? '#34d399' : '#71717a', fontSize: 13, fontWeight: currentPrice > 0 ? 600 : 400 }}>
+                        {currentPrice > 0 ? formatCurrency(currentPrice) : '—'}
                       </td>
                       <td style={{ padding: '14px 24px', color: '#a1a1aa', fontSize: 13 }}>
                         {s.category === 'assinatura' ? `${s.duration_minutes} min` : '—'}
@@ -200,19 +240,23 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
                     </tr>
                     {editingId === s.id && (
                       <tr style={{ borderTop: '1px solid rgba(225,6,0,0.2)', backgroundColor: 'rgba(225,6,0,0.03)' }}>
-                        <td colSpan={4} style={{ padding: 20 }}>
-                          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
-                            <div style={{ flex: 1 }}>
+                        <td colSpan={5} style={{ padding: 20 }}>
+                          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                            <div style={{ flex: '1 1 200px' }}>
                               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>Item (exato)</label>
                               <input style={input} value={editItem} onChange={e => setEditItem(e.target.value)} />
                             </div>
-                            <div style={{ width: 200 }}>
+                            <div style={{ width: 170 }}>
                               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>Categoria</label>
                               <select style={{ ...input }} value={editCategory} onChange={e => setEditCategory(e.target.value as ServiceType['category'])}>
                                 {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                               </select>
                             </div>
                             <div style={{ width: 120 }}>
+                              <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>Preço Unit.</label>
+                              <input style={input} type="text" value={editUnitPrice} onChange={e => setEditUnitPrice(e.target.value)} placeholder="Ex: 12,00" />
+                            </div>
+                            <div style={{ width: 100 }}>
                               <label style={{ display: 'block', fontSize: 12, color: '#71717a', marginBottom: 4 }}>Min</label>
                               <input style={input} type="number" value={editDuration} onChange={e => setEditDuration(e.target.value)} />
                             </div>
@@ -227,7 +271,8 @@ export function ServicesSettings({ serviceTypes, onRefresh, unitId }: ServicesSe
                       </tr>
                     )}
                   </React.Fragment>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           )}

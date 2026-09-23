@@ -3,6 +3,7 @@ import { BarChart3, Settings, Users, Upload, LogOut, Scissors, TrendingUp, Troph
 import { supabase } from './supabaseClient';
 import { Barber, ServiceType, Settings as SettingsType, Cycle, CommissionRecord, BarberResult, UserProfile, Unit, ManualMinutes, HistoricalResult, Campaign } from './types';
 import { getWorkingHours, formatCurrency, currentMonthYear } from './utils';
+import { getStoredUnitPrices } from './utils/itemPrices';
 
 import { BarbersSettings } from './components/BarbersSettings';
 import { ServicesSettings } from './components/ServicesSettings';
@@ -237,7 +238,14 @@ export default function App() {
         setAppSettings(s.find(x => x.unit_id === activeUnitId) || s[0] || null);
       }
       if (manual) setManualMinutes(manual);
-      if (st) setServiceTypes(st);
+      if (st) {
+        const localPrices = getStoredUnitPrices();
+        const hydrated = st.map(item => ({
+          ...item,
+          unit_price: (item.unit_price && item.unit_price > 0) ? item.unit_price : (localPrices[item.item_name.trim().toLowerCase()] || 0)
+        }));
+        setServiceTypes(hydrated);
+      }
       if (allB) setAllBarbers(allB);
       if (hist) setHistoricalResults(hist);
       
