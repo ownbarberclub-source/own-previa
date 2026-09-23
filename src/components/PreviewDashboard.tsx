@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2, Star } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, Scissors, Target, Users, Beer, Package, FileDown, Loader2, Star, CircleDollarSign } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 import { exportPreviewPdf, exportBarberCardPdf } from '../utils/exportPdf';
@@ -303,8 +303,11 @@ export function PreviewDashboard({
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Total Acumulado</p>
+                    <p style={{ fontSize: 12, color: '#71717a', fontWeight: 500, marginBottom: 2 }}>Comissão Acumulada</p>
                     <p style={{ fontSize: 24, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>{formatCurrency(res.totalCommission)}</p>
+                    <p style={{ fontSize: 11, color: '#10b981', fontWeight: 700, marginTop: 4 }}>
+                      Cadeira: {formatCurrency(res.totalChairRevenue || 0)}
+                    </p>
                     {/* Avaliação no header */}
                     {(res.evaluationCount || 0) > 0 && (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginTop: 6 }}>
@@ -339,7 +342,9 @@ export function PreviewDashboard({
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Assinaturas (POT)</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.subscriptionCount} atendimentos • {res.subscriptionMinutes} min</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>
+                          {res.subscriptionCount} atendimentos • {res.subscriptionMinutes} min • Faturado {formatCurrency(res.subscriptionRevenue || 0)}
+                        </span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.subscriptionCommission)}</span>
@@ -367,7 +372,7 @@ export function PreviewDashboard({
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Bebidas</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.bebidaCount} itens vendidos</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.bebidaCount} itens vendidos • Faturado {formatCurrency(res.bebidaRevenue)}</span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.bebidaCommission)}</span>
@@ -381,7 +386,7 @@ export function PreviewDashboard({
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Produtos</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.productCount} itens vendidos</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.productCount} itens vendidos • Faturado {formatCurrency(res.productRevenue)}</span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.productCommission)}</span>
@@ -395,7 +400,7 @@ export function PreviewDashboard({
                       </div>
                       <div>
                         <span style={{ display: 'block', fontSize: 13, color: '#f4f4f5', fontWeight: 600 }}>Serviços Extras</span>
-                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.extraCount} serviços</span>
+                        <span style={{ fontSize: 11, color: '#52525b' }}>{res.extraCount} serviços • Faturado {formatCurrency(res.extraRevenue)}</span>
                       </div>
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#e4e4e7' }}>{formatCurrency(res.extraCommission)}</span>
@@ -442,6 +447,73 @@ export function PreviewDashboard({
                   </div>
                   <div style={{ width: '100%', height: 4, backgroundColor: 'rgba(225,6,0,0.1)', borderRadius: 2, marginTop: 12, overflow: 'hidden' }}>
                     <div style={{ width: '65%', height: '100%', backgroundColor: 'var(--brand)', borderRadius: 2 }}></div>
+                  </div>
+                </div>
+
+                {/* Faturamento Total da Cadeira */}
+                <div style={{
+                  marginTop: 16,
+                  padding: 18,
+                  backgroundColor: 'rgba(16,185,129,0.06)',
+                  borderRadius: 16,
+                  border: '1px solid rgba(16,185,129,0.22)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ padding: 4, backgroundColor: 'rgba(16,185,129,0.15)', borderRadius: 6, color: '#10b981' }}>
+                        <CircleDollarSign size={15} />
+                      </div>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: '#34d399', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Faturamento Total da Cadeira
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 6, backgroundColor: 'rgba(16,185,129,0.15)', color: '#6ee7b7', fontWeight: 700 }}>
+                      Receita Bruta
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+                    <div>
+                      <p style={{ fontSize: 24, fontWeight: 900, color: '#f4f4f5', fontFamily: 'Space Grotesk' }}>
+                        {formatCurrency(res.totalChairRevenue || 0)}
+                      </p>
+                      <p style={{ fontSize: 11, color: '#a1a1aa', fontWeight: 500, marginTop: 2 }}>
+                        Total faturado no período
+                      </p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: 10, color: '#71717a', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>Projeção Cadeira</span>
+                      <span style={{ fontSize: 15, fontWeight: 800, color: '#10b981', fontFamily: 'Space Grotesk' }}>
+                        {formatCurrency(res.projectedChairRevenue || 0)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Detalhamento por categoria em mini-pills */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, paddingTop: 10, borderTop: '1px solid rgba(16,185,129,0.12)' }}>
+                    <div style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, backgroundColor: '#09090b', border: '1px solid #27272a', color: '#93c5fd' }}>
+                      Assinaturas: <strong>{formatCurrency(res.subscriptionRevenue || 0)}</strong>
+                    </div>
+                    <div style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, backgroundColor: '#09090b', border: '1px solid #27272a', color: '#fca5a5' }}>
+                      Avulsos: <strong>{formatCurrency(res.avulsoRevenue || 0)}</strong>
+                    </div>
+                    {(res.productRevenue || 0) > 0 && (
+                      <div style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, backgroundColor: '#09090b', border: '1px solid #27272a', color: '#fde047' }}>
+                        Produtos: <strong>{formatCurrency(res.productRevenue || 0)}</strong>
+                      </div>
+                    )}
+                    {(res.bebidaRevenue || 0) > 0 && (
+                      <div style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, backgroundColor: '#09090b', border: '1px solid #27272a', color: '#86efac' }}>
+                        Bebidas: <strong>{formatCurrency(res.bebidaRevenue || 0)}</strong>
+                      </div>
+                    )}
+                    {(res.extraRevenue || 0) > 0 && (
+                      <div style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, backgroundColor: '#09090b', border: '1px solid #27272a', color: '#d8b4fe' }}>
+                        Extras: <strong>{formatCurrency(res.extraRevenue || 0)}</strong>
+                      </div>
+                    )}
                   </div>
                 </div>
 

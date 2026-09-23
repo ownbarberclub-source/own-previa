@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package, ShieldAlert, FileDown, Loader2 } from 'lucide-react';
+import { Trophy, Crown, Calendar, CalendarDays, Users, Scissors, Target, ArrowUpRight, TrendingUp, Beer, Package, ShieldAlert, FileDown, Loader2, CircleDollarSign } from 'lucide-react';
 import { BarberResult, Cycle } from '../types';
 import { formatCurrency } from '../utils';
 import { exportRankingPdf } from '../utils/exportPdf';
@@ -58,6 +58,7 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
   const sortedByExtraCount = [...resultsToUse].sort((a, b) => b.extraCount - a.extraCount);
   const sortedByProductCount = [...resultsToUse].sort((a, b) => b.productCount - a.productCount);
   const sortedByBebidaCount = [...resultsToUse].sort((a, b) => b.bebidaCount - a.bebidaCount);
+  const sortedByChairRevenue = [...resultsToUse].sort((a, b) => (b.totalChairRevenue || 0) - (a.totalChairRevenue || 0));
 
   const cardStyle = { backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: 20, overflow: 'hidden' as const };
 
@@ -149,11 +150,16 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
                   </div>
                   <div>
                     <p style={{ fontSize: 15, fontWeight: 700, color: idx === 0 ? '#fff' : '#e4e4e7' }}>{res.barber.name}</p>
-                    {idx > 0 && (
-                      <p style={{ fontSize: 11, color: '#52525b', fontWeight: 600 }}>
-                        {formatCurrency(leader.totalCommission - res.totalCommission)} atrás do 1º
-                      </p>
-                    )}
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 11, color: '#10b981', fontWeight: 700 }}>
+                        Cadeira: {formatCurrency(res.totalChairRevenue || 0)}
+                      </span>
+                      {idx > 0 && (
+                        <span style={{ fontSize: 11, color: '#52525b', fontWeight: 600 }}>
+                          • {formatCurrency(leader.totalCommission - res.totalCommission)} atrás do 1º
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -240,6 +246,22 @@ export function RankingPanel({ barberResults, annualResults, activeCycle }: Rank
 
         {/* Grid de Sub-Rankings */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+          {/* Campeão de Faturamento da Cadeira */}
+          <div style={{ ...cardStyle, border: '1px solid rgba(16,185,129,0.25)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'rgba(16,185,129,0.04)' }}>
+              <CircleDollarSign size={16} color="#10b981" />
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>Campeão de Faturamento (Cadeira)</h4>
+            </div>
+            <div style={{ padding: '8px 0' }}>
+              {sortedByChairRevenue.map((res: BarberResult, idx: number) => (
+                <div key={res.barber.id} style={{ padding: '10px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: idx === sortedByChairRevenue.length - 1 ? 'none' : '1px solid #27272a' }}>
+                  <span style={{ fontSize: 13, color: idx === 0 ? '#fff' : '#a1a1aa', fontWeight: idx === 0 ? 700 : 400 }}>{idx + 1}º {res.barber.name}</span>
+                  <span style={{ fontSize: 13, color: '#10b981', fontWeight: 700 }}>{formatCurrency(res.totalChairRevenue || 0)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Feedback */}
           <div style={cardStyle}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 10 }}>

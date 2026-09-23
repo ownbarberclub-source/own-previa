@@ -316,6 +316,10 @@ export default function App() {
         }
 
         const key = `${hr.unit_id}_${nameToUse.trim().toLowerCase()}`;
+        const potRateClosed = globalSettings?.pot_rate || 0.42;
+        const subRevClosed = potRateClosed > 0 ? hr.subscription_commission / potRateClosed : 0;
+        const chairRevClosed = subRevClosed + hr.avulso_revenue + hr.extra_revenue + hr.product_revenue + hr.bebida_revenue;
+
         if (!groupedClosedResults[key]) {
           groupedClosedResults[key] = {
             barber: { ...barber, name: nameToUse }, unit_name: units.find(u => u.id === hr.unit_id)?.name || 'Unidade',
@@ -324,7 +328,8 @@ export default function App() {
             extraRevenue: hr.extra_revenue, extraCommission: hr.extra_commission, extraCount: hr.extra_count,
             productRevenue: hr.product_revenue, productCommission: hr.product_commission, productCount: hr.product_count,
             bebidaRevenue: hr.bebida_revenue, bebidaCommission: hr.bebida_commission, bebidaCount: hr.bebida_count,
-            subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission
+            subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission,
+            subscriptionRevenue: subRevClosed, totalChairRevenue: chairRevClosed, projectedChairRevenue: chairRevClosed
           } as BarberResult;
         } else {
           const g = groupedClosedResults[key];
@@ -334,6 +339,9 @@ export default function App() {
           g.productRevenue += hr.product_revenue; g.productCommission += hr.product_commission; g.productCount += hr.product_count;
           g.bebidaRevenue += hr.bebida_revenue; g.bebidaCommission += hr.bebida_commission; g.bebidaCount += hr.bebida_count;
           g.subscriptionCommission += hr.subscription_commission; g.totalCommission += hr.total_commission; g.projectedCommission += hr.total_commission;
+          g.subscriptionRevenue = (g.subscriptionRevenue || 0) + subRevClosed;
+          g.totalChairRevenue = (g.totalChairRevenue || 0) + chairRevClosed;
+          g.projectedChairRevenue = (g.projectedChairRevenue || 0) + chairRevClosed;
         }
       });
       
@@ -423,6 +431,13 @@ export default function App() {
         const subscriptionCommission = actualMinutes * valuePorMinutoGlobal;
         const totalCommission = subscriptionCommission + data.avulsoComm + data.extraComm + data.productComm + data.bebidaComm;
 
+        // Faturamento da Cadeira (Modo A - Proporção real de assinaturas + avulsos + extras + produtos + bebidas)
+        const subscriptionRevenue = totalNetworkMinutes > 0 
+          ? (actualMinutes / totalNetworkMinutes) * (activeCycle.subscription_total || 0) 
+          : 0;
+        const totalChairRevenue = subscriptionRevenue + data.avulsoRevenue + data.extraRevenue + data.productRevenue + data.bebidaRevenue;
+        const projectedChairRevenue = totalChairRevenue * projectionFactor;
+
         networkMonthResults.push({
           barber: { ...barber }, unit_name: units.find(u => u.id === barber.unit_id)?.name || 'Unidade',
           subscriptionMinutes: actualMinutes, subscriptionCount: actualCount,
@@ -431,6 +446,7 @@ export default function App() {
           productRevenue: data.productRevenue, productCommission: data.productComm, productCount: data.productCount,
           bebidaRevenue: data.bebidaRevenue, bebidaCommission: data.bebidaComm, bebidaCount: data.bebidaCount,
           subscriptionCommission, totalCommission, projectedCommission: totalCommission * projectionFactor,
+          subscriptionRevenue, totalChairRevenue, projectedChairRevenue,
         });
       });
     }
@@ -487,6 +503,9 @@ export default function App() {
           bebidaCount: 0,
           totalCommission: 0,
           projectedCommission: 0,
+          subscriptionRevenue: 0,
+          totalChairRevenue: 0,
+          projectedChairRevenue: 0,
           rankNetwork: 0,
           rankUnit: 0,
           rankAnnual: 0
@@ -512,6 +531,9 @@ export default function App() {
         g.productRevenue += res.productRevenue; g.productCommission += res.productCommission; g.productCount += res.productCount;
         g.bebidaRevenue += res.bebidaRevenue; g.bebidaCommission += res.bebidaCommission; g.bebidaCount += res.bebidaCount;
         g.subscriptionCommission += res.subscriptionCommission; g.totalCommission += res.totalCommission; g.projectedCommission += res.projectedCommission;
+        g.subscriptionRevenue = (g.subscriptionRevenue || 0) + (res.subscriptionRevenue || 0);
+        g.totalChairRevenue = (g.totalChairRevenue || 0) + (res.totalChairRevenue || 0);
+        g.projectedChairRevenue = (g.projectedChairRevenue || 0) + (res.projectedChairRevenue || 0);
       }
     };
 
@@ -525,6 +547,10 @@ export default function App() {
          barber = { id: hr.barber_id || 'deleted', name: nameToUse, unit_id: hr.unit_id, avulso_rate: 0 } as Barber;
        }
 
+       const potRateAnnual = (globalSettings?.pot_rate || 0.42);
+       const hSubRev = potRateAnnual > 0 ? hr.subscription_commission / potRateAnnual : 0;
+       const hChairRev = hSubRev + hr.avulso_revenue + hr.extra_revenue + hr.product_revenue + hr.bebida_revenue;
+
        processAnnual({
           barber: { ...barber },
           subscriptionMinutes: hr.subscription_minutes, subscriptionCount: hr.subscription_count,
@@ -532,7 +558,8 @@ export default function App() {
           extraRevenue: hr.extra_revenue, extraCommission: hr.extra_commission, extraCount: hr.extra_count,
           productRevenue: hr.product_revenue, productCommission: hr.product_commission, productCount: hr.product_count,
           bebidaRevenue: hr.bebida_revenue, bebidaCommission: hr.bebida_commission, bebidaCount: hr.bebida_count,
-          subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission
+          subscriptionCommission: hr.subscription_commission, totalCommission: hr.total_commission, projectedCommission: hr.total_commission,
+          subscriptionRevenue: hSubRev, totalChairRevenue: hChairRev, projectedChairRevenue: hChairRev
        });
     });
 
@@ -580,6 +607,9 @@ export default function App() {
           g.productRevenue += r.productRevenue; g.productCommission += r.productCommission; g.productCount += r.productCount;
           g.bebidaRevenue += r.bebidaRevenue; g.bebidaCommission += r.bebidaCommission; g.bebidaCount += r.bebidaCount;
           g.subscriptionCommission += r.subscriptionCommission; g.totalCommission += r.totalCommission; g.projectedCommission += r.projectedCommission;
+          g.subscriptionRevenue = (g.subscriptionRevenue || 0) + (r.subscriptionRevenue || 0);
+          g.totalChairRevenue = (g.totalChairRevenue || 0) + (r.totalChairRevenue || 0);
+          g.projectedChairRevenue = (g.projectedChairRevenue || 0) + (r.projectedChairRevenue || 0);
         }
       });
       finalMonthResults = Object.values(groupedMonth).sort((a, b) => b.totalCommission - a.totalCommission);

@@ -115,6 +115,11 @@ export interface BarberResult {
 
   totalCommission: number;
   projectedCommission: number;
+
+  // Faturamento da Cadeira (Volume bruto produzido pelo barbeiro)
+  subscriptionRevenue?: number;
+  totalChairRevenue?: number;
+  projectedChairRevenue?: number;
   
   rankUnit?: number;
   rankNetwork?: number;

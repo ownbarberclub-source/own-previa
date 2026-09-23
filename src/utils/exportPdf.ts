@@ -142,8 +142,9 @@ function drawPodium(doc: jsPDF, y: number, results: BarberResult[]): number {
   setRgb(doc, TEXT_GRAY);
   doc.text('POS.',        MARGIN + 6,              y + 5);
   doc.text('PROFISSIONAL',MARGIN + 18,             y + 5);
+  doc.text('FAT. CADEIRA',PAGE_W - MARGIN - 62,    y + 5, { align: 'right' });
+  doc.text('DIFERENÇA',   PAGE_W - MARGIN - 32,    y + 5, { align: 'right' });
   doc.text('COMISSÃO',    PAGE_W - MARGIN - 2,     y + 5, { align: 'right' });
-  doc.text('DIFERENÇA',   PAGE_W - MARGIN - 38,    y + 5, { align: 'right' });
   y += 7;
 
   for (let i = 0; i < results.length; i++) {
@@ -180,13 +181,19 @@ function drawPodium(doc: jsPDF, y: number, results: BarberResult[]): number {
       doc.text(res.unit_name, MARGIN + 14, y + ROW_H / 2 + 5);
     }
 
+    // Faturamento Cadeira
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    setRgb(doc, GREEN);
+    doc.text(formatBRL(res.totalChairRevenue || 0), PAGE_W - MARGIN - 62, y + ROW_H / 2 + 1, { align: 'right' });
+
     // Diferença do líder
     if (i > 0) {
       const gap = leader.totalCommission - res.totalCommission;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       setRgb(doc, TEXT_GRAY);
-      doc.text(`-${formatBRL(gap)}`, PAGE_W - MARGIN - 36, y + ROW_H / 2 + 1, { align: 'right' });
+      doc.text(`-${formatBRL(gap)}`, PAGE_W - MARGIN - 32, y + ROW_H / 2 + 1, { align: 'right' });
     }
 
     // Comissão total
@@ -724,6 +731,12 @@ export function exportRankingPdf(
   y = drawSectionTitle(doc, y, 'PÓDIO GERAL — Comissão Acumulada por Barbeiro', BRAND);
   y = drawPodium(doc, y, results);
 
+  // ── Campeão de Faturamento (Cadeira) ──
+  const porCadeira = [...results].sort((a, b) => (b.totalChairRevenue || 0) - (a.totalChairRevenue || 0));
+  y = drawSubRanking(doc, y, 'CAMPEÃO DE FATURAMENTO DA CADEIRA (RECEITA BRUTA)', GREEN,
+    porCadeira.map(r => ({ name: r.barber.name, value: formatBRL(r.totalChairRevenue || 0) }))
+  );
+
   // ── Assinaturas × Serviços Avulsos ──
   const porMinutos   = [...results].sort((a, b) => b.subscriptionMinutes   - a.subscriptionMinutes);
   const porAvulso    = [...results].sort((a, b) => b.avulsoCount           - a.avulsoCount);
@@ -879,40 +892,61 @@ export function exportBarberCardPdf(
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
   y += 7;
 
-  // ── Total da comissão (destaque) ──
+  // ── Destaques financeiros (lado a lado: Comissão e Faturamento da Cadeira) ──
+  const cardW = (COL_W - 4) / 2;
+  const cardH = 22;
+
+  // Card 1: Comissão
   setFill(doc, [255, 245, 245]);
   setStroke(doc, [220, 180, 180]);
   doc.setLineWidth(0.4);
-  doc.roundedRect(MARGIN, y, COL_W, 20, 2, 2, 'FD');
+  doc.roundedRect(MARGIN, y, cardW, cardH, 2, 2, 'FD');
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   setRgb(doc, TEXT_GRAY);
-  doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 6, y + 7);
+  doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 5, y + 5.5);
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
+  doc.setFontSize(15);
   setRgb(doc, BRAND);
-  doc.text(formatBRL(result.totalCommission), MARGIN + 6, y + 17);
+  doc.text(formatBRL(result.totalCommission), MARGIN + 5, y + 13.5);
 
-  // Projeção do mês
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  setRgb(doc, TEXT_GRAY);
-  doc.text('PROJEÇÃO FINAL DO MÊS', PAGE_W - MARGIN - 2, y + 7, { align: 'right' });
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
+  doc.setFontSize(7.5);
   setRgb(doc, TEXT_DARK);
-  doc.text(formatBRL(result.projectedCommission), PAGE_W - MARGIN - 2, y + 17, { align: 'right' });
+  doc.text(`Projeção: ${formatBRL(result.projectedCommission)}`, MARGIN + 5, y + 19);
 
-  y += 26;
+  // Card 2: Faturamento da Cadeira
+  const xRight = MARGIN + cardW + 4;
+  setFill(doc, [240, 253, 244]);
+  setStroke(doc, [187, 247, 208]);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(xRight, y, cardW, cardH, 2, 2, 'FD');
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  setRgb(doc, GREEN);
+  doc.text('FATURAMENTO TOTAL DA CADEIRA', xRight + 5, y + 5.5);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  setRgb(doc, GREEN);
+  doc.text(formatBRL(result.totalChairRevenue || 0), xRight + 5, y + 13.5);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  setRgb(doc, [21, 128, 61]);
+  doc.text(`Projeção Cadeira: ${formatBRL(result.projectedChairRevenue || 0)}`, xRight + 5, y + 19);
+
+  y += 28;
 
   // ── Tabela de categorias ──
   const categorias = [
     {
       label  : 'Assinaturas (POT)',
       detalhe: `${result.subscriptionCount} atendimentos  •  ${result.subscriptionMinutes} min`,
-      receita: null,
+      receita: result.subscriptionRevenue ?? null,
       comis  : result.subscriptionCommission,
       color  : BLUE,
     },
@@ -1010,7 +1044,10 @@ export function exportBarberCardPdf(
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   setRgb(doc, TEXT_BLACK);
-  doc.text('TOTAL', MARGIN + 6, y + 6.5);
+  doc.text('TOTAL FATURADO & COMISSÃO', MARGIN + 6, y + 6.5);
+  doc.setFontSize(9);
+  setRgb(doc, GREEN);
+  doc.text(formatBRL(result.totalChairRevenue || 0), PAGE_W - MARGIN - 36, y + 6.5, { align: 'right' });
   doc.setFontSize(10);
   setRgb(doc, BRAND);
   doc.text(formatBRL(result.totalCommission), PAGE_W - MARGIN - 2, y + 6.5, { align: 'right' });
@@ -1498,34 +1535,58 @@ export function exportPreviewPdf(
     doc.line(MARGIN, y, PAGE_W - MARGIN, y);
     y += 4;
 
-    // Destaque financeiro (compacto)
+    // Destaques financeiros (compacto lado a lado: Comissão e Faturamento Cadeira)
+    const cardW = (COL_W - 4) / 2;
+    const cardH = 17;
+
+    // Card 1: Comissão
     setFill(doc, [255, 245, 245]);
     setStroke(doc, [220, 180, 180]);
     doc.setLineWidth(0.4);
-    doc.roundedRect(MARGIN, y, COL_W, 16, 2, 2, 'FD');
+    doc.roundedRect(MARGIN, y, cardW, cardH, 2, 2, 'FD');
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
+    doc.setFontSize(6.5);
     setRgb(doc, TEXT_GRAY);
-    doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 6, y + 5.5);
+    doc.text('COMISSÃO TOTAL ACUMULADA', MARGIN + 5, y + 4.5);
+
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
+    doc.setFontSize(13);
     setRgb(doc, BRAND);
-    doc.text(formatBRL(result.totalCommission), MARGIN + 6, y + 13.5);
+    doc.text(formatBRL(result.totalCommission), MARGIN + 5, y + 11);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    setRgb(doc, TEXT_DARK);
+    doc.text(`Projeção: ${formatBRL(result.projectedCommission)}`, MARGIN + 5, y + 15.5);
+
+    // Card 2: Faturamento Cadeira
+    const xRight = MARGIN + cardW + 4;
+    setFill(doc, [240, 253, 244]);
+    setStroke(doc, [187, 247, 208]);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(xRight, y, cardW, cardH, 2, 2, 'FD');
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
-    setRgb(doc, TEXT_GRAY);
-    doc.text('PROJEÇÃO FINAL DO MÊS', PAGE_W - MARGIN - 2, y + 5.5, { align: 'right' });
+    doc.setFontSize(6.5);
+    setRgb(doc, GREEN);
+    doc.text('FATURAMENTO TOTAL DA CADEIRA', xRight + 5, y + 4.5);
+
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    setRgb(doc, TEXT_DARK);
-    doc.text(formatBRL(result.projectedCommission), PAGE_W - MARGIN - 2, y + 13.5, { align: 'right' });
-    y += 20;
+    doc.setFontSize(13);
+    setRgb(doc, GREEN);
+    doc.text(formatBRL(result.totalChairRevenue || 0), xRight + 5, y + 11);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    setRgb(doc, [21, 128, 61]);
+    doc.text(`Projeção: ${formatBRL(result.projectedChairRevenue || 0)}`, xRight + 5, y + 15.5);
+
+    y += 22;
 
     // Tabela de categorias
     const categorias = [
-      { label: 'Assinaturas (POT)', detalhe: `${result.subscriptionCount} atendimentos  •  ${result.subscriptionMinutes} min`, receita: null,                  comis: result.subscriptionCommission, color: BLUE   },
+      { label: 'Assinaturas (POT)', detalhe: `${result.subscriptionCount} atendimentos  •  ${result.subscriptionMinutes} min`, receita: result.subscriptionRevenue ?? null, comis: result.subscriptionCommission, color: BLUE   },
       { label: 'Serviços Avulsos',  detalhe: `${result.avulsoCount} atendimentos`,                                              receita: result.avulsoRevenue,  comis: result.avulsoCommission,       color: BRAND  },
       { label: 'Bebidas',           detalhe: `${result.bebidaCount} itens vendidos`,                                            receita: result.bebidaRevenue,  comis: result.bebidaCommission,       color: GREEN  },
       { label: 'Produtos',          detalhe: `${result.productCount} itens vendidos`,                                           receita: result.productRevenue, comis: result.productCommission,      color: AMBER  },
@@ -1579,10 +1640,13 @@ export function exportPreviewPdf(
     doc.setLineWidth(0.4);
     doc.rect(MARGIN, y, COL_W, 9, 'FD');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     setRgb(doc, TEXT_BLACK);
-    doc.text('TOTAL', MARGIN + 6, y + 6);
-    doc.setFontSize(10);
+    doc.text('TOTAL FATURADO & COMISSÃO', MARGIN + 6, y + 6);
+    doc.setFontSize(8.5);
+    setRgb(doc, GREEN);
+    doc.text(formatBRL(result.totalChairRevenue || 0), PAGE_W - MARGIN - 36, y + 6, { align: 'right' });
+    doc.setFontSize(9.5);
     setRgb(doc, BRAND);
     doc.text(formatBRL(result.totalCommission), PAGE_W - MARGIN - 2, y + 6, { align: 'right' });
     y += 12;
